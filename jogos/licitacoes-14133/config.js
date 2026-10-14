@@ -1,4 +1,5 @@
 window.QUIZ_CONFIG = {
+  rotuloFonte: "Ver no texto da lei",
   id: "licitacoes-14133",
   titulo: "Quiz da Lei 14.133",
   subtitulo: "Nova Lei de Licitações e Contratos Administrativos",

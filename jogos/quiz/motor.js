@@ -330,7 +330,7 @@ function answer(btn){
       (ok ? '<span class="pts">+' + pts + ' pontos' + (mult() > 1 ? ' · combo ×' + mult() : '') + '</span>'
           : '<span>Resposta certa: <strong>' + esc(q.right) + '</strong>' + (G.lives > 0 ? ' · restam ' + G.lives + ' ' + (G.lives === 1 ? 'vida' : 'vidas') : '') + '</span>') +
       (q.fact ? '<span>💡 ' + esc(q.fact) + '</span>' : '') +
-      (q.fonte ? '<a class="lei" href="' + esc(q.fonte) + '" target="_blank" rel="noopener">Ver no texto da lei ↗</a>' : '') +
+      (q.fonte ? '<a class="lei" href="' + esc(q.fonte) + '" target="_blank" rel="noopener">' + esc(CFG.rotuloFonte || 'Ver a fonte') + ' ↗</a>' : '') +
     '</div>' +
     '<div class="fbrow"><button class="next" type="button" id="nx">' + (G.lives <= 0 || G.i === G.qs.length - 1 ? "Ver resultado" : "Próxima →") + '</button></div>';
   var nx = document.getElementById("nx"); nx.onclick = function(){ SFX.click(); nextQ(); }; nx.focus({preventScroll:true});

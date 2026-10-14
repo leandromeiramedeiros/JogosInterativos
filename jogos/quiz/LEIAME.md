@@ -50,7 +50,7 @@ window.QUIZ_PERGUNTAS = {
       certa: "…",
       erradas: ["…", "…", "…"],       // exatamente 3, plausíveis
       curiosidade: "…",               // aparece no feedback
-      fonte: "https://…"              // opcional: vira o link "Ver no texto da lei ↗"
+      fonte: "https://…"              // opcional: vira um link no feedback ("Ver a fonte ↗", ou o texto de `rotuloFonte` no config.js)
     }
   ],
   dificil: [ … ], impossivel: [ … ]
