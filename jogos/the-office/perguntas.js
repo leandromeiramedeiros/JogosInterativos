@@ -117,10 +117,10 @@ window.QUIZ_PERGUNTAS = {
       curiosidade: "Deangelo é o substituto de Michael como gerente regional no fim da 7ª temporada.",
       fonte: "https://en.wikipedia.org/wiki/List_of_The_Office_(American_TV_series)_characters" },
     { cena: "predio-dunder",
-      pergunta: "Qual empresa compra a Dunder Mifflin durante a 6ª temporada?",
+      pergunta: "Qual empresa assume o controle da Dunder Mifflin na 6ª temporada?",
       certa: "Sabre",
       erradas: ["Vance Refrigeration", "Prince Family Paper", "Michael Scott Paper Company"],
-      curiosidade: "A compra acontece no episódio \"Sabre\", e a companhia traz Jo Bennett e Gabe Lewis para o escritório.",
+      curiosidade: "No episódio \"Sabre\", Gabe Lewis impõe as novas regras da empresa e a CEO Jo Bennett (Kathy Bates) aparece pela primeira vez, por vídeo.",
       fonte: "https://en.wikipedia.org/wiki/List_of_The_Office_(American_TV_series)_characters" },
     { cena: "fazenda",
       pergunta: "Que negócio Dwight e Mose mantêm na Schrute Farms, além da plantação?",
@@ -269,10 +269,10 @@ window.QUIZ_PERGUNTAS = {
       curiosidade: "Meredith cuida das relações com fornecedores e Kelly, do atendimento ao cliente.",
       fonte: "https://en.wikipedia.org/wiki/List_of_The_Office_(American_TV_series)_characters" },
     { cena: "predio-dunder",
-      pergunta: "Qual é o nome do segurança que escolta Michael para fora do prédio em \"Two Weeks\"?",
-      certa: "Hank Tate",
-      erradas: ["Hank Hudson", "Frank Tate", "Harry Tate"],
-      curiosidade: "Hank é o segurança do prédio ao longo de toda a série.",
+      pergunta: "Qual é o sobrenome de Hank, o segurança que escolta Michael para fora do prédio em \"Two Weeks\"?",
+      certa: "Tate",
+      erradas: ["Hudson", "Philbin", "Flenderson"],
+      curiosidade: "Hank Tate é o segurança do prédio e aparece em vários episódios.",
       fonte: "https://en.wikipedia.org/wiki/Two_Weeks_(The_Office)" }
   ]
 };
