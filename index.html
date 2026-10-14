@@ -358,7 +358,7 @@ const ONLINE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
 const LOCAL_KEY="jogos-placar-v1";
 
 const Placar=ONLINE?(()=>{
-  const base=CFG.supabaseUrl.replace(/\/+$/,"")+"/rest/v1/placar";
+  const base=CFG.supabaseUrl.replace(/\/+$/,"").replace(/\/rest\/v1$/,"")+"/rest/v1/placar"; // aceita a URL com ou sem /rest/v1
   const h={apikey:CFG.supabaseAnonKey};
   if(/^eyJ/.test(CFG.supabaseAnonKey)) h.Authorization="Bearer "+CFG.supabaseAnonKey; // chave anon antiga (JWT)
   const campos="select=id,nome,pontos,nivel,criado_em";
