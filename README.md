@@ -7,7 +7,12 @@ Uma prateleira de jogos para jogar no navegador.
 | Jogo | Do que se trata |
 | --- | --- |
 | [Bandeiras do Mundo](https://leandromeiramedeiros.github.io/JogosInterativos/#bandeiras-do-mundo) | Veja a bandeira e digite o nome do país antes que o tempo acabe. 4 níveis, 10 rodadas. |
-| [Quiz da Vila](https://leandromeiramedeiros.github.io/JogosInterativos/#quiz-da-vila) | Perguntas sobre o seriado Chaves. 3 níveis, 3 vidas, combos e ajudas. |
+| [Quiz da Vila](https://leandromeiramedeiros.github.io/JogosInterativos/#quiz-da-vila) | Perguntas sobre o seriado Chaves, com cenas da série. |
+| [Quiz da Lei 14.133](https://leandromeiramedeiros.github.io/JogosInterativos/#licitacoes-14133) | Nova Lei de Licitações e Contratos, com o artigo de cada resposta. |
+| [Quiz do SUAS](https://leandromeiramedeiros.github.io/JogosInterativos/#quiz-do-suas) | LOAS, CRAS, CREAS, BPC e o Sistema Único de Assistência Social. |
+| [Quiz Velozes e Furiosos](https://leandromeiramedeiros.github.io/JogosInterativos/#velozes-e-furiosos) | Carros, rachas e a família Toretto, com cenas dos filmes. |
+| [Quiz The Office](https://leandromeiramedeiros.github.io/JogosInterativos/#the-office) | Dunder Mifflin e Michael Scott, com cenas da série. |
+| [Quiz Sertanejo Raiz](https://leandromeiramedeiros.github.io/JogosInterativos/#sertanejo-raiz) | Duplas, violeiros e modas de viola da música caipira. |
 
 ## Placar
 
@@ -26,8 +31,8 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 
 ## Estrutura
 
-- `index.html` — a página com a grade de jogos. Cada jogo abre por cima da grade, e o endereço ganha `#id-do-jogo` para poder ser compartilhado.
-- `jogos/` — um arquivo HTML autossuficiente por jogo. No fim da partida, o jogo avisa a página com `parent.postMessage({tipo: "jogos:fim", pontos, nivel}, "*")`.
+- `index.html`, `hub.css`, `hub.js` — a página com a grade de jogos. Cada jogo abre por cima da grade, e o endereço ganha `#id-do-jogo` para poder ser compartilhado.
+- `jogos/` — um HTML por jogo. Os quizzes usam o motor em `jogos/quiz/` (veja `jogos/quiz/LEIAME.md`) e guardam perguntas, imagens e tema em `jogos/<id>/`. No fim da partida, o jogo avisa a página com `parent.postMessage({tipo: "jogos:fim", pontos, nivel}, "*")`.
 - `placar-config.js` — endereço e chave pública do Supabase (vazio = placar só no navegador).
 - `supabase/placar.sql` — criação da tabela do placar e das regras de acesso.
 - `.github/workflows/pages.yml` — publica o site no GitHub Pages a cada push no branch padrão.
