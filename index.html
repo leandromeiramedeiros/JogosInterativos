@@ -119,8 +119,104 @@ a{color:inherit}
 .pbtn:hover{border-color:var(--accent)}
 .pbtn.back{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .pbtn svg{width:14px;height:14px}
-.player iframe{flex:1;width:100%;border:0;background:#fff;padding-bottom:env(safe-area-inset-bottom,0px)}
+.stage{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px;position:relative;padding-bottom:env(safe-area-inset-bottom,0px)}
+.stage iframe{width:100%;height:100%;border:0;background:#fff;display:block}
 @media (max-width:520px){.pbtn .wide{display:none}}
+
+/* ---------- Placar (barra ao lado do jogo) ---------- */
+.board{background:var(--bg);color:var(--ink);border-left:1px solid var(--line);overflow-y:auto;display:flex;flex-direction:column;gap:18px;
+  padding-block:18px;padding-left:18px;padding-right:max(18px,env(safe-area-inset-right,0px))}
+.bhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bhead h3{font-family:var(--display);font-weight:400;font-size:22px;margin:0;line-height:1}
+.src{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 8px;white-space:nowrap}
+.bclose{display:none;background:transparent;border:0;color:var(--ink);font-size:24px;line-height:1;cursor:pointer;padding:2px 6px;border-radius:8px}
+
+.send{display:flex;flex-direction:column;gap:10px;background:var(--shell);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.send .yours{margin:0;font-size:14px;color:var(--muted)}
+.send .yours b{display:block;font-family:var(--display);font-weight:400;font-size:34px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.send label{font-weight:800;font-size:13px}
+.send .row{display:flex;gap:8px}
+.send input{flex:1;min-width:0;font:600 16px var(--body);color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:9px;padding:9px 11px}
+.send input:focus-visible{outline:none;border-color:var(--accent)}
+.btn{font:800 14px var(--body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:9px;padding:10px 14px;cursor:pointer;white-space:nowrap}
+.btn[disabled]{opacity:.55;cursor:progress}
+.msg{margin:0;font-size:14px;line-height:1.4}
+.msg.ok{font-weight:800}
+.msg.err{color:var(--accent)}
+
+.podium{display:flex;flex-direction:column;gap:12px}
+.first{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:6px 0 4px}
+.first svg{width:118px;height:118px}
+.nm{font-weight:800;overflow-wrap:anywhere}
+.first .nm{font-size:19px;line-height:1.2}
+.pts{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.first .pts{font-size:15px;color:var(--ink)}
+.lv{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duo>div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;min-width:0;border-top:1px solid var(--line);padding-top:10px}
+.duo svg{width:64px;height:64px}
+.you{border-radius:10px;box-shadow:0 0 0 2px var(--accent)}
+.first.you,.duo>div.you{padding-inline:6px}
+.tagyou{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+
+.rest{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.rest li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:baseline;gap:8px;padding:8px 6px;border-top:1px solid var(--line)}
+.rest .pos{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rest .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{margin:0;color:var(--muted);font-size:14px}
+.linkbtn{align-self:flex-start;background:transparent;border:2px solid var(--line);color:var(--ink);font:800 14px var(--body);border-radius:9px;padding:9px 14px;cursor:pointer}
+.linkbtn:hover{border-color:var(--accent)}
+
+@media (max-width:899px){
+  .stage{grid-template-columns:minmax(0,1fr)}
+  .board{position:absolute;left:0;right:0;bottom:0;max-height:80%;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;
+    box-shadow:0 -24px 48px -12px rgba(0,0,0,.55);padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+    padding-left:max(18px,env(safe-area-inset-left,0px));transform:translateY(105%);visibility:hidden;transition:transform .25s ease,visibility .25s}
+  .board.open{transform:none;visibility:visible}
+  .bclose{display:block}
+}
+@media (min-width:900px){#rank-toggle{display:none}}
+
+/* ---------- Comemoração de pódio (visual único, escuro, tingido pelo metal) ---------- */
+.celebra{position:fixed;inset:0;z-index:40;display:grid;place-items:center;overflow:auto;color:#fff8ea;
+  --m1:#e9b824;--m2:#fff1b8;
+  background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--m1) 38%,#141018) 0,#0d0b12 62%);
+  padding-block:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.celebra.l2{--m1:#c3cad4;--m2:#ffffff}
+.celebra.l3{--m1:#cd8a52;--m2:#ffd9b8}
+.celebra::before{content:"";position:absolute;left:50%;top:38%;width:180vmax;height:180vmax;translate:-50% -50%;pointer-events:none;
+  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--m1) 22%,transparent) 0 8deg,transparent 8deg 22deg);
+  mask:radial-gradient(circle,#000 0,transparent 55%);-webkit-mask:radial-gradient(circle,#000 0,transparent 55%);animation:raios 24s linear infinite}
+@keyframes raios{to{rotate:360deg}}
+#confete{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cbox{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;max-width:520px}
+.trofeu{width:min(250px,58vw);aspect-ratio:1;max-width:100%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.55));animation:sobe .9s cubic-bezier(.2,1.5,.4,1) both}
+.trofeu svg{width:100%;height:100%}
+@keyframes sobe{from{transform:translateY(40px) scale(.4) rotate(-8deg);opacity:0}}
+.ceyebrow{margin:6px 0 0;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--m2)}
+.celebra h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(34px,8vw,58px);line-height:1;text-wrap:balance;color:var(--m2);text-shadow:0 3px 0 rgba(0,0,0,.35)}
+.cdesc{margin:0;font-size:17px;line-height:1.45;max-width:38ch;color:#e9e2d4;overflow-wrap:anywhere}
+.cpts{margin:4px 0 0;font-family:var(--display);font-size:clamp(26px,6vw,36px);font-variant-numeric:tabular-nums}
+.cbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:10px}
+.cbtns .btn{background:var(--m1);color:#1a1206;font-size:16px;padding:12px 20px}
+.cghost{font:800 16px var(--body);background:transparent;color:#fff8ea;border:2px solid rgba(255,248,234,.4);border-radius:9px;padding:10px 18px;cursor:pointer}
+.cghost:hover{border-color:#fff8ea}
+.celebra :focus-visible{outline-color:#fff8ea}
+@media (prefers-reduced-motion:reduce){.celebra::before,.trofeu{animation:none}}
+
+/* ---------- Últimas 100 ---------- */
+dialog.recent{width:min(640px,calc(100% - 32px));max-height:min(80vh,720px);padding:0;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+dialog.recent::backdrop{background:rgba(10,12,20,.55)}
+.rhead{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.rhead h3{font-family:var(--display);font-weight:400;font-size:20px;margin:0}
+.rbody{padding:4px 16px 16px;overflow-x:auto}
+.rbody table{width:100%;border-collapse:collapse;font-size:14px}
+.rbody th{text-align:left;font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 8px 6px}
+.rbody td{padding:8px;border-top:1px solid var(--line);vertical-align:baseline}
+.rbody td.num,.rbody th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+.rbody td.when{color:var(--muted);white-space:nowrap}
+.rbody td.nm{max-width:220px;overflow-wrap:anywhere}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -131,7 +227,7 @@ a{color:inherit}
   <header class="top">
     <div class="brand">
       <h1>Jogos <span>Interativos</span></h1>
-      <p>Escolha um cartucho e jogue aqui mesmo, sem sair da página. Os recordes de cada jogo ficam salvos no seu navegador.</p>
+      <p>Escolha um cartucho e jogue aqui mesmo, sem sair da página. No fim de cada partida, salve sua pontuação com seu nome e dispute o placar.</p>
     </div>
     <div class="count"><b id="n">2</b> jogos na prateleira</div>
   </header>
@@ -145,11 +241,58 @@ a{color:inherit}
   <div class="pbar">
     <a class="pbtn back" id="back" href="#"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Todos os jogos</a>
     <h2 id="ptitle"></h2>
+    <button class="pbtn" id="rank-toggle" type="button" aria-controls="board" aria-expanded="false" aria-label="Placar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2h8v3a4 4 0 0 1-8 0zM4 3H1.5v1.2A2.8 2.8 0 0 0 4 7M12 3h2.5v1.2A2.8 2.8 0 0 1 12 7M8 9v3M5 14h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wide">Placar</span></button>
     <button class="pbtn" id="full" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="wide">Tela cheia</span></button>
   </div>
-  <iframe id="frame" title="Jogo"></iframe>
+  <div class="stage">
+    <iframe id="frame" title="Jogo"></iframe>
+    <aside class="board" id="board" aria-labelledby="btitle">
+      <div class="bhead">
+        <h3 id="btitle">Placar</h3>
+        <span class="src" id="src"></span>
+        <button class="bclose" id="bclose" type="button" aria-label="Fechar placar">×</button>
+      </div>
+
+      <form class="send" id="send" hidden autocomplete="off">
+        <p class="yours">Fim de partida<span id="ylv"></span><b id="ypts">0</b></p>
+        <label for="nome">Seu nome no placar</label>
+        <div class="row">
+          <input id="nome" name="nome" maxlength="20" required placeholder="Como quer aparecer?">
+          <button class="btn" id="salvar" type="submit">Salvar</button>
+        </div>
+        <p class="msg" id="smsg" role="status"></p>
+      </form>
+      <p class="msg ok" id="saved" role="status" hidden></p>
+
+      <div class="podium" id="podium"></div>
+      <ol class="rest" id="rest"></ol>
+      <p class="empty" id="empty" hidden></p>
+      <button class="linkbtn" id="recent-btn" type="button">Ver últimas 100 pontuações</button>
+    </aside>
+  </div>
 </section>
 
+<div class="celebra" id="celebra" hidden role="dialog" aria-modal="true" aria-labelledby="ctitle">
+  <canvas id="confete" aria-hidden="true"></canvas>
+  <div class="cbox">
+    <div class="trofeu" id="trofeu"></div>
+    <p class="ceyebrow" id="ceyebrow"></p>
+    <h2 id="ctitle"></h2>
+    <p class="cdesc" id="cdesc"></p>
+    <p class="cpts" id="cpts"></p>
+    <div class="cbtns">
+      <button class="btn" id="c-placar" type="button">Ver placar</button>
+      <button class="cghost" id="c-again" type="button">Jogar de novo</button>
+    </div>
+  </div>
+</div>
+
+<dialog class="recent" id="recent" aria-labelledby="rtitle">
+  <div class="rhead"><h3 id="rtitle">Últimas 100 pontuações</h3><button class="linkbtn" id="rclose" type="button">Fechar</button></div>
+  <div class="rbody" id="rbody"></div>
+</dialog>
+
+<script src="placar-config.js"></script>
 <script>
 /* Para adicionar um jogo: coloque o arquivo HTML em jogos/ e acrescente um item aqui. */
 const JOGOS=[
@@ -207,25 +350,286 @@ shelf.innerHTML=JOGOS.map(j=>`
     <p>O próximo jogo entra aqui.</p>
   </li>`;
 
+/* ================= Placar =================
+   Com Supabase configurado em placar-config.js, o placar é compartilhado por todos.
+   Sem configuração, as pontuações ficam só neste navegador. */
+const CFG=window.PLACAR||{};
+const ONLINE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
+const LOCAL_KEY="jogos-placar-v1";
+
+const Placar=ONLINE?(()=>{
+  const base=CFG.supabaseUrl.replace(/\/+$/,"")+"/rest/v1/placar";
+  const h={apikey:CFG.supabaseAnonKey};
+  if(/^eyJ/.test(CFG.supabaseAnonKey)) h.Authorization="Bearer "+CFG.supabaseAnonKey; // chave anon antiga (JWT)
+  const campos="select=id,nome,pontos,nivel,criado_em";
+  async function get(q,extra){
+    const r=await fetch(base+"?"+q,{headers:{...h,...extra}});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    return r;
+  }
+  return {
+    async topo(jogo){ return (await get(`${campos}&jogo=eq.${encodeURIComponent(jogo)}&order=pontos.desc,criado_em.asc&limit=10`)).json() },
+    async recentes(jogo){ return (await get(`${campos}&jogo=eq.${encodeURIComponent(jogo)}&order=criado_em.desc&limit=100`)).json() },
+    async salvar(item){
+      const r=await fetch(base+"?"+campos,{method:"POST",headers:{...h,"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify(item)});
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return (await r.json())[0];
+    },
+    async posicao(jogo,pontos){
+      const r=await get(`select=id&jogo=eq.${encodeURIComponent(jogo)}&pontos=gt.${pontos}&limit=1`,{Prefer:"count=exact"});
+      const total=+(r.headers.get("content-range")||"").split("/")[1];
+      return Number.isFinite(total)?total+1:null;
+    }
+  };
+})():(()=>{
+  const ler=()=>{try{return JSON.parse(localStorage.getItem(LOCAL_KEY))||[]}catch(e){return []}};
+  const doJogo=j=>ler().filter(x=>x.jogo===j);
+  const ordem=(a,b)=>b.pontos-a.pontos||a.criado_em.localeCompare(b.criado_em);
+  return {
+    async topo(jogo){ return doJogo(jogo).sort(ordem).slice(0,10) },
+    async recentes(jogo){ return doJogo(jogo).sort((a,b)=>b.criado_em.localeCompare(a.criado_em)).slice(0,100) },
+    async salvar(item){
+      const novo={...item,id:Date.now()+"-"+Math.random().toString(36).slice(2,7),criado_em:new Date().toISOString()};
+      const todos=ler(); todos.push(novo);
+      localStorage.setItem(LOCAL_KEY,JSON.stringify(todos.slice(-1000)));
+      return novo;
+    },
+    async posicao(jogo,pontos){ return doJogo(jogo).filter(x=>x.pontos>pontos).length+1 }
+  };
+})();
+
+const fmt=n=>Number(n).toLocaleString("pt-BR");
+const $=id=>document.getElementById(id);
+const board=$("board"), toggle=$("rank-toggle"), sendForm=$("send"), nomeInp=$("nome");
+let pendente=null, meuId=null, boardGen=0;
+$("src").textContent=ONLINE?"Online":"Só neste navegador";
+$("src").title=ONLINE?"Pontuações compartilhadas entre todos os jogadores":"Sem servidor configurado: as pontuações ficam salvas apenas neste navegador";
+
+/* Medalhas: 1º ouro com coroa de louros, 2º prata, 3º bronze */
+const METAIS={1:["#fff1b8","#e9b824","#9c6a00","#7a5200"],2:["#ffffff","#c3cad4","#7b8594","#59616e"],3:["#ffd9b8","#cd8a52","#8a4f22","#6b3a16"]};
+function coroaDeLouros(cy,r1,r2){
+  let out="";
+  for(const lado of [1,-1]) for(let k=0;k<7;k++){
+    const a=108+k*19, t=a*Math.PI/180;
+    for(const [r,tilt] of [[r1,-38],[r2,38]]){
+      const x=50+lado*r*Math.cos(t), y=cy+r*Math.sin(t), rot=lado*(a+90+tilt);
+      out+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="7.5" ry="3.3" transform="rotate(${rot.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="#d4a62a" stroke="#8a6410" stroke-width=".8"/>`;
+    }
+  }
+  return out;
+}
+function medalha(lugar){
+  const [hi,mid,lo,txt]=METAIS[lugar], g="mg"+lugar;
+  const louros=lugar===1?coroaDeLouros(60,31,41):"";
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="${lugar}º lugar">
+    <defs><radialGradient id="${g}" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="${hi}"/><stop offset=".55" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></radialGradient></defs>
+    <path d="M36 4h12l8 30H44z" fill="#2d4fa3"/><path d="M52 4h12l-8 30H44z" fill="#e2453a"/>
+    ${louros}
+    <circle cx="50" cy="60" r="25" fill="url(#${g})" stroke="${lo}" stroke-width="2"/>
+    <circle cx="50" cy="60" r="19" fill="none" stroke="${hi}" stroke-opacity=".7" stroke-width="1.5"/>
+    <text x="50" y="68.5" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="24" fill="${txt}">${lugar}</text>
+  </svg>`;
+}
+
+/* Troféu do pódio: copa no metal do lugar (o de ouro ganha louros) */
+function trofeu(lugar){
+  const [hi,mid,lo,txt]=METAIS[lugar], g="tg"+lugar;
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="Troféu de ${lugar}º lugar">
+    <defs><linearGradient id="${g}" x1="0" x2="1"><stop offset="0" stop-color="${lo}"/><stop offset=".35" stop-color="${hi}"/><stop offset=".6" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient></defs>
+    ${lugar===1?coroaDeLouros(52,36,45):""}
+    <path d="M33 26h-8c0 13 6 20 14 21M67 26h8c0 13-6 20-14 21" fill="none" stroke="${mid}" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M31 18h38v12c0 15-8.5 26-19 26S31 45 31 30z" fill="url(#${g})" stroke="${lo}" stroke-width="1.5"/>
+    <ellipse cx="50" cy="18" rx="19" ry="3.2" fill="${hi}" stroke="${lo}" stroke-width="1.2"/>
+    <rect x="46" y="55" width="8" height="10" fill="url(#${g})"/>
+    <path d="M38 65h24l3 9H35z" fill="url(#${g})" stroke="${lo}" stroke-width="1.2"/>
+    <rect x="31" y="74" width="38" height="10" rx="2" fill="#2a2230" stroke="${lo}" stroke-width="1.2"/>
+    <rect x="41" y="77" width="18" height="4" rx="1" fill="${mid}"/>
+    <text x="50" y="43" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="17" fill="${txt}">${lugar}º</text>
+  </svg>`;
+}
+
+const FRASES={
+  1:{t:"Topo do placar!",d:(n,j)=>`${n}, ninguém fez mais pontos que você em ${j}. A coroa de louros é sua.`},
+  2:{t:"Medalha de prata!",d:(n,j)=>`${n}, só uma pessoa fez mais pontos que você em ${j}. Falta pouco para o topo.`},
+  3:{t:"Bronze garantido!",d:(n,j)=>`${n}, você subiu ao pódio de ${j}. Agora é mirar mais alto.`}
+};
+let confeteRaf=0;
+function confete(cor){
+  const cv=$("confete"); cancelAnimationFrame(confeteRaf);
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const ctx=cv.getContext("2d"), dpr=Math.min(2,devicePixelRatio||1);
+  cv.width=cv.clientWidth*dpr; cv.height=cv.clientHeight*dpr; ctx.scale(dpr,dpr);
+  const W=cv.clientWidth, H=cv.clientHeight, cores=[...cor,"#ffffff","#e2453a","#2d4fa3"];
+  let ps=Array.from({length:180},(_,i)=>({x:Math.random()*W,y:-20-Math.random()*H*.6,vx:(Math.random()-.5)*2.4,vy:1.6+Math.random()*3.2,r:Math.random()*6.3,vr:(Math.random()-.5)*.25,s:5+Math.random()*7,c:cores[i%cores.length]}));
+  (function loop(){
+    ctx.clearRect(0,0,W,H); ps=ps.filter(p=>p.y<H+20);
+    for(const p of ps){ p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); ctx.restore() }
+    if(ps.length) confeteRaf=requestAnimationFrame(loop);
+  })();
+}
+let AC=null;
+function fanfarra(lugar){
+  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume() }catch(e){ return }
+  const notas=lugar===1?[523,659,784,1047,784,1047,1319]:lugar===2?[523,659,784,1047]:[440,554,659,880];
+  notas.forEach((f,i)=>{
+    const t=AC.currentTime+i*.13, o=AC.createOscillator(), g=AC.createGain();
+    o.type="triangle"; o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+(i===notas.length-1?.9:.22));
+    o.connect(g).connect(AC.destination); o.start(t); o.stop(t+1);
+  });
+}
+let focoAntes=null;
+function celebrar(lugar,item){
+  const j=JOGOS.find(x=>x.id===item.jogo), f=FRASES[lugar], c=$("celebra");
+  c.className="celebra l"+lugar;
+  $("trofeu").innerHTML=trofeu(lugar);
+  $("ceyebrow").textContent=`${lugar}º lugar · ${j?j.titulo:""}${item.nivel?" · "+item.nivel:""}`;
+  $("ctitle").textContent=f.t;
+  $("cdesc").textContent=f.d(item.nome,j?j.titulo:"este jogo");
+  $("cpts").textContent=fmt(item.pontos)+" pontos";
+  focoAntes=document.activeElement;
+  c.hidden=false; $("c-placar").focus();
+  confete([METAIS[lugar][1],METAIS[lugar][0]]); fanfarra(lugar);
+}
+function fecharCelebra(){ const c=$("celebra"); if(c.hidden) return; c.hidden=true; cancelAnimationFrame(confeteRaf) }
+$("c-placar").onclick=()=>{ fecharCelebra(); abrirPlacar(true); $("podium").scrollIntoView({block:"nearest"}); $("bclose").focus() };
+$("c-again").onclick=()=>{ fecharCelebra(); abrirPlacar(false); const j=JOGOS.find(x=>x.id===atual); if(j){ frame.src=j.arquivo; frame.focus() } };
+
+function setVazio(msg){ const e=$("empty"); e.hidden=!msg; e.innerHTML=msg||"" }
+
+async function carregarPlacar(){
+  const jogo=atual, gen=++boardGen;
+  if(!jogo) return;
+  setVazio(""); $("podium").innerHTML=""; $("rest").innerHTML="";
+  $("podium").setAttribute("aria-busy","true");
+  let lista;
+  try{ lista=await Placar.topo(jogo) }
+  catch(e){
+    if(gen!==boardGen) return;
+    $("podium").removeAttribute("aria-busy");
+    setVazio(`Não foi possível carregar o placar. Verifique sua conexão. <button class="linkbtn" type="button" id="retry" style="margin-top:8px">Tentar de novo</button>`);
+    $("retry").onclick=carregarPlacar; return;
+  }
+  if(gen!==boardGen) return;
+  $("podium").removeAttribute("aria-busy");
+  if(!lista.length){ setVazio("Ninguém pontuou ainda. Termine uma partida e seja o primeiro do placar."); return }
+  const pessoa=(x,lugar)=>{
+    const voce=String(x.id)===String(meuId);
+    return `<div class="${lugar===1?"first":""}${voce?" you":""}">${medalha(lugar)}
+      <span class="nm"></span>${voce?`<span class="tagyou">você</span>`:""}
+      <span class="pts">${fmt(x.pontos)} pts</span>${x.nivel?`<span class="lv"></span>`:""}</div>`;
+  };
+  const [a,b,c]=lista;
+  $("podium").innerHTML=pessoa(a,1)+(b?`<div class="duo">${pessoa(b,2)}${c?pessoa(c,3):"<div></div>"}</div>`:"");
+  $("rest").innerHTML=lista.slice(3).map((x,i)=>`<li${String(x.id)===String(meuId)?' class="you"':""}><span class="pos">${i+4}º</span><span class="nm"></span><span class="pts">${fmt(x.pontos)}</span></li>`).join("");
+  // nomes e níveis entram como texto puro
+  const blocos=[...$("podium").querySelectorAll(".first,.duo>div")].filter(d=>d.querySelector(".nm"));
+  blocos.forEach((d,i)=>{ d.querySelector(".nm").textContent=lista[i].nome; const lv=d.querySelector(".lv"); if(lv) lv.textContent=lista[i].nivel });
+  [...$("rest").children].forEach((li,i)=>{ const x=lista[i+3]; li.querySelector(".nm").textContent=x.nome; li.title=(x.nivel?x.nivel+" · ":"")+fmt(x.pontos)+" pontos" });
+}
+
+function abrirPlacar(abrir){
+  board.classList.toggle("open",abrir);
+  toggle.setAttribute("aria-expanded",abrir);
+}
+toggle.onclick=()=>abrirPlacar(!board.classList.contains("open"));
+$("bclose").onclick=()=>abrirPlacar(false);
+
+function limparEnvio(){ pendente=null; sendForm.hidden=true; $("saved").hidden=true; $("smsg").textContent=""; $("smsg").className="msg" }
+
+addEventListener("message",e=>{
+  // Os jogos ficam no mesmo site; o Chrome nem sempre informa o iframe como remetente, então a checagem é pela origem.
+  if(!atual||(e.origin!==location.origin&&e.source!==frame.contentWindow)) return;
+  const d=e.data;
+  if(!d||d.tipo!=="jogos:fim") return;
+  const pontos=Math.round(+d.pontos);
+  if(!Number.isFinite(pontos)||pontos<=0) return;   // partida sem pontos não entra no placar
+  pendente={jogo:atual,pontos,nivel:String(d.nivel||"").slice(0,40)};
+  $("ypts").textContent=fmt(pontos)+" pts";
+  $("ylv").textContent=pendente.nivel?" · "+pendente.nivel:"";
+  $("saved").hidden=true; $("smsg").textContent=""; $("smsg").className="msg";
+  $("salvar").disabled=false;
+  try{ nomeInp.value=nomeInp.value||localStorage.getItem("jogos-nome")||"" }catch(err){}
+  sendForm.hidden=false;
+  board.scrollTop=0;
+  abrirPlacar(true);
+  if(matchMedia("(min-width:900px)").matches) nomeInp.focus({preventScroll:true});
+});
+
+sendForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!pendente) return;
+  const nome=nomeInp.value.replace(/[\u0000-\u001f\u007f]/g,"").replace(/\s+/g," ").trim().slice(0,20);
+  if(!nome){ $("smsg").className="msg err"; $("smsg").textContent="Escreva um nome para aparecer no placar."; nomeInp.focus(); return }
+  const item={...pendente,nome};
+  $("salvar").disabled=true; $("smsg").className="msg"; $("smsg").textContent="Salvando…";
+  try{
+    const salvo=await Placar.salvar(item);
+    try{ localStorage.setItem("jogos-nome",nome) }catch(err){}
+    meuId=salvo&&salvo.id;
+    let pos=null; try{ pos=await Placar.posicao(item.jogo,item.pontos) }catch(err){}
+    pendente=null; sendForm.hidden=true;
+    $("saved").textContent=`Pontuação salva! ${pos?`Você está em ${pos}º lugar com ${fmt(item.pontos)} pontos.`:`${fmt(item.pontos)} pontos.`}`;
+    $("saved").hidden=false;
+    carregarPlacar();
+    if(pos&&pos<=3) celebrar(pos,item);
+  }catch(err){
+    $("salvar").disabled=false; $("smsg").className="msg err";
+    $("smsg").textContent=ONLINE?"Não foi possível salvar agora. Verifique sua conexão e tente de novo.":"Este navegador não permitiu salvar a pontuação.";
+  }
+});
+
+/* Últimas 100 */
+const recent=$("recent");
+function quando(iso){
+  const d=new Date(iso), s=(Date.now()-d)/1000;
+  if(s<60) return "agora";
+  if(s<3600) return `há ${Math.floor(s/60)} min`;
+  if(s<86400) return `há ${Math.floor(s/3600)} h`;
+  if(s<7*86400) return `há ${Math.floor(s/86400)} ${Math.floor(s/86400)===1?"dia":"dias"}`;
+  return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
+}
+$("recent-btn").onclick=async()=>{
+  const j=JOGOS.find(x=>x.id===atual); if(!j) return;
+  $("rtitle").textContent="Últimas 100 · "+j.titulo;
+  $("rbody").innerHTML=`<p class="empty" style="padding:12px 0">Carregando…</p>`;
+  if(typeof recent.showModal==="function") recent.showModal(); else recent.setAttribute("open","");
+  try{
+    const lista=await Placar.recentes(atual);
+    if(!lista.length){ $("rbody").innerHTML=`<p class="empty" style="padding:12px 0">Nenhuma pontuação salva ainda.</p>`; return }
+    $("rbody").innerHTML=`<table><thead><tr><th>Quando</th><th>Nome</th><th>Nível</th><th class="num">Pontos</th></tr></thead><tbody>${
+      lista.map(x=>`<tr><td class="when" title="${esc(new Date(x.criado_em).toLocaleString("pt-BR"))}">${esc(quando(x.criado_em))}</td><td class="nm"></td><td class="lvl"></td><td class="num">${fmt(x.pontos)}</td></tr>`).join("")
+    }</tbody></table>`;
+    [...$("rbody").querySelectorAll("tbody tr")].forEach((tr,i)=>{ tr.querySelector(".nm").textContent=lista[i].nome; tr.querySelector(".lvl").textContent=lista[i].nivel||"—" });
+  }catch(err){ $("rbody").innerHTML=`<p class="empty" style="padding:12px 0">Não foi possível carregar as pontuações. Verifique sua conexão e tente de novo.</p>` }
+};
+$("rclose").onclick=()=>recent.close?recent.close():recent.removeAttribute("open");
+recent.addEventListener("click",e=>{ if(e.target===recent) recent.close() });
+
+/* ================= Navegação ================= */
 let atual=null;
 function route(){
   const id=decodeURIComponent(location.hash.slice(1));
   const j=JOGOS.find(x=>x.id===id);
   if(j){
-    if(atual!==j.id){ frame.src=j.arquivo; frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos" }
-    atual=j.id; player.hidden=false; document.body.classList.add("playing");
+    if(atual!==j.id){
+      frame.src=j.arquivo; frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos";
+      atual=j.id; meuId=null; limparEnvio(); abrirPlacar(false); carregarPlacar();
+    }
+    player.hidden=false; document.body.classList.add("playing");
     frame.focus();
   }else{
     const saindo=atual; atual=null;
     player.hidden=true; document.body.classList.remove("playing");
     frame.removeAttribute("src"); frame.src="about:blank"; /* para sons e cronômetros do jogo */
+    limparEnvio(); fecharCelebra();
     document.title="Jogos Interativos";
     if(saindo){ const b=document.getElementById("play-"+saindo); if(b) b.focus({preventScroll:false}) }
   }
 }
 function fechar(){ if(location.hash.length>1) location.hash=""; else route() }
 document.getElementById("back").addEventListener("click",e=>{e.preventDefault();fechar()});
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&atual&&!document.fullscreenElement) fechar() });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("celebra").hidden){ fecharCelebra(); return } if(e.key==="Escape"&&atual&&!recent.open&&!document.fullscreenElement){ if(board.classList.contains("open")&&!matchMedia("(min-width:900px)").matches) abrirPlacar(false); else fechar() } });
 document.getElementById("full").addEventListener("click",()=>{
   try{ const p=player.requestFullscreen?.(); if(p&&p.catch) p.catch(()=>{}) }catch(e){}
 });

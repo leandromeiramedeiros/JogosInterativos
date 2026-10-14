@@ -344,6 +344,7 @@ function end(){
   clearInterval(timerId);
   const lv=G.lv, total=G.qs.length, rec=G.score>best(lv);
   if(rec) setBest(lv,G.score);
+  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:G.score,nivel:LEVELS[lv].name},"*") }catch(e){}
   const won=G.lives>0, pct=G.hits/total;
   const rank= !won?"Fim de jogo! Até o Senhor Barriga ficou com pena.":
     pct===1?"Perfeito! Você deveria morar na vila.":

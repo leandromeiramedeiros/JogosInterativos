@@ -473,7 +473,7 @@ function round(){
   const inp=document.getElementById("ans"); inp.focus({preventScroll:true});
   document.getElementById("f").onsubmit=e=>{e.preventDefault(); if(G.done){next();return} submit(inp.value)};
   document.getElementById("skip").onclick=()=>{ if(!G.done) submit("",true) };
-  document.getElementById("hintbtn").onclick=showHint;
+  const hb=document.getElementById("hintbtn"); hb.onmousedown=e=>e.preventDefault(); hb.onclick=showHint;
   waveFlag(document.getElementById("flag"),c.code);
   Tension.start();
   const bar=document.getElementById("bar"), tm=document.getElementById("tm"), secs=document.getElementById("secs"), box=document.querySelector(".flagbox");
@@ -487,12 +487,16 @@ function round(){
   },100);
 }
 function showHint(){
-  if(G.done||G.hint>=2)return; G.hint++; SFX.hint();
+  if(G.done)return;
+  focusAnswer();
+  if(G.hint>=2)return; G.hint++; SFX.hint();
   const n=G.qs[G.i].pt, w=[...n];
   const shown=G.hint===1? w.map((ch,i)=>i===0||/[\s-]/.test(ch)?ch:"_").join("") : w.map((ch,i)=>i%2===0||/[\s-]/.test(ch)?ch:"_").join("");
   document.getElementById("hintbox").innerHTML=`<span class="hint">${esc(shown)}</span>`;
   if(G.hint>=2) document.getElementById("hintbtn").disabled=true, document.getElementById("hintbtn").style.opacity=.4;
 }
+// Mantém o cursor na caixa de resposta (no fim do texto) depois de usar Dica.
+function focusAnswer(){ const i=document.getElementById("ans"); if(!i)return; i.focus({preventScroll:true}); const n=i.value.length; try{i.setSelectionRange(n,n)}catch(e){} }
 function submit(val,skipped,timeout){
   if(G.done)return;
   const c=G.qs[G.i];
@@ -528,6 +532,7 @@ function next(){ G.i++; G.i>=ROUNDS?end():round() }
 function end(){
   stopRound(); cancelAnimationFrame(waveRaf);
   const lv=G.lv, rec=G.score>best(lv); if(rec){try{localStorage.setItem("bm-best-"+lv,G.score)}catch(e){}}
+  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:G.score,nivel:LEVELS[lv].name},"*") }catch(e){}
   const h=G.hits, title=h===10?"Gabaritou! Pode dar aula de geografia.":h>=8?"Excelente! Você conhece o mundo.":h>=6?"Mandou bem, viajante.":h>=4?"Dá para melhorar. Que tal mais uma volta ao mundo?":"O atlas está te esperando!";
   app.innerHTML=`
    ${rec&&G.score>0?`<span class="rec">NOVO RECORDE · ${LEVELS[lv].name.toUpperCase()}</span>`:""}
