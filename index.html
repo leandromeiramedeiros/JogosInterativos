@@ -6,220 +6,8 @@
 <title>Jogos Interativos</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Figtree:wght@400;600;800&family=DM+Mono:wght@500&family=Archivo+Black&family=Bungee&display=swap">
-<style>
-/* Layout: uma prateleira de cartuchos. Cada jogo é um cartucho com o rótulo pintado na identidade do próprio jogo; ao jogar, ele abre em tela cheia dentro da página. */
-:root{
-  --bg:#e6e9ef; --dot:rgba(30,36,58,.10); --ink:#1c2236; --muted:#5d6681;
-  --shell:#cdd2dd; --shell-hi:#e0e4ec; --ridge:rgba(28,34,54,.16); --line:#b4bbca;
-  --accent:#ff5a36; --accent-ink:#ffffff; --bar:#1c2236; --bar-ink:#f2f4f8;
-  --display:"Bowlby One SC","Arial Black",Impact,sans-serif;
-  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"DM Mono",ui-monospace,Menlo,monospace;
-  --shadow:0 2px 0 rgba(255,255,255,.6) inset,0 -3px 0 rgba(28,34,54,.12) inset,0 18px 30px -22px rgba(28,34,54,.6);
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#13161f; --dot:rgba(200,210,240,.07); --ink:#eef0f6; --muted:#9aa3bd;
-  --shell:#262b3a; --shell-hi:#30364a; --ridge:rgba(0,0,0,.35); --line:#3a4157;
-  --accent:#ff6b47; --accent-ink:#1b0904; --bar:#0b0d13; --bar-ink:#eef0f6;
-  --shadow:0 1px 0 rgba(255,255,255,.06) inset,0 -3px 0 rgba(0,0,0,.3) inset,0 18px 30px -18px rgba(0,0,0,.8);
-  color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#13161f; --dot:rgba(200,210,240,.07); --ink:#eef0f6; --muted:#9aa3bd;
-  --shell:#262b3a; --shell-hi:#30364a; --ridge:rgba(0,0,0,.35); --line:#3a4157;
-  --accent:#ff6b47; --accent-ink:#1b0904; --bar:#0b0d13; --bar-ink:#eef0f6;
-  --shadow:0 1px 0 rgba(255,255,255,.06) inset,0 -3px 0 rgba(0,0,0,.3) inset,0 18px 30px -18px rgba(0,0,0,.8);
-  color-scheme:dark}
-
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-html,body{min-height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
-  background-image:radial-gradient(var(--dot) 1.2px,transparent 1.4px);background-size:22px 22px;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
-body.playing{overflow:hidden}
-a{color:inherit}
-:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-
-.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
-
-/* Cabeçalho */
-.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
-.brand{display:flex;flex-direction:column;gap:8px;min-width:0}
-.brand h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,7vw,60px);line-height:.92;margin:0;letter-spacing:-.01em;text-wrap:balance}
-.brand h1 span{color:var(--accent)}
-.brand p{margin:0;color:var(--muted);max-width:52ch}
-.count{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;align-items:center}
-.count b{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 8px;border-radius:99px;background:var(--ink);color:var(--bg);font-weight:500;font-variant-numeric:tabular-nums}
-
-/* Prateleira */
-.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:24px;padding:0;margin:0;list-style:none}
-
-.cart{position:relative;display:flex;flex-direction:column;gap:14px;background:linear-gradient(180deg,var(--shell-hi),var(--shell) 40%);
-  border-radius:16px 16px 10px 10px;padding:30px 16px 18px;box-shadow:var(--shadow);transition:transform .18s ease}
-.cart::before{content:"";position:absolute;top:9px;left:22%;right:22%;height:11px;border-radius:3px;
-  background:repeating-linear-gradient(90deg,var(--ridge) 0 3px,transparent 3px 8px)}
-.cart:hover{transform:translateY(-4px)}
-.cart:has(.play:focus-visible){transform:translateY(-4px)}
-
-.label{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:8px;overflow:hidden;box-shadow:0 0 0 3px rgba(0,0,0,.18),inset 0 0 0 1px rgba(255,255,255,.2)}
-.label .mark{position:absolute;left:12px;bottom:10px;right:12px;line-height:.95;z-index:2}
-
-.info{display:flex;flex-direction:column;gap:6px;min-width:0}
-.info h2{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1;margin:0}
-.info p{margin:0;color:var(--muted);font-size:15px}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0;padding:0;list-style:none}
-.tags li{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink)}
-
-.actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto}
-.play{display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:var(--accent);color:var(--accent-ink);font-weight:800;
-  border-radius:10px;padding:11px 18px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
-.play:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
-.play svg{width:14px;height:14px}
-.orig{font-size:13px;color:var(--muted);text-underline-offset:3px}
-.orig:hover{color:var(--ink)}
-
-/* Slot vazio */
-.slot{border:2px dashed var(--line);border-radius:16px 16px 10px 10px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px;padding:24px;color:var(--muted);min-height:220px}
-.slot b{font-family:var(--display);font-weight:400;font-size:20px;color:var(--ink);opacity:.55}
-.slot p{margin:0;font-size:14px;max-width:30ch}
-
-.foot{font-size:13px;color:var(--muted);margin:0}
-
-/* ---------- Arte: Bandeiras do Mundo ---------- */
-.art-flags{background:linear-gradient(180deg,#bcd9ea,#e8f2f7);
-  background-image:linear-gradient(rgba(20,33,61,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(20,33,61,.09) 1px,transparent 1px),linear-gradient(180deg,#bcd9ea,#e8f2f7);
-  background-size:28px 28px,28px 28px,100% 100%}
-.art-flags .coord{position:absolute;top:10px;left:12px;font-family:"JetBrains Mono",var(--mono);font-size:10px;letter-spacing:.06em;color:#5b6b82}
-.art-flags .flags{position:absolute;inset:18% 10% 34% 10%;display:flex;justify-content:center;align-items:center}
-.art-flags .flags svg{width:38%;max-width:120px;aspect-ratio:3/2;border-radius:4px;box-shadow:0 0 0 1px rgba(20,33,61,.2),0 10px 18px -8px rgba(20,33,61,.5);flex:none}
-.art-flags .flags svg:nth-child(1){transform:rotate(-9deg) translate(18%,6%)}
-.art-flags .flags svg:nth-child(2){transform:translateY(-8%);z-index:1;width:44%}
-.art-flags .flags svg:nth-child(3){transform:rotate(8deg) translate(-18%,8%)}
-.art-flags .mark{font-family:"Archivo Black","Arial Black",sans-serif;font-size:clamp(22px,2.6vw,28px);color:#14213d}
-.art-flags .mark span{color:#ff6b2c}
-
-/* ---------- Arte: Quiz da Vila ---------- */
-.art-vila{background:#123a3c;background-image:repeating-linear-gradient(90deg,transparent 0 22px,rgba(0,0,0,.12) 22px 24px),radial-gradient(ellipse at top,rgba(242,177,52,.22),transparent 65%)}
-.art-vila .tv{position:absolute;left:50%;top:12%;width:46%;aspect-ratio:5/4;transform:translateX(-50%) rotate(-3deg);background:linear-gradient(160deg,#5a3a22,#3f2816);border-radius:14px;padding:7%;box-shadow:0 8px 0 -3px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.15)}
-.art-vila .tv::after{content:"";position:absolute;left:18%;right:18%;bottom:-8px;height:8px;background:repeating-linear-gradient(90deg,#3f2816 0 16%,transparent 16% 84%,#3f2816 84%)}
-.art-vila .screen{height:100%;border-radius:12px/16px;background:#0f1d1c;display:grid;place-items:center;position:relative;overflow:hidden;box-shadow:inset 0 0 18px rgba(0,0,0,.9)}
-.art-vila .screen::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px)}
-.art-vila .screen b{font-family:"Bungee",Impact,sans-serif;font-weight:400;font-size:clamp(26px,3.4vw,40px);color:#f2b134;text-shadow:2px 2px 0 #e4572e;line-height:1}
-.art-vila .mark{font-family:"Bungee",Impact,sans-serif;font-size:clamp(20px,2.4vw,26px);color:#f2b134;text-shadow:2px 2px 0 #e4572e}
-
-/* ---------- Jogador ---------- */
-.player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}
-.pbar{display:flex;align-items:center;gap:12px;color:var(--bar-ink);
-  padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:10px;
-  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
-.pbar h2{font-family:var(--display);font-weight:400;font-size:18px;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pbtn{display:inline-flex;align-items:center;gap:8px;font:800 14px var(--body);color:var(--bar-ink);background:transparent;border:2px solid rgba(255,255,255,.22);
-  border-radius:9px;padding:7px 12px;text-decoration:none;cursor:pointer;white-space:nowrap}
-.pbtn:hover{border-color:var(--accent)}
-.pbtn.back{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.pbtn svg{width:14px;height:14px}
-.stage{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px;position:relative;padding-bottom:env(safe-area-inset-bottom,0px)}
-.stage iframe{width:100%;height:100%;border:0;background:#fff;display:block}
-@media (max-width:520px){.pbtn .wide{display:none}}
-
-/* ---------- Placar (barra ao lado do jogo) ---------- */
-.board{background:var(--bg);color:var(--ink);border-left:1px solid var(--line);overflow-y:auto;display:flex;flex-direction:column;gap:18px;
-  padding-block:18px;padding-left:18px;padding-right:max(18px,env(safe-area-inset-right,0px))}
-.bhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.bhead h3{font-family:var(--display);font-weight:400;font-size:22px;margin:0;line-height:1}
-.src{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 8px;white-space:nowrap}
-.bclose{display:none;background:transparent;border:0;color:var(--ink);font-size:24px;line-height:1;cursor:pointer;padding:2px 6px;border-radius:8px}
-
-.send{display:flex;flex-direction:column;gap:10px;background:var(--shell);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
-.send .yours{margin:0;font-size:14px;color:var(--muted)}
-.send .yours b{display:block;font-family:var(--display);font-weight:400;font-size:34px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
-.send label{font-weight:800;font-size:13px}
-.send .row{display:flex;gap:8px}
-.send input{flex:1;min-width:0;font:600 16px var(--body);color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:9px;padding:9px 11px}
-.send input:focus-visible{outline:none;border-color:var(--accent)}
-.btn{font:800 14px var(--body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:9px;padding:10px 14px;cursor:pointer;white-space:nowrap}
-.btn[disabled]{opacity:.55;cursor:progress}
-.msg{margin:0;font-size:14px;line-height:1.4}
-.msg.ok{font-weight:800}
-.msg.err{color:var(--accent)}
-
-.podium{display:flex;flex-direction:column;gap:12px}
-.first{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:6px 0 4px}
-.first svg{width:118px;height:118px}
-.nm{font-weight:800;overflow-wrap:anywhere}
-.first .nm{font-size:19px;line-height:1.2}
-.pts{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
-.first .pts{font-size:15px;color:var(--ink)}
-.lv{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.duo>div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;min-width:0;border-top:1px solid var(--line);padding-top:10px}
-.duo svg{width:64px;height:64px}
-.you{border-radius:10px;box-shadow:0 0 0 2px var(--accent)}
-.first.you,.duo>div.you{padding-inline:6px}
-.tagyou{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-
-.rest{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.rest li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:baseline;gap:8px;padding:8px 6px;border-top:1px solid var(--line)}
-.rest .pos{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.rest .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.empty{margin:0;color:var(--muted);font-size:14px}
-.linkbtn{align-self:flex-start;background:transparent;border:2px solid var(--line);color:var(--ink);font:800 14px var(--body);border-radius:9px;padding:9px 14px;cursor:pointer}
-.linkbtn:hover{border-color:var(--accent)}
-
-@media (max-width:899px){
-  .stage{grid-template-columns:minmax(0,1fr)}
-  .board{position:absolute;left:0;right:0;bottom:0;max-height:80%;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;
-    box-shadow:0 -24px 48px -12px rgba(0,0,0,.55);padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
-    padding-left:max(18px,env(safe-area-inset-left,0px));transform:translateY(105%);visibility:hidden;transition:transform .25s ease,visibility .25s}
-  .board.open{transform:none;visibility:visible}
-  .bclose{display:block}
-}
-@media (min-width:900px){#rank-toggle{display:none}}
-
-/* ---------- Comemoração de pódio (visual único, escuro, tingido pelo metal) ---------- */
-.celebra{position:fixed;inset:0;z-index:40;display:grid;place-items:center;overflow:auto;color:#fff8ea;
-  --m1:#e9b824;--m2:#fff1b8;
-  background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--m1) 38%,#141018) 0,#0d0b12 62%);
-  padding-block:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-bottom,0px));
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.celebra.l2{--m1:#c3cad4;--m2:#ffffff}
-.celebra.l3{--m1:#cd8a52;--m2:#ffd9b8}
-.celebra::before{content:"";position:absolute;left:50%;top:38%;width:180vmax;height:180vmax;translate:-50% -50%;pointer-events:none;
-  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--m1) 22%,transparent) 0 8deg,transparent 8deg 22deg);
-  mask:radial-gradient(circle,#000 0,transparent 55%);-webkit-mask:radial-gradient(circle,#000 0,transparent 55%);animation:raios 24s linear infinite}
-@keyframes raios{to{rotate:360deg}}
-#confete{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.cbox{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;max-width:520px}
-.trofeu{width:min(250px,58vw);aspect-ratio:1;max-width:100%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.55));animation:sobe .9s cubic-bezier(.2,1.5,.4,1) both}
-.trofeu svg{width:100%;height:100%}
-@keyframes sobe{from{transform:translateY(40px) scale(.4) rotate(-8deg);opacity:0}}
-.ceyebrow{margin:6px 0 0;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--m2)}
-.celebra h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(34px,8vw,58px);line-height:1;text-wrap:balance;color:var(--m2);text-shadow:0 3px 0 rgba(0,0,0,.35)}
-.cdesc{margin:0;font-size:17px;line-height:1.45;max-width:38ch;color:#e9e2d4;overflow-wrap:anywhere}
-.cpts{margin:4px 0 0;font-family:var(--display);font-size:clamp(26px,6vw,36px);font-variant-numeric:tabular-nums}
-.cbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:10px}
-.cbtns .btn{background:var(--m1);color:#1a1206;font-size:16px;padding:12px 20px}
-.cghost{font:800 16px var(--body);background:transparent;color:#fff8ea;border:2px solid rgba(255,248,234,.4);border-radius:9px;padding:10px 18px;cursor:pointer}
-.cghost:hover{border-color:#fff8ea}
-.celebra :focus-visible{outline-color:#fff8ea}
-@media (prefers-reduced-motion:reduce){.celebra::before,.trofeu{animation:none}}
-
-/* ---------- Últimas 100 ---------- */
-dialog.recent{width:min(640px,calc(100% - 32px));max-height:min(80vh,720px);padding:0;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
-dialog.recent::backdrop{background:rgba(10,12,20,.55)}
-.rhead{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
-.rhead h3{font-family:var(--display);font-weight:400;font-size:20px;margin:0}
-.rbody{padding:4px 16px 16px;overflow-x:auto}
-.rbody table{width:100%;border-collapse:collapse;font-size:14px}
-.rbody th{text-align:left;font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 8px 6px}
-.rbody td{padding:8px;border-top:1px solid var(--line);vertical-align:baseline}
-.rbody td.num,.rbody th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
-.rbody td.when{color:var(--muted);white-space:nowrap}
-.rbody td.nm{max-width:220px;overflow-wrap:anywhere}
-
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Figtree:wght@400;600;800&family=DM+Mono:wght@500&family=Archivo+Black&family=Bungee&family=DM+Serif+Display&family=Fredoka:wght@600&family=Russo+One&family=Rye&display=swap">
+<link rel="stylesheet" href="hub.css">
 </head>
 <body>
 
@@ -229,7 +17,7 @@ dialog.recent::backdrop{background:rgba(10,12,20,.55)}
       <h1>Jogos <span>Interativos</span></h1>
       <p>Escolha um cartucho e jogue aqui mesmo, sem sair da página. No fim de cada partida, salve sua pontuação com seu nome e dispute o placar.</p>
     </div>
-    <div class="count"><b id="n">2</b> jogos na prateleira</div>
+    <div class="count"><b id="n">7</b> jogos na prateleira</div>
   </header>
 
   <ul class="shelf" id="shelf" aria-label="Jogos"></ul>
@@ -247,10 +35,16 @@ dialog.recent::backdrop{background:rgba(10,12,20,.55)}
   <div class="stage">
     <iframe id="frame" title="Jogo"></iframe>
     <aside class="board" id="board" aria-labelledby="btitle">
+      <div class="grab" aria-hidden="true"></div>
       <div class="bhead">
-        <h3 id="btitle">Placar</h3>
-        <span class="src" id="src"></span>
-        <button class="bclose" id="bclose" type="button" aria-label="Fechar placar">×</button>
+        <h3 id="btitle">
+          <span class="beyebrow"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2h8v3a4 4 0 0 1-8 0zM4 3H1.5v1.2A2.8 2.8 0 0 0 4 7M12 3h2.5v1.2A2.8 2.8 0 0 1 12 7M8 9v3M5 14h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Placar</span>
+          <span id="bgame"></span>
+        </h3>
+        <div class="bright">
+          <span class="src" id="src"></span>
+          <button class="bclose" id="bclose" type="button" aria-label="Fechar placar">×</button>
+        </div>
       </div>
 
       <form class="send" id="send" hidden autocomplete="off">
@@ -266,23 +60,27 @@ dialog.recent::backdrop{background:rgba(10,12,20,.55)}
 
       <div class="podium" id="podium"></div>
       <ol class="rest" id="rest"></ol>
-      <p class="empty" id="empty" hidden></p>
-      <button class="linkbtn" id="recent-btn" type="button">Ver últimas 100 pontuações</button>
+      <div class="empty" id="empty" hidden></div>
+      <button class="linkbtn" id="recent-btn" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 4.6V8l2.3 1.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Ver últimas 100 pontuações</button>
     </aside>
   </div>
 </section>
 
 <div class="celebra" id="celebra" hidden role="dialog" aria-modal="true" aria-labelledby="ctitle">
-  <canvas id="confete" aria-hidden="true"></canvas>
-  <div class="cbox">
-    <div class="trofeu" id="trofeu"></div>
-    <p class="ceyebrow" id="ceyebrow"></p>
-    <h2 id="ctitle"></h2>
-    <p class="cdesc" id="cdesc"></p>
-    <p class="cpts" id="cpts"></p>
-    <div class="cbtns">
-      <button class="btn" id="c-placar" type="button">Ver placar</button>
-      <button class="cghost" id="c-again" type="button">Jogar de novo</button>
+  <div class="ccard">
+    <div class="crays" aria-hidden="true"></div>
+    <div class="cglow" aria-hidden="true"></div>
+    <canvas id="confete" aria-hidden="true"></canvas>
+    <div class="cbox">
+      <div class="trofeu" id="trofeu"></div>
+      <p class="ceyebrow" id="ceyebrow"></p>
+      <h2 id="ctitle"></h2>
+      <p class="cdesc" id="cdesc"></p>
+      <p class="cpts" id="cpts"></p>
+      <div class="cbtns">
+        <button class="btn" id="c-placar" type="button">Ver placar</button>
+        <button class="cghost" id="c-again" type="button">Jogar de novo</button>
+      </div>
     </div>
   </div>
 </div>
@@ -294,7 +92,8 @@ dialog.recent::backdrop{background:rgba(10,12,20,.55)}
 
 <script src="placar-config.js"></script>
 <script>
-/* Para adicionar um jogo: coloque o arquivo HTML em jogos/ e acrescente um item aqui. */
+/* Para adicionar um jogo: coloque o arquivo HTML em jogos/ e acrescente um item aqui.
+   cor: [destaque, fundo] do jogo, usadas no cabeçalho do placar. original: opcional. */
 const JOGOS=[
   {
     id:"bandeiras-do-mundo",
@@ -303,6 +102,7 @@ const JOGOS=[
     original:"https://claude.ai/artifact/3x5vkWsQbYTZgF5EX9KBYi",
     resumo:"Uma bandeira aparece e você digita o nome do país antes que o tempo acabe. Pequenos erros de grafia contam como acerto.",
     tags:["Geografia","4 níveis","10 rodadas"],
+    cor:["#ff6b2c","#14213d"],
     arte:`<div class="label art-flags">
       <span class="coord">00°00′N · 00°00′E</span>
       <div class="flags" aria-hidden="true">
@@ -320,321 +120,281 @@ const JOGOS=[
     original:"https://claude.ai/artifact/BM2QmQ9NKdhkypwmvsySur",
     resumo:"Perguntas sobre o seriado Chaves dentro de uma TV de tubo. Três vidas, combos de acertos e ajudas de 50/50, pular e +10s.",
     tags:["Seriado Chaves","3 níveis","3 vidas"],
+    cor:["#f2b134","#123a3c"],
     arte:`<div class="label art-vila">
       <div class="tv" aria-hidden="true"><div class="screen"><b>?</b></div></div>
       <div class="mark" aria-hidden="true">Quiz da Vila</div>
     </div>`
+  },
+  {
+    id:"licitacoes-14133",
+    emBreve:true,
+    titulo:"Quiz da Lei 14.133",
+    arquivo:"jogos/licitacoes-14133.html",
+    resumo:"Modalidades, fases, contratos e sanções da Nova Lei de Licitações e Contratos.",
+    tags:["Direito público","3 níveis","3 vidas"],
+    cor:["#e6c26b","#0f2a4a"],
+    arte:`<div class="label art-lic">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="lc-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4f86"/><stop offset="1" stop-color="#091a30"/></linearGradient>
+          <linearGradient id="lc-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b0"/><stop offset=".5" stop-color="#e0b445"/><stop offset="1" stop-color="#9a6d12"/></linearGradient>
+          <linearGradient id="lc-wood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6a3d1c"/><stop offset=".4" stop-color="#c0834b"/><stop offset="1" stop-color="#55300f"/></linearGradient>
+          <linearGradient id="lc-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#091a30" stop-opacity="0"/><stop offset="1" stop-color="#091a30" stop-opacity=".94"/></linearGradient>
+        </defs>
+        <rect width="400" height="300" fill="url(#lc-bg)"/>
+        <g fill="#fff" opacity=".08"><path d="M0 74 200 6 400 74z"/><rect y="80" width="400" height="12"/>
+          <rect x="12" y="98" width="36" height="150"/><rect x="72" y="98" width="36" height="150"/><rect x="292" y="98" width="36" height="150"/><rect x="352" y="98" width="36" height="150"/></g>
+        <text x="262" y="150" font-family="DM Serif Display,Georgia,serif" font-size="150" fill="#e6c26b" opacity=".14">§</text>
+        <g transform="rotate(-5 160 100)">
+          <rect x="102" y="30" width="140" height="150" rx="5" fill="#000" opacity=".35"/>
+          <rect x="96" y="22" width="140" height="150" rx="5" fill="#fbf5e4"/>
+          <rect x="96" y="22" width="140" height="150" rx="5" fill="none" stroke="#d8cfb4" stroke-width="1"/>
+          <text x="166" y="47" text-anchor="middle" font-family="DM Serif Display,Georgia,serif" font-size="13" fill="#0f2a4a">LEI Nº 14.133</text>
+          <path d="M112 54h108" stroke="#0f2a4a" stroke-width="1.6"/><path d="M112 57.5h108" stroke="#0f2a4a" stroke-width=".6"/>
+          <g fill="#b9b29a"><rect x="112" y="80" width="106" height="4.5" rx="2"/><rect x="112" y="91" width="94" height="4.5" rx="2"/><rect x="112" y="102" width="106" height="4.5" rx="2"/><rect x="112" y="113" width="62" height="4.5" rx="2"/>
+            <rect x="112" y="139" width="106" height="4.5" rx="2"/><rect x="112" y="150" width="84" height="4.5" rx="2"/></g>
+          <g fill="#0f2a4a" opacity=".8"><rect x="112" y="68" width="34" height="5.5" rx="2"/><rect x="112" y="127" width="34" height="5.5" rx="2"/></g>
+          <g transform="translate(212 160)">
+            <path d="M-12 12-18 38-9 32-3 40 1 14z" fill="#b3202e"/><path d="M12 12 18 38 9 32 3 40-1 14z" fill="#8f1623"/>
+            <circle r="21" fill="url(#lc-gold)" stroke="#8a5d0a" stroke-width="1.2"/><circle r="21" fill="none" stroke="#fff3c4" stroke-opacity=".7" stroke-width="2" stroke-dasharray="1.5 3"/>
+            <circle r="14" fill="none" stroke="#8a5d0a" stroke-width="1"/>
+            <path d="M0-8 2.4-2.6 8.2-2.2 3.8 1.6 5.2 7.3 0 4.2-5.2 7.3-3.8 1.6-8.2-2.2-2.4-2.6z" fill="#7a5008"/>
+          </g>
+        </g>
+        <g transform="translate(318 112) rotate(30)">
+          <rect x="-6.5" y="14" width="13" height="76" rx="6" fill="url(#lc-wood)"/>
+          <rect x="-40" y="-18" width="80" height="36" rx="8" fill="url(#lc-wood)" stroke="#3d2008" stroke-width="1.4"/>
+          <rect x="-31" y="-18" width="8" height="36" fill="url(#lc-gold)"/><rect x="23" y="-18" width="8" height="36" fill="url(#lc-gold)"/>
+          <rect x="-36" y="-14" width="72" height="5" rx="2.5" fill="#fff" opacity=".25"/>
+        </g>
+        <g stroke="#e6c26b" stroke-width="3" stroke-linecap="round" opacity=".9"><path d="M262 78l-14-9M268 100l-18 0M262 122l-14 9"/></g>
+        <rect y="170" width="400" height="130" fill="url(#lc-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Quiz da<br>Lei <span>14.133</span></div>
+    </div>`
+  },
+  {
+    id:"quiz-do-suas",
+    emBreve:true,
+    titulo:"Quiz do SUAS",
+    arquivo:"jogos/quiz-do-suas.html",
+    resumo:"CRAS, CREAS, BPC e a LOAS: teste o que você sabe sobre o Sistema Único de Assistência Social.",
+    tags:["Assistência social","3 níveis","3 vidas"],
+    cor:["#ffc857","#0b5a63"],
+    arte:`<div class="label art-suas">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="su-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a5260"/><stop offset=".6" stop-color="#17998f"/><stop offset="1" stop-color="#0a5f5e"/></linearGradient>
+          <radialGradient id="su-sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff0b8"/><stop offset=".55" stop-color="#ffd36b"/><stop offset="1" stop-color="#ffd36b" stop-opacity="0"/></radialGradient>
+          <linearGradient id="su-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06343a" stop-opacity="0"/><stop offset="1" stop-color="#06343a" stop-opacity=".85"/></linearGradient>
+        </defs>
+        <rect width="400" height="300" fill="url(#su-bg)"/>
+        <circle cx="332" cy="62" r="64" fill="url(#su-sun)"/><circle cx="332" cy="62" r="29" fill="#ffd36b"/>
+        <g fill="#fff" opacity=".16"><ellipse cx="62" cy="52" rx="38" ry="9"/><ellipse cx="84" cy="43" rx="24" ry="8"/><ellipse cx="290" cy="116" rx="30" ry="7"/></g>
+        <path d="M0 178Q90 140 190 168T400 150V300H0z" fill="#0f857c"/>
+        <path d="M0 200Q110 172 230 192T400 184V300H0z" fill="#0a6a66"/>
+        <g>
+          <path d="M112 100 200 52 288 100z" fill="#f08a3c"/><path d="M112 100 200 52 288 100" fill="none" stroke="#ffb774" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="128" y="100" width="144" height="58" fill="#fff4dc"/><rect x="128" y="100" width="144" height="5" fill="#e9d8b0"/>
+          <rect x="160" y="105" width="80" height="14" rx="3" fill="#0b5a63"/><text x="200" y="115.5" text-anchor="middle" font-family="Fredoka,Trebuchet MS,sans-serif" font-weight="600" font-size="10" fill="#fff6e0" letter-spacing="1.5">CRAS</text>
+          <rect x="140" y="124" width="26" height="22" rx="3" fill="#8fd6d0"/><rect x="234" y="124" width="26" height="22" rx="3" fill="#8fd6d0"/>
+          <path d="M153 124v22M140 135h26M247 124v22M234 135h26" stroke="#fff4dc" stroke-width="2"/>
+          <path d="M186 158v-22a14 14 0 0 1 28 0v22z" fill="#0b5a63"/><circle cx="208" cy="148" r="1.6" fill="#ffc857"/>
+          <g transform="translate(200 82) scale(1.1)"><path d="M0 8C-17-4-9-17 0-8 9-17 17-4 0 8z" fill="#ff5d73"/><path d="M-5-8C-9-10-12-7-11-4" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.6" stroke-linecap="round"/></g>
+        </g>
+        <g stroke-linecap="round" fill="none" stroke-width="5">
+          <path d="M104 187Q134 197 164 187" stroke="#ffc857"/><path d="M164 187Q196 197 228 187" stroke="#ff7a59"/><path d="M228 187Q258 197 288 187" stroke="#fff4dc"/>
+        </g>
+        <g>
+          <g transform="translate(104 0)"><circle cy="170" r="9" fill="#ffc857"/><path d="M-11 206Q-11 180 0 180T11 206z" fill="#ffc857"/></g>
+          <g transform="translate(164 0)"><circle cy="168" r="9.5" fill="#ff7a59"/><path d="M-12 206Q-12 178 0 178T12 206z" fill="#ff7a59"/></g>
+          <g transform="translate(228 0)"><circle cy="170" r="9" fill="#fff4dc"/><path d="M-11 206Q-11 180 0 180T11 206z" fill="#fff4dc"/></g>
+          <g transform="translate(288 0)"><circle cy="172" r="8" fill="#9be8d3"/><path d="M-10 206Q-10 182 0 182T10 206z" fill="#9be8d3"/></g>
+        </g>
+        <rect y="168" width="400" height="132" fill="url(#su-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Quiz do<br><span>SUAS</span></div>
+    </div>`
+  },
+  {
+    id:"velozes-e-furiosos",
+    emBreve:true,
+    titulo:"Quiz Velozes e Furiosos",
+    arquivo:"jogos/velozes-e-furiosos.html",
+    resumo:"Carros, rachas e a família Toretto em todos os filmes da saga.",
+    tags:["Filmes","3 níveis","3 vidas"],
+    cor:["#ff5a2b","#1a0b2e"],
+    arte:`<div class="label art-vel">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="ve-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0616"/><stop offset=".55" stop-color="#43103f"/><stop offset="1" stop-color="#ff7a30"/></linearGradient>
+          <linearGradient id="ve-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4a3d"/><stop offset=".55" stop-color="#c3141f"/><stop offset="1" stop-color="#6f0a14"/></linearGradient>
+          <linearGradient id="ve-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c64a8"/><stop offset="1" stop-color="#0a0d20"/></linearGradient>
+          <radialGradient id="ve-lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".9"/><stop offset="1" stop-color="#ff7a30" stop-opacity="0"/></radialGradient>
+          <filter id="ve-blur" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>
+          <linearGradient id="ve-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f0a16" stop-opacity="0"/><stop offset="1" stop-color="#0f0a16" stop-opacity=".9"/></linearGradient>
+        </defs>
+        <rect width="400" height="152" fill="url(#ve-sky)"/>
+        <g fill="#150a1c"><rect x="0" y="118" width="26" height="34"/><rect x="30" y="104" width="22" height="48"/><rect x="56" y="124" width="30" height="28"/><rect x="92" y="112" width="18" height="40"/><rect x="114" y="128" width="40" height="24"/>
+          <rect x="248" y="126" width="34" height="26"/><rect x="286" y="108" width="20" height="44"/><rect x="310" y="120" width="30" height="32"/><rect x="344" y="100" width="24" height="52"/><rect x="372" y="122" width="28" height="30"/></g>
+        <g fill="#ffd36b" opacity=".85"><rect x="35" y="112" width="3" height="3"/><rect x="42" y="124" width="3" height="3"/><rect x="97" y="120" width="3" height="3"/><rect x="291" y="116" width="3" height="3"/><rect x="350" y="110" width="3" height="3"/><rect x="351" y="124" width="3" height="3"/><rect x="62" y="132" width="3" height="3"/></g>
+        <rect y="150" width="400" height="150" fill="#0d0814"/>
+        <circle cx="116" cy="150" r="22" fill="url(#ve-lamp)"/><circle cx="286" cy="150" r="22" fill="url(#ve-lamp)"/>
+        <path d="M192 150h16l210 150H-18z" fill="#1d1528"/>
+        <path d="M192 150 -30 300M208 150 430 300" stroke="#ffd9a0" stroke-opacity=".7" stroke-width="2"/>
+        <g fill="#ffe6b8"><path d="M199.4 156h1.2l.5 6h-2.2z"/><path d="M199 168h2l1.2 11h-4.4z"/><path d="M198.4 188h3.2l2.2 18h-7.6z"/><path d="M197.4 220h5.2l4 30h-13.2z"/></g>
+        <g stroke="#fff" stroke-linecap="round" opacity=".35" stroke-width="1.4"><path d="M10 176h60M30 192h44M330 170h60M338 186h42M18 210h52M322 206h70"/></g>
+        <g transform="translate(200 170)">
+          <ellipse cx="0" cy="20" rx="60" ry="7" fill="#27d7ff" opacity=".55" filter="url(#ve-blur)"/>
+          <ellipse cx="-30" cy="-6" rx="24" ry="8" fill="#ff2a3d" opacity=".75" filter="url(#ve-blur)"/><ellipse cx="30" cy="-6" rx="24" ry="8" fill="#ff2a3d" opacity=".75" filter="url(#ve-blur)"/>
+          <rect x="-50" y="2" width="15" height="18" rx="3" fill="#07050b"/><rect x="35" y="2" width="15" height="18" rx="3" fill="#07050b"/>
+          <path d="M-36-11-29-32Q-27-36-21-36H21Q27-36 29-32L36-11z" fill="#12101a"/>
+          <path d="M-31-14-25-30Q-24-32-20-32H20Q24-32 25-30L31-14z" fill="url(#ve-glass)"/><path d="M-22-31-10-31-20-14-29-14z" fill="#fff" opacity=".13"/>
+          <path d="M-54 8Q-54-8-45-12H45Q54-8 54 8V15Q0 22-54 15z" fill="url(#ve-body)"/>
+          <path d="M-46-10Q0-14 46-10" stroke="#ff9a8a" stroke-opacity=".8" stroke-width="1.4" fill="none"/>
+          <rect x="-50" y="-44" width="100" height="5.5" rx="2.5" fill="#15121c" stroke="#ff4a3d" stroke-width=".8"/><rect x="-36" y="-39" width="4.5" height="9" fill="#15121c"/><rect x="31.5" y="-39" width="4.5" height="9" fill="#15121c"/>
+          <rect x="-48" y="-7" width="32" height="8" rx="3.5" fill="#ff2a3d"/><rect x="16" y="-7" width="32" height="8" rx="3.5" fill="#ff2a3d"/><rect x="-44" y="-6" width="24" height="2.2" rx="1" fill="#ffd0c8"/><rect x="20" y="-6" width="24" height="2.2" rx="1" fill="#ffd0c8"/>
+          <path d="M-16-3H16" stroke="#ff2a3d" stroke-width="2" opacity=".7"/>
+          <rect x="-11" y="2" width="22" height="8" rx="1.5" fill="#f4efe0"/><rect x="-8" y="4.5" width="16" height="1.6" fill="#2a2a38" opacity=".55"/>
+          <circle cx="-31" cy="14" r="3.6" fill="#2a2a36" stroke="#a9a9b8" stroke-width="1"/><circle cx="31" cy="14" r="3.6" fill="#2a2a36" stroke="#a9a9b8" stroke-width="1"/>
+        </g>
+        <rect y="190" width="400" height="110" fill="url(#ve-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Quiz Velozes<br>&amp; Furiosos</div>
+    </div>`
+  },
+  {
+    id:"the-office",
+    emBreve:true,
+    titulo:"Quiz The Office",
+    arquivo:"jogos/the-office.html",
+    resumo:"Dunder Mifflin, Michael Scott e as pegadinhas do Jim em perguntas sobre a série.",
+    tags:["Série","3 níveis","3 vidas"],
+    cor:["#ffd23f","#1d4f91"],
+    arte:`<div class="label art-off">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="of-panel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb0c4"/><stop offset="1" stop-color="#7f93aa"/></linearGradient>
+          <linearGradient id="of-desk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8935a"/><stop offset=".35" stop-color="#a8733f"/><stop offset="1" stop-color="#6f4521"/></linearGradient>
+          <linearGradient id="of-jello" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9dffb2"/><stop offset=".5" stop-color="#37d46d"/><stop offset="1" stop-color="#14934a"/></linearGradient>
+          <linearGradient id="of-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2410" stop-opacity="0"/><stop offset="1" stop-color="#3a2410" stop-opacity=".78"/></linearGradient>
+        </defs>
+        <rect width="400" height="300" fill="#cfd8e1"/>
+        <rect x="0" y="10" width="400" height="160" fill="url(#of-panel)"/>
+        <g stroke="#fff" stroke-opacity=".07" stroke-width="2"><path d="M20 10v160M40 10v160M60 10v160M80 10v160M100 10v160M120 10v160M140 10v160M160 10v160M180 10v160M200 10v160M220 10v160M240 10v160M260 10v160M280 10v160M300 10v160M320 10v160M340 10v160M360 10v160M380 10v160"/></g>
+        <rect x="0" y="10" width="400" height="6" fill="#b9c7d6"/><rect x="0" y="164" width="400" height="6" fill="#6f8299"/>
+        <g transform="rotate(-2 72 50)">
+          <rect x="22" y="28" width="104" height="46" rx="2" fill="#000" opacity=".2" transform="translate(3 4)"/>
+          <rect x="22" y="28" width="104" height="46" rx="2" fill="#fbfbf6"/>
+          <rect x="22" y="28" width="104" height="9" fill="#1d4f91"/>
+          <text x="74" y="53" text-anchor="middle" font-family="Archivo Black,Arial Black,sans-serif" font-size="13" fill="#1d4f91">DUNDER</text>
+          <text x="74" y="67" text-anchor="middle" font-family="Archivo Black,Arial Black,sans-serif" font-size="13" fill="#1d4f91">MIFFLIN</text>
+          <circle cx="74" cy="31" r="3" fill="#e33a35"/>
+        </g>
+        <g transform="rotate(-6 168 48)"><rect x="146" y="26" width="46" height="46" fill="#000" opacity=".16" transform="translate(3 4)"/><rect x="146" y="26" width="46" height="46" fill="#ffe36e"/>
+          <path d="M153 40h32M153 49h26M153 58h30" stroke="#a88a12" stroke-width="2.4" stroke-linecap="round" opacity=".7"/><circle cx="169" cy="29" r="3" fill="#e33a35"/></g>
+        <g transform="rotate(7 218 56)"><rect x="198" y="40" width="40" height="40" fill="#000" opacity=".16" transform="translate(3 4)"/><rect x="198" y="40" width="40" height="40" fill="#ff9ecb"/>
+          <path d="M205 54h26M205 63h20M205 72h24" stroke="#b5497d" stroke-width="2.4" stroke-linecap="round" opacity=".65"/></g>
+        <g transform="rotate(2 308 58)"><rect x="262" y="26" width="104" height="64" fill="#000" opacity=".16" transform="translate(3 4)"/><rect x="262" y="26" width="104" height="64" fill="#fbfbf6"/>
+          <path d="M272 78V44M272 78h84" stroke="#9aa5b4" stroke-width="1.4" fill="none"/><path d="M274 74 292 66 308 70 326 52 346 40" stroke="#e33a35" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="314" cy="29" r="3" fill="#2f6fb5"/></g>
+        <rect x="0" y="168" width="400" height="132" fill="url(#of-desk)"/><rect x="0" y="168" width="400" height="5" fill="#e0b27a"/>
+        <g>
+          <rect x="34" y="150" width="74" height="30" rx="2" fill="#000" opacity=".22" transform="translate(4 5)"/>
+          <rect x="34" y="150" width="74" height="30" rx="2" fill="#fff"/><rect x="34" y="150" width="74" height="9" fill="#d6dde8"/>
+          <rect x="34" y="164" width="74" height="10" fill="#1d4f91"/><text x="71" y="172" text-anchor="middle" font-family="Archivo Black,Arial Black,sans-serif" font-size="6.4" fill="#fff" letter-spacing=".6">DUNDER MIFFLIN</text>
+          <path d="M34 159h74" stroke="#b9c3d2" stroke-width="1"/>
+        </g>
+        <ellipse cx="204" cy="186" rx="64" ry="8" fill="#000" opacity=".28"/>
+        <g>
+          <rect x="164" y="152" width="82" height="13" rx="5" fill="#2b2b33"/><rect x="170" y="141" width="68" height="13" rx="6" fill="#b3191e"/><rect x="174" y="144" width="56" height="3" rx="1.5" fill="#ff7a7a" opacity=".6"/><rect x="164" y="162" width="82" height="5" rx="2" fill="#15151b"/>
+          <rect x="148" y="128" width="112" height="58" rx="11" fill="url(#of-jello)" opacity=".82"/>
+          <rect x="148" y="128" width="112" height="58" rx="11" fill="none" stroke="#c9ffd6" stroke-opacity=".7" stroke-width="1.6"/>
+          <path d="M156 138Q156 133 162 133H216" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="3.5" stroke-linecap="round"/>
+          <rect x="152" y="172" width="104" height="10" rx="5" fill="#0b6b33" opacity=".4"/>
+        </g>
+        <g>
+          <ellipse cx="316" cy="187" rx="30" ry="6" fill="#000" opacity=".28"/>
+          <path d="M338 148c18 0 18 24 0 24" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M338 148c18 0 18 24 0 24" fill="none" stroke="#c9ced8" stroke-width="1.2" stroke-linecap="round" transform="translate(1 0)"/>
+          <rect x="290" y="136" width="48" height="50" rx="6" fill="#fff"/><rect x="290" y="136" width="48" height="8" rx="4" fill="#e6e9f0"/><rect x="294" y="144" width="5" height="40" rx="2" fill="#fff" opacity=".7"/>
+          <text x="314" y="158" text-anchor="middle" font-family="Archivo Black,Arial Black,sans-serif" font-size="7.4" fill="#c8222f">WORLD'S</text>
+          <text x="314" y="168" text-anchor="middle" font-family="Archivo Black,Arial Black,sans-serif" font-size="7.4" fill="#c8222f">BEST</text>
+          <text x="314" y="178" text-anchor="middle" font-family="Archivo Black,Arial Black,sans-serif" font-size="7.4" fill="#c8222f">BOSS</text>
+        </g>
+        <rect y="188" width="400" height="112" fill="url(#of-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Quiz<br>The <span>Office</span></div>
+    </div>`
+  },
+  {
+    id:"sertanejo-raiz",
+    emBreve:true,
+    titulo:"Quiz Sertanejo Raiz",
+    arquivo:"jogos/sertanejo-raiz.html",
+    resumo:"Duplas, violeiros e modas de viola que fizeram a música caipira.",
+    tags:["Música","3 níveis","3 vidas"],
+    cor:["#ffb347","#3b1a0c"],
+    arte:`<div class="label art-ser">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="se-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d2f5e"/><stop offset=".5" stop-color="#e8743a"/><stop offset="1" stop-color="#ffd27a"/></linearGradient>
+          <radialGradient id="se-sun" cx=".5" cy=".5" r=".5"><stop offset=".4" stop-color="#fff3c4"/><stop offset=".42" stop-color="#ffe9a0" stop-opacity=".55"/><stop offset="1" stop-color="#ffcf6a" stop-opacity="0"/></radialGradient>
+          <linearGradient id="se-wood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8d4616"/><stop offset=".4" stop-color="#e0903f"/><stop offset="1" stop-color="#7a3a10"/></linearGradient>
+          <linearGradient id="se-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1208" stop-opacity="0"/><stop offset="1" stop-color="#2a1208" stop-opacity=".92"/></linearGradient>
+        </defs>
+        <rect width="400" height="190" fill="url(#se-sky)"/>
+        <circle cx="146" cy="136" r="74" fill="url(#se-sun)"/>
+        <g fill="#4a1d3b" opacity=".35"><ellipse cx="300" cy="52" rx="62" ry="6"/><ellipse cx="330" cy="64" rx="40" ry="5"/><ellipse cx="60" cy="40" rx="44" ry="5"/></g>
+        <g fill="none" stroke="#3a1330" stroke-width="1.8" stroke-linecap="round" opacity=".8"><path d="M232 78q5-6 10 0q5-6 10 0"/><path d="M262 94q4-5 8 0q4-5 8 0"/><path d="M212 100q4-5 8 0q4-5 8 0"/></g>
+        <path d="M0 152Q60 124 130 146T260 138T400 128V300H0z" fill="#b4502c"/>
+        <path d="M0 172Q90 142 190 166T400 152V300H0z" fill="#7d3320"/>
+        <path d="M0 190Q120 176 220 188T400 180V300H0z" fill="#3b180e"/>
+        <g fill="#2a1008"><rect x="0" y="170" width="400" height="4"/><rect x="0" y="184" width="400" height="4"/>
+          <path d="M18 152h8v44h-8zM88 152h8v44h-8zM158 152h8v44h-8zM228 152h8v44h-8zM298 152h8v44h-8zM368 152h8v44h-8z"/></g>
+        <g transform="translate(92 152)"><ellipse cy="0" rx="25" ry="5" fill="#e9c27a" stroke="#7a4b1a" stroke-width="1.2"/><path d="M-12 -1Q-12-18 0-18T12-1z" fill="#f0cf8c" stroke="#7a4b1a" stroke-width="1.2"/><rect x="-12" y="-7" width="24" height="4" fill="#7a2a14"/></g>
+        <g transform="translate(332 150) rotate(16) scale(.8)">
+          <rect x="-7" y="-92" width="14" height="82" rx="3" fill="#5a2f12"/><rect x="-4.5" y="-92" width="9" height="82" fill="#24100a"/>
+          <g stroke="#e8c27a" stroke-width=".9"><path d="M-4.5-90v8M-4.5-72v8"/></g>
+          <rect x="-12" y="-116" width="24" height="28" rx="5" fill="#4a230c"/>
+          <g fill="#f3d79a"><circle cx="-14" cy="-108" r="2.6"/><circle cx="-14" cy="-98" r="2.6"/><circle cx="14" cy="-108" r="2.6"/><circle cx="14" cy="-98" r="2.6"/><circle cx="14" cy="-91" r="2.2"/></g>
+          <circle cy="24" r="31" fill="#4a230c"/><circle cy="-14" r="23" fill="#4a230c"/>
+          <circle cy="24" r="29" fill="url(#se-wood)"/><circle cy="-14" r="21" fill="url(#se-wood)"/>
+          <path d="M-14-26Q-26-12-14 6" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="3" stroke-linecap="round"/>
+          <circle cy="24" r="9.5" fill="#1b0b04"/><circle cy="24" r="12.5" fill="none" stroke="#f3d79a" stroke-width="1.6"/><circle cy="24" r="15" fill="none" stroke="#2a1008" stroke-width=".8"/>
+          <rect x="-15" y="46" width="30" height="4.5" rx="2" fill="#24100a"/>
+          <g stroke="#f4e4b8" stroke-opacity=".85" stroke-width=".9"><path d="M-3-112L-8 47M-1.5-112L-4 47M0-112V47M1.5-112L4 47M3-112L8 47"/></g>
+        </g>
+        <rect y="168" width="400" height="132" fill="url(#se-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Quiz Sertanejo<br><span>Raiz</span></div>
+    </div>`
   }
 ];
 
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shelf=document.getElementById("shelf");
-const player=document.getElementById("player"), frame=document.getElementById("frame"), ptitle=document.getElementById("ptitle");
+shelf.dataset.m2=JOGOS.length%2;   // sobra na grade de 2 colunas
+shelf.dataset.m3=JOGOS.length%3;   // sobra na grade de 3 colunas: o slot livre completa a última linha
 document.getElementById("n").textContent=JOGOS.length;
-
+const escH=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 shelf.innerHTML=JOGOS.map(j=>`
-  <li class="cart">
+  <li class="cart${j.emBreve?" breve":""}">
     ${j.arte}
     <div class="info">
-      <h2>${esc(j.titulo)}</h2>
-      <p>${esc(j.resumo)}</p>
-      <ul class="tags">${j.tags.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+      <h2>${escH(j.titulo)}</h2>
+      <p>${escH(j.resumo)}</p>
+      <ul class="tags">${j.tags.map(t=>`<li>${escH(t)}</li>`).join("")}</ul>
     </div>
     <div class="actions">
-      <a class="play" href="#${j.id}" id="play-${j.id}"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Jogar</a>
-      <a class="orig" href="${j.original}" target="_blank" rel="noopener">Abrir original ↗</a>
+      ${j.emBreve?`<span class="soon">Em breve</span>`:`<a class="play" href="#${j.id}" id="play-${j.id}"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Jogar</a>`}
+      ${j.original?`<a class="orig" href="${escH(j.original)}" target="_blank" rel="noopener">Abrir original ↗</a>`:""}
     </div>
   </li>`).join("")+`
   <li class="slot" aria-label="Espaço para o próximo jogo">
     <b>Slot livre</b>
     <p>O próximo jogo entra aqui.</p>
   </li>`;
-
-/* ================= Placar =================
-   Com Supabase configurado em placar-config.js, o placar é compartilhado por todos.
-   Sem configuração, as pontuações ficam só neste navegador. */
-const CFG=window.PLACAR||{};
-const ONLINE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
-const LOCAL_KEY="jogos-placar-v1";
-
-const Placar=ONLINE?(()=>{
-  const base=CFG.supabaseUrl.replace(/\/+$/,"").replace(/\/rest\/v1$/,"")+"/rest/v1/placar"; // aceita a URL com ou sem /rest/v1
-  const h={apikey:CFG.supabaseAnonKey};
-  if(/^eyJ/.test(CFG.supabaseAnonKey)) h.Authorization="Bearer "+CFG.supabaseAnonKey; // chave anon antiga (JWT)
-  const campos="select=id,nome,pontos,nivel,criado_em";
-  async function get(q,extra){
-    const r=await fetch(base+"?"+q,{headers:{...h,...extra}});
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    return r;
-  }
-  return {
-    async topo(jogo){ return (await get(`${campos}&jogo=eq.${encodeURIComponent(jogo)}&order=pontos.desc,criado_em.asc&limit=10`)).json() },
-    async recentes(jogo){ return (await get(`${campos}&jogo=eq.${encodeURIComponent(jogo)}&order=criado_em.desc&limit=100`)).json() },
-    async salvar(item){
-      const r=await fetch(base+"?"+campos,{method:"POST",headers:{...h,"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify(item)});
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      return (await r.json())[0];
-    },
-    async posicao(jogo,pontos){
-      const r=await get(`select=id&jogo=eq.${encodeURIComponent(jogo)}&pontos=gt.${pontos}&limit=1`,{Prefer:"count=exact"});
-      const total=+(r.headers.get("content-range")||"").split("/")[1];
-      return Number.isFinite(total)?total+1:null;
-    }
-  };
-})():(()=>{
-  const ler=()=>{try{return JSON.parse(localStorage.getItem(LOCAL_KEY))||[]}catch(e){return []}};
-  const doJogo=j=>ler().filter(x=>x.jogo===j);
-  const ordem=(a,b)=>b.pontos-a.pontos||a.criado_em.localeCompare(b.criado_em);
-  return {
-    async topo(jogo){ return doJogo(jogo).sort(ordem).slice(0,10) },
-    async recentes(jogo){ return doJogo(jogo).sort((a,b)=>b.criado_em.localeCompare(a.criado_em)).slice(0,100) },
-    async salvar(item){
-      const novo={...item,id:Date.now()+"-"+Math.random().toString(36).slice(2,7),criado_em:new Date().toISOString()};
-      const todos=ler(); todos.push(novo);
-      localStorage.setItem(LOCAL_KEY,JSON.stringify(todos.slice(-1000)));
-      return novo;
-    },
-    async posicao(jogo,pontos){ return doJogo(jogo).filter(x=>x.pontos>pontos).length+1 }
-  };
-})();
-
-const fmt=n=>Number(n).toLocaleString("pt-BR");
-const $=id=>document.getElementById(id);
-const board=$("board"), toggle=$("rank-toggle"), sendForm=$("send"), nomeInp=$("nome");
-let pendente=null, meuId=null, boardGen=0;
-$("src").textContent=ONLINE?"Online":"Só neste navegador";
-$("src").title=ONLINE?"Pontuações compartilhadas entre todos os jogadores":"Sem servidor configurado: as pontuações ficam salvas apenas neste navegador";
-
-/* Medalhas: 1º ouro com coroa de louros, 2º prata, 3º bronze */
-const METAIS={1:["#fff1b8","#e9b824","#9c6a00","#7a5200"],2:["#ffffff","#c3cad4","#7b8594","#59616e"],3:["#ffd9b8","#cd8a52","#8a4f22","#6b3a16"]};
-function coroaDeLouros(cy,r1,r2){
-  let out="";
-  for(const lado of [1,-1]) for(let k=0;k<7;k++){
-    const a=108+k*19, t=a*Math.PI/180;
-    for(const [r,tilt] of [[r1,-38],[r2,38]]){
-      const x=50+lado*r*Math.cos(t), y=cy+r*Math.sin(t), rot=lado*(a+90+tilt);
-      out+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="7.5" ry="3.3" transform="rotate(${rot.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="#d4a62a" stroke="#8a6410" stroke-width=".8"/>`;
-    }
-  }
-  return out;
-}
-function medalha(lugar){
-  const [hi,mid,lo,txt]=METAIS[lugar], g="mg"+lugar;
-  const louros=lugar===1?coroaDeLouros(60,31,41):"";
-  return `<svg viewBox="0 0 100 100" role="img" aria-label="${lugar}º lugar">
-    <defs><radialGradient id="${g}" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="${hi}"/><stop offset=".55" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></radialGradient></defs>
-    <path d="M36 4h12l8 30H44z" fill="#2d4fa3"/><path d="M52 4h12l-8 30H44z" fill="#e2453a"/>
-    ${louros}
-    <circle cx="50" cy="60" r="25" fill="url(#${g})" stroke="${lo}" stroke-width="2"/>
-    <circle cx="50" cy="60" r="19" fill="none" stroke="${hi}" stroke-opacity=".7" stroke-width="1.5"/>
-    <text x="50" y="68.5" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="24" fill="${txt}">${lugar}</text>
-  </svg>`;
-}
-
-/* Troféu do pódio: copa no metal do lugar (o de ouro ganha louros) */
-function trofeu(lugar){
-  const [hi,mid,lo,txt]=METAIS[lugar], g="tg"+lugar;
-  return `<svg viewBox="0 0 100 100" role="img" aria-label="Troféu de ${lugar}º lugar">
-    <defs><linearGradient id="${g}" x1="0" x2="1"><stop offset="0" stop-color="${lo}"/><stop offset=".35" stop-color="${hi}"/><stop offset=".6" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient></defs>
-    ${lugar===1?coroaDeLouros(52,36,45):""}
-    <path d="M33 26h-8c0 13 6 20 14 21M67 26h8c0 13-6 20-14 21" fill="none" stroke="${mid}" stroke-width="4.5" stroke-linecap="round"/>
-    <path d="M31 18h38v12c0 15-8.5 26-19 26S31 45 31 30z" fill="url(#${g})" stroke="${lo}" stroke-width="1.5"/>
-    <ellipse cx="50" cy="18" rx="19" ry="3.2" fill="${hi}" stroke="${lo}" stroke-width="1.2"/>
-    <rect x="46" y="55" width="8" height="10" fill="url(#${g})"/>
-    <path d="M38 65h24l3 9H35z" fill="url(#${g})" stroke="${lo}" stroke-width="1.2"/>
-    <rect x="31" y="74" width="38" height="10" rx="2" fill="#2a2230" stroke="${lo}" stroke-width="1.2"/>
-    <rect x="41" y="77" width="18" height="4" rx="1" fill="${mid}"/>
-    <text x="50" y="43" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="17" fill="${txt}">${lugar}º</text>
-  </svg>`;
-}
-
-const FRASES={
-  1:{t:"Topo do placar!",d:(n,j)=>`${n}, ninguém fez mais pontos que você em ${j}. A coroa de louros é sua.`},
-  2:{t:"Medalha de prata!",d:(n,j)=>`${n}, só uma pessoa fez mais pontos que você em ${j}. Falta pouco para o topo.`},
-  3:{t:"Bronze garantido!",d:(n,j)=>`${n}, você subiu ao pódio de ${j}. Agora é mirar mais alto.`}
-};
-let confeteRaf=0;
-function confete(cor){
-  const cv=$("confete"); cancelAnimationFrame(confeteRaf);
-  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const ctx=cv.getContext("2d"), dpr=Math.min(2,devicePixelRatio||1);
-  cv.width=cv.clientWidth*dpr; cv.height=cv.clientHeight*dpr; ctx.scale(dpr,dpr);
-  const W=cv.clientWidth, H=cv.clientHeight, cores=[...cor,"#ffffff","#e2453a","#2d4fa3"];
-  let ps=Array.from({length:180},(_,i)=>({x:Math.random()*W,y:-20-Math.random()*H*.6,vx:(Math.random()-.5)*2.4,vy:1.6+Math.random()*3.2,r:Math.random()*6.3,vr:(Math.random()-.5)*.25,s:5+Math.random()*7,c:cores[i%cores.length]}));
-  (function loop(){
-    ctx.clearRect(0,0,W,H); ps=ps.filter(p=>p.y<H+20);
-    for(const p of ps){ p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); ctx.restore() }
-    if(ps.length) confeteRaf=requestAnimationFrame(loop);
-  })();
-}
-let AC=null;
-function fanfarra(lugar){
-  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume() }catch(e){ return }
-  const notas=lugar===1?[523,659,784,1047,784,1047,1319]:lugar===2?[523,659,784,1047]:[440,554,659,880];
-  notas.forEach((f,i)=>{
-    const t=AC.currentTime+i*.13, o=AC.createOscillator(), g=AC.createGain();
-    o.type="triangle"; o.frequency.setValueAtTime(f,t);
-    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+(i===notas.length-1?.9:.22));
-    o.connect(g).connect(AC.destination); o.start(t); o.stop(t+1);
-  });
-}
-let focoAntes=null;
-function celebrar(lugar,item){
-  const j=JOGOS.find(x=>x.id===item.jogo), f=FRASES[lugar], c=$("celebra");
-  c.className="celebra l"+lugar;
-  $("trofeu").innerHTML=trofeu(lugar);
-  $("ceyebrow").textContent=`${lugar}º lugar · ${j?j.titulo:""}${item.nivel?" · "+item.nivel:""}`;
-  $("ctitle").textContent=f.t;
-  $("cdesc").textContent=f.d(item.nome,j?j.titulo:"este jogo");
-  $("cpts").textContent=fmt(item.pontos)+" pontos";
-  focoAntes=document.activeElement;
-  c.hidden=false; $("c-placar").focus();
-  confete([METAIS[lugar][1],METAIS[lugar][0]]); fanfarra(lugar);
-}
-function fecharCelebra(){ const c=$("celebra"); if(c.hidden) return; c.hidden=true; cancelAnimationFrame(confeteRaf) }
-$("c-placar").onclick=()=>{ fecharCelebra(); abrirPlacar(true); $("podium").scrollIntoView({block:"nearest"}); $("bclose").focus() };
-$("c-again").onclick=()=>{ fecharCelebra(); abrirPlacar(false); const j=JOGOS.find(x=>x.id===atual); if(j){ frame.src=j.arquivo; frame.focus() } };
-
-function setVazio(msg){ const e=$("empty"); e.hidden=!msg; e.innerHTML=msg||"" }
-
-async function carregarPlacar(){
-  const jogo=atual, gen=++boardGen;
-  if(!jogo) return;
-  setVazio(""); $("podium").innerHTML=""; $("rest").innerHTML="";
-  $("podium").setAttribute("aria-busy","true");
-  let lista;
-  try{ lista=await Placar.topo(jogo) }
-  catch(e){
-    if(gen!==boardGen) return;
-    $("podium").removeAttribute("aria-busy");
-    setVazio(`Não foi possível carregar o placar. Verifique sua conexão. <button class="linkbtn" type="button" id="retry" style="margin-top:8px">Tentar de novo</button>`);
-    $("retry").onclick=carregarPlacar; return;
-  }
-  if(gen!==boardGen) return;
-  $("podium").removeAttribute("aria-busy");
-  if(!lista.length){ setVazio("Ninguém pontuou ainda. Termine uma partida e seja o primeiro do placar."); return }
-  const pessoa=(x,lugar)=>{
-    const voce=String(x.id)===String(meuId);
-    return `<div class="${lugar===1?"first":""}${voce?" you":""}">${medalha(lugar)}
-      <span class="nm"></span>${voce?`<span class="tagyou">você</span>`:""}
-      <span class="pts">${fmt(x.pontos)} pts</span>${x.nivel?`<span class="lv"></span>`:""}</div>`;
-  };
-  const [a,b,c]=lista;
-  $("podium").innerHTML=pessoa(a,1)+(b?`<div class="duo">${pessoa(b,2)}${c?pessoa(c,3):"<div></div>"}</div>`:"");
-  $("rest").innerHTML=lista.slice(3).map((x,i)=>`<li${String(x.id)===String(meuId)?' class="you"':""}><span class="pos">${i+4}º</span><span class="nm"></span><span class="pts">${fmt(x.pontos)}</span></li>`).join("");
-  // nomes e níveis entram como texto puro
-  const blocos=[...$("podium").querySelectorAll(".first,.duo>div")].filter(d=>d.querySelector(".nm"));
-  blocos.forEach((d,i)=>{ d.querySelector(".nm").textContent=lista[i].nome; const lv=d.querySelector(".lv"); if(lv) lv.textContent=lista[i].nivel });
-  [...$("rest").children].forEach((li,i)=>{ const x=lista[i+3]; li.querySelector(".nm").textContent=x.nome; li.title=(x.nivel?x.nivel+" · ":"")+fmt(x.pontos)+" pontos" });
-}
-
-function abrirPlacar(abrir){
-  board.classList.toggle("open",abrir);
-  toggle.setAttribute("aria-expanded",abrir);
-}
-toggle.onclick=()=>abrirPlacar(!board.classList.contains("open"));
-$("bclose").onclick=()=>abrirPlacar(false);
-
-function limparEnvio(){ pendente=null; sendForm.hidden=true; $("saved").hidden=true; $("smsg").textContent=""; $("smsg").className="msg" }
-
-addEventListener("message",e=>{
-  // Os jogos ficam no mesmo site; o Chrome nem sempre informa o iframe como remetente, então a checagem é pela origem.
-  if(!atual||(e.origin!==location.origin&&e.source!==frame.contentWindow)) return;
-  const d=e.data;
-  if(!d||d.tipo!=="jogos:fim") return;
-  const pontos=Math.round(+d.pontos);
-  if(!Number.isFinite(pontos)||pontos<=0) return;   // partida sem pontos não entra no placar
-  pendente={jogo:atual,pontos,nivel:String(d.nivel||"").slice(0,40)};
-  $("ypts").textContent=fmt(pontos)+" pts";
-  $("ylv").textContent=pendente.nivel?" · "+pendente.nivel:"";
-  $("saved").hidden=true; $("smsg").textContent=""; $("smsg").className="msg";
-  $("salvar").disabled=false;
-  try{ nomeInp.value=nomeInp.value||localStorage.getItem("jogos-nome")||"" }catch(err){}
-  sendForm.hidden=false;
-  board.scrollTop=0;
-  abrirPlacar(true);
-  if(matchMedia("(min-width:900px)").matches) nomeInp.focus({preventScroll:true});
-});
-
-sendForm.addEventListener("submit",async e=>{
-  e.preventDefault();
-  if(!pendente) return;
-  const nome=nomeInp.value.replace(/[\u0000-\u001f\u007f]/g,"").replace(/\s+/g," ").trim().slice(0,20);
-  if(!nome){ $("smsg").className="msg err"; $("smsg").textContent="Escreva um nome para aparecer no placar."; nomeInp.focus(); return }
-  const item={...pendente,nome};
-  $("salvar").disabled=true; $("smsg").className="msg"; $("smsg").textContent="Salvando…";
-  try{
-    const salvo=await Placar.salvar(item);
-    try{ localStorage.setItem("jogos-nome",nome) }catch(err){}
-    meuId=salvo&&salvo.id;
-    let pos=null; try{ pos=await Placar.posicao(item.jogo,item.pontos) }catch(err){}
-    pendente=null; sendForm.hidden=true;
-    $("saved").textContent=`Pontuação salva! ${pos?`Você está em ${pos}º lugar com ${fmt(item.pontos)} pontos.`:`${fmt(item.pontos)} pontos.`}`;
-    $("saved").hidden=false;
-    carregarPlacar();
-    if(pos&&pos<=3) celebrar(pos,item);
-  }catch(err){
-    $("salvar").disabled=false; $("smsg").className="msg err";
-    $("smsg").textContent=ONLINE?"Não foi possível salvar agora. Verifique sua conexão e tente de novo.":"Este navegador não permitiu salvar a pontuação.";
-  }
-});
-
-/* Últimas 100 */
-const recent=$("recent");
-function quando(iso){
-  const d=new Date(iso), s=(Date.now()-d)/1000;
-  if(s<60) return "agora";
-  if(s<3600) return `há ${Math.floor(s/60)} min`;
-  if(s<86400) return `há ${Math.floor(s/3600)} h`;
-  if(s<7*86400) return `há ${Math.floor(s/86400)} ${Math.floor(s/86400)===1?"dia":"dias"}`;
-  return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
-}
-$("recent-btn").onclick=async()=>{
-  const j=JOGOS.find(x=>x.id===atual); if(!j) return;
-  $("rtitle").textContent="Últimas 100 · "+j.titulo;
-  $("rbody").innerHTML=`<p class="empty" style="padding:12px 0">Carregando…</p>`;
-  if(typeof recent.showModal==="function") recent.showModal(); else recent.setAttribute("open","");
-  try{
-    const lista=await Placar.recentes(atual);
-    if(!lista.length){ $("rbody").innerHTML=`<p class="empty" style="padding:12px 0">Nenhuma pontuação salva ainda.</p>`; return }
-    $("rbody").innerHTML=`<table><thead><tr><th>Quando</th><th>Nome</th><th>Nível</th><th class="num">Pontos</th></tr></thead><tbody>${
-      lista.map(x=>`<tr><td class="when" title="${esc(new Date(x.criado_em).toLocaleString("pt-BR"))}">${esc(quando(x.criado_em))}</td><td class="nm"></td><td class="lvl"></td><td class="num">${fmt(x.pontos)}</td></tr>`).join("")
-    }</tbody></table>`;
-    [...$("rbody").querySelectorAll("tbody tr")].forEach((tr,i)=>{ tr.querySelector(".nm").textContent=lista[i].nome; tr.querySelector(".lvl").textContent=lista[i].nivel||"—" });
-  }catch(err){ $("rbody").innerHTML=`<p class="empty" style="padding:12px 0">Não foi possível carregar as pontuações. Verifique sua conexão e tente de novo.</p>` }
-};
-$("rclose").onclick=()=>recent.close?recent.close():recent.removeAttribute("open");
-recent.addEventListener("click",e=>{ if(e.target===recent) recent.close() });
-
-/* ================= Navegação ================= */
-let atual=null;
-function route(){
-  const id=decodeURIComponent(location.hash.slice(1));
-  const j=JOGOS.find(x=>x.id===id);
-  if(j){
-    if(atual!==j.id){
-      frame.src=j.arquivo; frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos";
-      atual=j.id; meuId=null; limparEnvio(); abrirPlacar(false); carregarPlacar();
-    }
-    player.hidden=false; document.body.classList.add("playing");
-    frame.focus();
-  }else{
-    const saindo=atual; atual=null;
-    player.hidden=true; document.body.classList.remove("playing");
-    frame.removeAttribute("src"); frame.src="about:blank"; /* para sons e cronômetros do jogo */
-    limparEnvio(); fecharCelebra();
-    document.title="Jogos Interativos";
-    if(saindo){ const b=document.getElementById("play-"+saindo); if(b) b.focus({preventScroll:false}) }
-  }
-}
-function fechar(){ if(location.hash.length>1) location.hash=""; else route() }
-document.getElementById("back").addEventListener("click",e=>{e.preventDefault();fechar()});
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("celebra").hidden){ fecharCelebra(); return } if(e.key==="Escape"&&atual&&!recent.open&&!document.fullscreenElement){ if(board.classList.contains("open")&&!matchMedia("(min-width:900px)").matches) abrirPlacar(false); else fechar() } });
-document.getElementById("full").addEventListener("click",()=>{
-  try{ const p=player.requestFullscreen?.(); if(p&&p.catch) p.catch(()=>{}) }catch(e){}
-});
-addEventListener("hashchange",route);
-route();
 </script>
+<script src="hub.js"></script>
 </body>
 </html>
