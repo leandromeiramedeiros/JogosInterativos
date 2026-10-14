@@ -27,7 +27,7 @@ window.QUIZ_CONFIG = {
       googleFonts: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Special+Elite&display=swap"
     },
     cores: {
-      parede: "#a99f86", parede2: "#8c836c",
+      parede: "#3a3f4a", parede2: "#2c3039",
       tv: "#cfc5aa", tv2: "#9d9378",
       tela: "#0e1b2d",
       destaque: "#5eb3ff",

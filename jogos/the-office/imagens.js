@@ -1,99 +1,103 @@
 window.QUIZ_IMAGENS = {
   "predio-dunder": {
-    arquivo: null,
+    arquivo: "img/predio-dunder.webp",
     legenda: "Fachada da empresa",
-    alt: "Fachada de um prédio comercial baixo de tijolos, com estacionamento à frente",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Pilot", episodio: "S01E01", cena: "fachada externa do prédio da Dunder Mifflin em Scranton, com o estacionamento, de dia" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Fachada de prédio comercial de vidro azul, com árvores na frente, sob céu claro",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Simon_facade.png"
   },
   "escritorio-geral": {
-    arquivo: null,
+    arquivo: "img/escritorio-geral.webp",
     legenda: "O escritório",
-    alt: "Escritório com mesas abertas, divisórias baixas e funcionários trabalhando",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Pilot", episodio: "S01E01", cena: "plano geral do escritório da Dunder Mifflin, com as mesas e os funcionários trabalhando" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Vista de cima de uma maquete 3D do escritório, com mesas, salas e corredores",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Office.jpg"
   },
   "mesa-recepcao": {
-    arquivo: null,
+    arquivo: "img/mesa-recepcao.webp",
     legenda: "Na recepção",
-    alt: "Balcão de recepção de um escritório, com telefone e papéis",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Pilot", episodio: "S01E01", cena: "mesa da recepção da Dunder Mifflin vista da entrada do escritório" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Balcão curvo de recepção com uma placa de Reception, tigela de vidro e canetas",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:ReceptionDesk.jpg"
   },
   "sala-gerente": {
-    arquivo: null,
+    arquivo: "img/sala-gerente.webp",
     legenda: "A sala do chefe",
-    alt: "Sala de gerente com mesa grande, cadeira giratória e prateleiras",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Health Care", episodio: "S01E03", cena: "sala do gerente regional (Michael) com a mesa, prateleiras e a porta de vidro" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Homem de terno brincando com tubos coloridos sobre a mesa, em uma sala com persiana",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Tube_city.png"
   },
   "sala-reuniao": {
-    arquivo: null,
+    arquivo: "img/sala-reuniao.webp",
     legenda: "Sala de reunião",
-    alt: "Sala de reunião com mesa comprida e cadeiras, quadro branco ao fundo",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Diversity Day", episodio: "S01E02", cena: "sala de reunião da Dunder Mifflin com os funcionários sentados à mesa" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Quatro homens de terno sentados em volta de uma mesa oval de reunião, com pastas e um laptop",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:The-office-search-committee_article_story_main.jpeg"
   },
   "copa": {
-    arquivo: null,
+    arquivo: "img/copa.webp",
     legenda: "Hora do café",
-    alt: "Copa de escritório com mesa, geladeira e máquina de café",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "The Dundies", episodio: "S02E01", cena: "copa/cozinha do escritório da Dunder Mifflin com funcionários conversando" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Copa com mesas redondas e máquinas de venda automática de lanches e bebidas",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:BreakRoom.jpg"
   },
   "armazem": {
-    arquivo: null,
-    legenda: "O armazém",
-    alt: "Galpão com prateleiras altas, caixas de papel e empilhadeira",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Basketball", episodio: "S01E05", cena: "armazém da Dunder Mifflin, com as prateleiras, paletes e os funcionários do armazém" },
-    autor: "", licenca: "", fonte: ""
+    arquivo: "img/armazem.webp",
+    legenda: "Nos fundos",
+    alt: "Casal se abraçando numa sala com prateleiras cheias de caixas",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Screenshot_20200908-091834_Netflix.jpg"
   },
   "estacionamento-noite": {
     arquivo: null,
     legenda: "Estacionamento à noite",
     alt: "Estacionamento de um prédio comercial à noite, com carros parados",
+    // Sem imagem: não achei na wiki um estacionamento à noite (as cenas noturnas são de rua em cidade grande).
     procurar: { wiki: "theoffice.fandom.com", pagina: "Casino Night", episodio: "S02E22", cena: "estacionamento do prédio à noite, com carros e iluminação artificial" },
     autor: "", licenca: "", fonte: ""
   },
   "restaurante-festa": {
-    arquivo: null,
+    arquivo: "img/restaurante-festa.webp",
     legenda: "Festa da firma",
-    alt: "Mesas de um restaurante informal ocupadas por colegas de trabalho em uma festa",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "The Dundies", episodio: "S02E01", cena: "funcionários reunidos em mesas de um restaurante durante a cerimônia dos Dundies" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Funcionário de camisa branca em primeiro plano, com copos vermelhos e colegas em mesas de restaurante ao fundo",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Screen_Shot_2019-03-13_at_11.53.29_PM.png"
   },
   "fazenda": {
     arquivo: null,
     legenda: "Zona rural",
     alt: "Casa de fazenda cercada por campos e celeiro",
+    // Sem imagem: os frames de Schrute Farms da wiki têm pessoas em primeiro plano ou têm menos de 640 px.
     procurar: { wiki: "theoffice.fandom.com", pagina: "The Farm", episodio: "S09E17", cena: "casa e campos da Schrute Farms, em plano aberto, sem pessoas em primeiro plano" },
     autor: "", licenca: "", fonte: ""
   },
   "rua-cidade": {
-    arquivo: null,
+    arquivo: "img/rua-cidade.webp",
     legenda: "Rua da cidade",
-    alt: "Rua de uma cidade pequena do nordeste dos Estados Unidos, com prédios baixos e carros",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Local Ad", episodio: "S04E09", cena: "plano de rua de Scranton, com prédios e carros, sem letreiros que identifiquem a cidade" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Rua residencial com casas baixas, árvores e carros estacionados sob um céu claro",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Operation_Phoenix.jpg"
   },
   "escola": {
-    arquivo: null,
+    arquivo: "img/escola.webp",
     legenda: "Corredor da escola",
-    alt: "Auditório ou corredor de uma escola de ensino médio com alunos",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Scott's Tots", episodio: "S06E12", cena: "auditório ou corredor da escola de ensino médio com os alunos" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Grupo de alunos de camiseta azul dançando em uma sala de aula, com carteiras ao fundo",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Scott%27sTots.jpg"
   },
   "carro-estrada": {
     arquivo: null,
-    legenda: "Na estrada",
-    alt: "Carro andando por uma estrada rural com árvores dos dois lados",
+    legenda: "Momento especial",
+    alt: "Paisagem vista de um carro",
+    // Sem imagem: não achei um carro na estrada com árvores; as ruas disponíveis já são usadas em "rua-cidade" e a foto de carro está borrada.
     procurar: { wiki: "theoffice.fandom.com", pagina: "Dunder Mifflin Infinity", episodio: "S04E03", cena: "carro na estrada, de dentro ou de fora, com paisagem de árvores" },
     autor: "", licenca: "", fonte: ""
   },
   "resmas-papel": {
     arquivo: null,
-    legenda: "Estoque de papel",
-    alt: "Pilhas de caixas e resmas de papel branco numa prateleira",
+    legenda: "Depósito",
+    alt: "Depósito com prateleiras e caixas empilhadas",
+    // Sem imagem: qualquer foto de resmas ou caixas de papel entrega a resposta ("Papel para escritório").
     procurar: { wiki: "theoffice.fandom.com", pagina: "Pilot", episodio: "S01E01", cena: "resmas e caixas de papel empilhadas no armazém ou numa mesa de escritório" },
     autor: "", licenca: "", fonte: ""
   },
@@ -101,56 +105,59 @@ window.QUIZ_IMAGENS = {
     arquivo: null,
     legenda: "Sessão de cinema",
     alt: "Pessoas sentadas diante de uma tela de projeção em uma sala de escritório",
+    // Sem imagem: o único frame de projeção da wiki tem texto grande na tela ("Intent is Irrelevant").
     procurar: { wiki: "theoffice.fandom.com", pagina: "Threat Level Midnight", episodio: "S07E17", cena: "funcionários assistindo a uma projeção na sala de reunião ou no escritório" },
     autor: "", licenca: "", fonte: ""
   },
   "computador-escritorio": {
-    arquivo: null,
+    arquivo: "img/computador-escritorio.webp",
     legenda: "Mesa de trabalho",
-    alt: "Mesa de escritório com computador de tela de tubo, telefone e papéis",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "WUPHF.com", episodio: "S07E09", cena: "mesa de escritório com o computador e o telefone, com um funcionário trabalhando" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Mesa de escritório com monitor, teclado, telefone e pilhas de papéis, sem ninguém sentado",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Creed%27sDesk.jpg"
   },
   "corredor-hospital": {
     arquivo: null,
     legenda: "Corredor de hospital",
     alt: "Corredor de hospital com macas e portas de quartos",
+    // Sem imagem: a wiki não tem corredor de hospital sem as personagens da resposta (Meredith) ou o bebê de The Delivery.
     procurar: { wiki: "theoffice.fandom.com", pagina: "The Delivery", episodio: "S06E17", cena: "corredor ou sala de espera do hospital, com personagens sentados" },
     autor: "", licenca: "", fonte: ""
   },
   "arte-escritorio": {
-    arquivo: null,
+    arquivo: "img/arte-escritorio.webp",
     legenda: "Desenhos na parede",
-    alt: "Desenhos e esboços a lápis fixados em uma parede de escritório",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Business School", episodio: "S03E17", cena: "desenhos ou pinturas de Pam expostos no escritório, ou Pam desenhando" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Mulher de suéter roxo diante de pinturas e desenhos expostos em uma parede clara",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:S3E16-Pam-Art-Show.png"
   },
   "jim-e-pam": {
     arquivo: null,
-    legenda: "Jim e Pam",
+    legenda: "Colegas de trabalho",
     alt: "Duas pessoas conversando com descontração numa mesa de escritório",
+    // Sem imagem: todo frame com Jim e Pam juntos mostra a pessoa da resposta de "Com quem Jim se casa?".
     procurar: { wiki: "theoffice.fandom.com", pagina: "Casino Night", episodio: "S02E22", cena: "Jim e Pam conversando na recepção ou na mesa, sem texto na imagem" },
     autor: "", licenca: "", fonte: ""
   },
   "mesa-dwight": {
-    arquivo: null,
+    arquivo: "img/mesa-dwight.webp",
     legenda: "Mesa do colega",
-    alt: "Mesa de escritório cheia de objetos e itens de papelaria, com pessoa sentada",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Pilot", episodio: "S01E01", cena: "a mesa de Dwight vista de frente, com seus objetos e o grampeador" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Mesa de escritório cheia de papéis, monitor, telefone e objetos pessoais, com um adesivo de rádio local",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Dwight%27sDesk.jpg"
   },
   "michael-discursando": {
-    arquivo: null,
+    arquivo: "img/michael-discursando.webp",
     legenda: "Reunião improvisada",
-    alt: "Homem de camisa e gravata falando em pé diante de colegas de escritório",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Diversity Day", episodio: "S01E02", cena: "Michael falando em pé diante dos funcionários no escritório, em plano médio" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Homem de terno em pé diante de colegas de escritório, em uma sala com porta de madeira",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:The_Dundies_-_Michael_announced_about_the_Dundies_award.png"
   },
   "contabilidade": {
-    arquivo: null,
+    arquivo: "img/contabilidade.webp",
     legenda: "Setor de contabilidade",
-    alt: "Três mesas lado a lado com calculadoras, fichários e pilhas de papel",
-    procurar: { wiki: "theoffice.fandom.com", pagina: "Pilot", episodio: "S01E01", cena: "mesas de Angela, Oscar e Kevin lado a lado, com calculadoras e papéis" },
-    autor: "", licenca: "", fonte: ""
+    alt: "Mesa de trabalho cheia de papéis, porta-retratos, telefone e monitor",
+    autor: "The Office Wiki (Fandom)", licenca: "Captura de cena",
+    fonte: "https://theoffice.fandom.com/wiki/File:Oscar%26Kevin%27sDesks.jpg"
   }
 };
