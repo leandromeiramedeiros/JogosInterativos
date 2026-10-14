@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jogos Interativos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Figtree:wght@400;600;800&family=DM+Mono:wght@500&family=Archivo+Black&family=Bungee&display=swap">
+<style>
+/* Layout: uma prateleira de cartuchos. Cada jogo é um cartucho com o rótulo pintado na identidade do próprio jogo; ao jogar, ele abre em tela cheia dentro da página. */
+:root{
+  --bg:#e6e9ef; --dot:rgba(30,36,58,.10); --ink:#1c2236; --muted:#5d6681;
+  --shell:#cdd2dd; --shell-hi:#e0e4ec; --ridge:rgba(28,34,54,.16); --line:#b4bbca;
+  --accent:#ff5a36; --accent-ink:#ffffff; --bar:#1c2236; --bar-ink:#f2f4f8;
+  --display:"Bowlby One SC","Arial Black",Impact,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"DM Mono",ui-monospace,Menlo,monospace;
+  --shadow:0 2px 0 rgba(255,255,255,.6) inset,0 -3px 0 rgba(28,34,54,.12) inset,0 18px 30px -22px rgba(28,34,54,.6);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#13161f; --dot:rgba(200,210,240,.07); --ink:#eef0f6; --muted:#9aa3bd;
+  --shell:#262b3a; --shell-hi:#30364a; --ridge:rgba(0,0,0,.35); --line:#3a4157;
+  --accent:#ff6b47; --accent-ink:#1b0904; --bar:#0b0d13; --bar-ink:#eef0f6;
+  --shadow:0 1px 0 rgba(255,255,255,.06) inset,0 -3px 0 rgba(0,0,0,.3) inset,0 18px 30px -18px rgba(0,0,0,.8);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13161f; --dot:rgba(200,210,240,.07); --ink:#eef0f6; --muted:#9aa3bd;
+  --shell:#262b3a; --shell-hi:#30364a; --ridge:rgba(0,0,0,.35); --line:#3a4157;
+  --accent:#ff6b47; --accent-ink:#1b0904; --bar:#0b0d13; --bar-ink:#eef0f6;
+  --shadow:0 1px 0 rgba(255,255,255,.06) inset,0 -3px 0 rgba(0,0,0,.3) inset,0 18px 30px -18px rgba(0,0,0,.8);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:radial-gradient(var(--dot) 1.2px,transparent 1.4px);background-size:22px 22px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+body.playing{overflow:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+
+/* Cabeçalho */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.brand{display:flex;flex-direction:column;gap:8px;min-width:0}
+.brand h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,7vw,60px);line-height:.92;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.brand h1 span{color:var(--accent)}
+.brand p{margin:0;color:var(--muted);max-width:52ch}
+.count{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;align-items:center}
+.count b{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 8px;border-radius:99px;background:var(--ink);color:var(--bg);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* Prateleira */
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:24px;padding:0;margin:0;list-style:none}
+
+.cart{position:relative;display:flex;flex-direction:column;gap:14px;background:linear-gradient(180deg,var(--shell-hi),var(--shell) 40%);
+  border-radius:16px 16px 10px 10px;padding:30px 16px 18px;box-shadow:var(--shadow);transition:transform .18s ease}
+.cart::before{content:"";position:absolute;top:9px;left:22%;right:22%;height:11px;border-radius:3px;
+  background:repeating-linear-gradient(90deg,var(--ridge) 0 3px,transparent 3px 8px)}
+.cart:hover{transform:translateY(-4px)}
+.cart:has(.play:focus-visible){transform:translateY(-4px)}
+
+.label{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:8px;overflow:hidden;box-shadow:0 0 0 3px rgba(0,0,0,.18),inset 0 0 0 1px rgba(255,255,255,.2)}
+.label .mark{position:absolute;left:12px;bottom:10px;right:12px;line-height:.95;z-index:2}
+
+.info{display:flex;flex-direction:column;gap:6px;min-width:0}
+.info h2{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1;margin:0}
+.info p{margin:0;color:var(--muted);font-size:15px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0;padding:0;list-style:none}
+.tags li{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink)}
+
+.actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto}
+.play{display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:var(--accent);color:var(--accent-ink);font-weight:800;
+  border-radius:10px;padding:11px 18px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.play:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.play svg{width:14px;height:14px}
+.orig{font-size:13px;color:var(--muted);text-underline-offset:3px}
+.orig:hover{color:var(--ink)}
+
+/* Slot vazio */
+.slot{border:2px dashed var(--line);border-radius:16px 16px 10px 10px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px;padding:24px;color:var(--muted);min-height:220px}
+.slot b{font-family:var(--display);font-weight:400;font-size:20px;color:var(--ink);opacity:.55}
+.slot p{margin:0;font-size:14px;max-width:30ch}
+
+.foot{font-size:13px;color:var(--muted);margin:0}
+
+/* ---------- Arte: Bandeiras do Mundo ---------- */
+.art-flags{background:linear-gradient(180deg,#bcd9ea,#e8f2f7);
+  background-image:linear-gradient(rgba(20,33,61,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(20,33,61,.09) 1px,transparent 1px),linear-gradient(180deg,#bcd9ea,#e8f2f7);
+  background-size:28px 28px,28px 28px,100% 100%}
+.art-flags .coord{position:absolute;top:10px;left:12px;font-family:"JetBrains Mono",var(--mono);font-size:10px;letter-spacing:.06em;color:#5b6b82}
+.art-flags .flags{position:absolute;inset:18% 10% 34% 10%;display:flex;justify-content:center;align-items:center}
+.art-flags .flags svg{width:38%;max-width:120px;aspect-ratio:3/2;border-radius:4px;box-shadow:0 0 0 1px rgba(20,33,61,.2),0 10px 18px -8px rgba(20,33,61,.5);flex:none}
+.art-flags .flags svg:nth-child(1){transform:rotate(-9deg) translate(18%,6%)}
+.art-flags .flags svg:nth-child(2){transform:translateY(-8%);z-index:1;width:44%}
+.art-flags .flags svg:nth-child(3){transform:rotate(8deg) translate(-18%,8%)}
+.art-flags .mark{font-family:"Archivo Black","Arial Black",sans-serif;font-size:clamp(22px,2.6vw,28px);color:#14213d}
+.art-flags .mark span{color:#ff6b2c}
+
+/* ---------- Arte: Quiz da Vila ---------- */
+.art-vila{background:#123a3c;background-image:repeating-linear-gradient(90deg,transparent 0 22px,rgba(0,0,0,.12) 22px 24px),radial-gradient(ellipse at top,rgba(242,177,52,.22),transparent 65%)}
+.art-vila .tv{position:absolute;left:50%;top:12%;width:46%;aspect-ratio:5/4;transform:translateX(-50%) rotate(-3deg);background:linear-gradient(160deg,#5a3a22,#3f2816);border-radius:14px;padding:7%;box-shadow:0 8px 0 -3px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.15)}
+.art-vila .tv::after{content:"";position:absolute;left:18%;right:18%;bottom:-8px;height:8px;background:repeating-linear-gradient(90deg,#3f2816 0 16%,transparent 16% 84%,#3f2816 84%)}
+.art-vila .screen{height:100%;border-radius:12px/16px;background:#0f1d1c;display:grid;place-items:center;position:relative;overflow:hidden;box-shadow:inset 0 0 18px rgba(0,0,0,.9)}
+.art-vila .screen::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px)}
+.art-vila .screen b{font-family:"Bungee",Impact,sans-serif;font-weight:400;font-size:clamp(26px,3.4vw,40px);color:#f2b134;text-shadow:2px 2px 0 #e4572e;line-height:1}
+.art-vila .mark{font-family:"Bungee",Impact,sans-serif;font-size:clamp(20px,2.4vw,26px);color:#f2b134;text-shadow:2px 2px 0 #e4572e}
+
+/* ---------- Jogador ---------- */
+.player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}
+.pbar{display:flex;align-items:center;gap:12px;color:var(--bar-ink);
+  padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:10px;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.pbar h2{font-family:var(--display);font-weight:400;font-size:18px;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbtn{display:inline-flex;align-items:center;gap:8px;font:800 14px var(--body);color:var(--bar-ink);background:transparent;border:2px solid rgba(255,255,255,.22);
+  border-radius:9px;padding:7px 12px;text-decoration:none;cursor:pointer;white-space:nowrap}
+.pbtn:hover{border-color:var(--accent)}
+.pbtn.back{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pbtn svg{width:14px;height:14px}
+.player iframe{flex:1;width:100%;border:0;background:#fff;padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (max-width:520px){.pbtn .wide{display:none}}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="hub">
+  <header class="top">
+    <div class="brand">
+      <h1>Jogos <span>Interativos</span></h1>
+      <p>Escolha um cartucho e jogue aqui mesmo, sem sair da página. Os recordes de cada jogo ficam salvos no seu navegador.</p>
+    </div>
+    <div class="count"><b id="n">2</b> jogos na prateleira</div>
+  </header>
+
+  <ul class="shelf" id="shelf" aria-label="Jogos"></ul>
+
+  <p class="foot">Cada jogo abre por cima da prateleira. Toque em “Todos os jogos” para voltar.</p>
+</div>
+
+<section class="player" id="player" hidden aria-labelledby="ptitle">
+  <div class="pbar">
+    <a class="pbtn back" id="back" href="#"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Todos os jogos</a>
+    <h2 id="ptitle"></h2>
+    <button class="pbtn" id="full" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="wide">Tela cheia</span></button>
+  </div>
+  <iframe id="frame" title="Jogo"></iframe>
+</section>
+
+<script>
+/* Para adicionar um jogo: coloque o arquivo HTML em jogos/ e acrescente um item aqui. */
+const JOGOS=[
+  {
+    id:"bandeiras-do-mundo",
+    titulo:"Bandeiras do Mundo",
+    arquivo:"jogos/bandeiras-do-mundo.html",
+    original:"https://claude.ai/artifact/3x5vkWsQbYTZgF5EX9KBYi",
+    resumo:"Uma bandeira aparece e você digita o nome do país antes que o tempo acabe. Pequenos erros de grafia contam como acerto.",
+    tags:["Geografia","4 níveis","10 rodadas"],
+    arte:`<div class="label art-flags">
+      <span class="coord">00°00′N · 00°00′E</span>
+      <div class="flags" aria-hidden="true">
+        <svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r=".6" fill="#bc002d"/></svg>
+        <svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><rect width="1" height="2" fill="#009246"/><rect x="2" width="1" height="2" fill="#ce2b37"/></svg>
+        <svg viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect y="1" width="3" height="1" fill="#ffd700"/></svg>
+      </div>
+      <div class="mark" aria-hidden="true">Bandeiras<br>do <span>Mundo</span></div>
+    </div>`
+  },
+  {
+    id:"quiz-da-vila",
+    titulo:"Quiz da Vila",
+    arquivo:"jogos/quiz-da-vila.html",
+    original:"https://claude.ai/artifact/BM2QmQ9NKdhkypwmvsySur",
+    resumo:"Perguntas sobre o seriado Chaves dentro de uma TV de tubo. Três vidas, combos de acertos e ajudas de 50/50, pular e +10s.",
+    tags:["Seriado Chaves","3 níveis","3 vidas"],
+    arte:`<div class="label art-vila">
+      <div class="tv" aria-hidden="true"><div class="screen"><b>?</b></div></div>
+      <div class="mark" aria-hidden="true">Quiz da Vila</div>
+    </div>`
+  }
+];
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shelf=document.getElementById("shelf");
+const player=document.getElementById("player"), frame=document.getElementById("frame"), ptitle=document.getElementById("ptitle");
+document.getElementById("n").textContent=JOGOS.length;
+
+shelf.innerHTML=JOGOS.map(j=>`
+  <li class="cart">
+    ${j.arte}
+    <div class="info">
+      <h2>${esc(j.titulo)}</h2>
+      <p>${esc(j.resumo)}</p>
+      <ul class="tags">${j.tags.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+    </div>
+    <div class="actions">
+      <a class="play" href="#${j.id}" id="play-${j.id}"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>Jogar</a>
+      <a class="orig" href="${j.original}" target="_blank" rel="noopener">Abrir original ↗</a>
+    </div>
+  </li>`).join("")+`
+  <li class="slot" aria-label="Espaço para o próximo jogo">
+    <b>Slot livre</b>
+    <p>O próximo jogo entra aqui.</p>
+  </li>`;
+
+let atual=null;
+function route(){
+  const id=decodeURIComponent(location.hash.slice(1));
+  const j=JOGOS.find(x=>x.id===id);
+  if(j){
+    if(atual!==j.id){ frame.src=j.arquivo; frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos" }
+    atual=j.id; player.hidden=false; document.body.classList.add("playing");
+    frame.focus();
+  }else{
+    const saindo=atual; atual=null;
+    player.hidden=true; document.body.classList.remove("playing");
+    frame.removeAttribute("src"); frame.src="about:blank"; /* para sons e cronômetros do jogo */
+    document.title="Jogos Interativos";
+    if(saindo){ const b=document.getElementById("play-"+saindo); if(b) b.focus({preventScroll:false}) }
+  }
+}
+function fechar(){ if(location.hash.length>1) location.hash=""; else route() }
+document.getElementById("back").addEventListener("click",e=>{e.preventDefault();fechar()});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&atual&&!document.fullscreenElement) fechar() });
+document.getElementById("full").addEventListener("click",()=>{
+  try{ const p=player.requestFullscreen?.(); if(p&&p.catch) p.catch(()=>{}) }catch(e){}
+});
+addEventListener("hashchange",route);
+route();
+</script>
+</body>
+</html>

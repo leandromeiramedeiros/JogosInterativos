@@ -1,0 +1,382 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Quiz da Vila</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: uma TV de tubo anos 70 no centro; tudo acontece "dentro da tela". Visual único (escuro), escolhido de propósito. */
+:root{
+  --wall:#123a3c;      /* parede verde-azulada da vila */
+  --wall2:#0c2a2b;
+  --tv:#5a3a22;        /* gabinete de madeira */
+  --tv2:#3f2816;
+  --screen:#0f1d1c;
+  --mustard:#f2b134;
+  --tomato:#e4572e;
+  --mint:#5fd39b;
+  --paper:#fdf3dc;
+  --muted:#a8c4bf;
+  --display:"Bungee",Impact,"Arial Black",sans-serif;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--wall);color:var(--paper);font-family:var(--body);font-size:16px;
+  background-image:repeating-linear-gradient(90deg,transparent 0 46px,rgba(0,0,0,.08) 46px 48px),radial-gradient(ellipse at top,rgba(242,177,52,.12),transparent 60%);
+  padding-inline:16px;padding-block:20px 32px;overflow-x:hidden}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:var(--display);font-size:clamp(22px,5vw,34px);letter-spacing:.02em;color:var(--mustard);text-shadow:3px 3px 0 var(--tomato);line-height:1}
+.logo small{display:block;font-family:var(--body);font-weight:800;font-size:12px;letter-spacing:.18em;color:var(--muted);text-shadow:none;text-transform:uppercase;margin-top:6px}
+.iconbtn{background:var(--wall2);border:2px solid rgba(253,243,220,.25);color:var(--paper);border-radius:10px;padding:8px 12px;font:700 14px var(--body);cursor:pointer}
+.iconbtn:focus-visible,button:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+
+/* TV */
+.tv{background:linear-gradient(160deg,var(--tv),var(--tv2));border-radius:28px;padding:18px;box-shadow:0 18px 0 -6px #000a,inset 0 2px 0 rgba(255,255,255,.15);position:relative}
+.tv::after{content:"";position:absolute;left:12%;right:12%;bottom:-14px;height:14px;background:repeating-linear-gradient(90deg,var(--tv2) 0 18%,transparent 18% 82%,var(--tv2) 82%);border-radius:0 0 6px 6px}
+.screen{background:var(--screen);border-radius:22px/30px;padding:clamp(16px,4vw,28px);min-height:440px;position:relative;overflow:hidden;
+  box-shadow:inset 0 0 60px rgba(0,0,0,.8),inset 0 0 0 4px #000}
+.screen::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);z-index:3}
+.view{position:relative;z-index:2;display:flex;flex-direction:column;gap:16px}
+
+/* Início */
+.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,6vw,44px);line-height:1.05;margin:0;text-wrap:balance}
+.hero h1 span{color:var(--mustard)}
+.hero p{margin:0;color:var(--muted);max-width:52ch;line-height:1.5}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:560px){.levels{grid-template-columns:1fr}}
+.level{all:unset;cursor:pointer;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px;border:3px solid transparent;transition:transform .15s}
+.level:hover{transform:translateY(-3px)}
+.level:focus-visible{outline:3px solid var(--paper);outline-offset:3px}
+.level b{font-family:var(--display);font-weight:400;font-size:20px}
+.level span{font-size:13px;line-height:1.4;opacity:.9}
+.level i{font-style:normal;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.lv-normal{background:var(--mint);color:#0b2a1d}
+.lv-dificil{background:var(--mustard);color:#3a2500}
+.lv-impossivel{background:var(--tomato);color:#fff6ef}
+.rules{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted)}
+.rules span{background:rgba(255,255,255,.06);border-radius:999px;padding:6px 10px}
+
+/* HUD */
+.hud{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-weight:800;font-variant-numeric:tabular-nums}
+.pill{background:rgba(255,255,255,.08);border-radius:999px;padding:6px 12px;font-size:14px}
+.lives{letter-spacing:2px;font-size:18px}
+.combo{color:var(--mustard)}
+.timer{height:10px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.timer div{height:100%;width:100%;background:var(--mint);transform-origin:left;transition:background .3s}
+.timer.warn div{background:var(--tomato)}
+
+.scene{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+@media (max-width:480px){.scene{grid-template-columns:1fr}}
+.pic{width:120px;height:96px;border-radius:14px;display:grid;place-items:center;font-size:52px;position:relative;
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.25),transparent 60%),var(--c,#2b5d5f);box-shadow:inset 0 -6px 0 rgba(0,0,0,.25)}
+.pic small{position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--paper);color:#2a1a0e;font:800 10px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:99px}
+.qnum{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mustard)}
+.question{font-family:var(--body);font-weight:800;font-size:clamp(19px,3.6vw,24px);line-height:1.3;margin:4px 0 0;text-wrap:balance}
+
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.answers{grid-template-columns:1fr}}
+.ans{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--paper);color:#2a1a0e;border-radius:12px;padding:12px 14px;font-weight:800;line-height:1.3;
+  box-shadow:0 4px 0 #b9a77f;transition:transform .08s,background .2s,opacity .2s;min-height:52px}
+.ans:hover{transform:translateY(-2px)}
+.ans:active{transform:translateY(2px);box-shadow:0 2px 0 #b9a77f}
+.ans:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+.ans .k{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#2a1a0e;color:var(--paper);font-family:var(--display);font-size:13px}
+.ans.ok{background:var(--mint);box-shadow:0 4px 0 #2f8a5f;animation:pop .35s}
+.ans.bad{background:var(--tomato);color:#fff;box-shadow:0 4px 0 #8f2d14;animation:shake .4s}
+.ans.gone{opacity:.18;pointer-events:none}
+.ans[disabled]{cursor:default}
+@keyframes pop{50%{transform:scale(1.05)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.tool{all:unset;cursor:pointer;border:2px dashed rgba(253,243,220,.4);border-radius:10px;padding:7px 12px;font-weight:800;font-size:13px}
+.tool:hover{border-color:var(--mustard);color:var(--mustard)}
+.tool[disabled]{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+.tool:focus-visible{outline:3px solid var(--mustard)}
+
+.feedback{border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;line-height:1.45}
+.feedback.ok{background:rgba(95,211,155,.14);border:2px solid var(--mint)}
+.feedback.bad{background:rgba(228,87,46,.14);border:2px solid var(--tomato)}
+.feedback b{font-family:var(--display);font-weight:400;font-size:18px}
+.feedback .pts{color:var(--mustard);font-weight:800}
+.next{all:unset;cursor:pointer;align-self:flex-end;background:var(--mustard);color:#3a2500;font-family:var(--display);font-size:16px;padding:12px 20px;border-radius:12px;box-shadow:0 4px 0 #a2700f}
+.next:focus-visible{outline:3px solid var(--paper);outline-offset:2px}
+
+/* Fim */
+.end{text-align:center;align-items:center}
+.end h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,6vw,40px);margin:0;color:var(--mustard)}
+.big{font-family:var(--display);font-size:clamp(44px,12vw,72px);line-height:1;font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:460px}
+.stats div{background:rgba(255,255,255,.07);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.stats b{font-size:22px;font-variant-numeric:tabular-nums}
+.stats span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.rank{font-weight:800;font-size:18px;max-width:40ch}
+.newrec{display:inline-block;background:var(--tomato);color:#fff;font-weight:800;border-radius:99px;padding:4px 12px;font-size:13px;letter-spacing:.06em;animation:pop .6s 2}
+.endbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.ghost{all:unset;cursor:pointer;border:2px solid var(--paper);border-radius:12px;padding:10px 18px;font-weight:800}
+.ghost:focus-visible{outline:3px solid var(--mustard)}
+.review{width:100%;text-align:left;display:flex;flex-direction:column;gap:6px;font-size:14px;max-height:220px;overflow:auto;padding-right:4px}
+.review div{background:rgba(255,255,255,.05);border-radius:10px;padding:8px 10px;line-height:1.35}
+.review em{font-style:normal;font-weight:800}
+.note{font-size:12px;color:var(--muted);text-align:center;margin:0}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+.flash{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0}
+.flash.ok{animation:fl .5s;background:radial-gradient(circle,rgba(95,211,155,.35),transparent 70%)}
+.flash.bad{animation:fl .5s;background:radial-gradient(circle,rgba(228,87,46,.4),transparent 70%)}
+@keyframes fl{30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="logo">Quiz da Vila<small>Perguntas sobre o seriado Chaves</small></div>
+    <button class="iconbtn" id="mute" aria-pressed="false">🔊 Som</button>
+  </header>
+  <div class="tv"><div class="screen"><div class="flash" id="flash"></div><div class="view" id="view"></div></div></div>
+  <p class="note">Quiz de fãs, sem vínculo oficial. As "cenas" são ilustrações simbólicas.</p>
+</div>
+<canvas id="fx"></canvas>
+
+<script>
+/* ---------------- PERGUNTAS ---------------- */
+// [emoji, legenda da cena, cor, pergunta, resposta certa, [erradas], curiosidade]
+const BANK={
+normal:[
+["🛢️","O barril","#7a4b2a","Onde o Chaves costuma se esconder na vila?","Dentro do barril",["Na caixa d'água","Debaixo da escada","No quarto do Seu Madruga"],"O barril é o refúgio do Chaves, embora ele diga que mora na casa 8."],
+["🥪","Hora do lanche","#b5652b","Qual é a comida preferida do Chaves?","Sanduíche de presunto",["Churros","Pão com mortadela","Torta de frango"],"O sanduíche de presunto é o sonho de consumo do Chaves em vários episódios."],
+["💰","Dia do aluguel","#3d6b45","Quem é o dono da vila que vive cobrando o aluguel?","Senhor Barriga",["Professor Girafales","Jaiminho","Seu Madruga"],"E quase sempre leva uma pancada do Chaves assim que chega."],
+["🎀","Casa 72","#a8434f","Quem é a filha do Seu Madruga?","Chiquinha",["Pópis","Paty","Glória"],"Chiquinha mora com o pai na casa 72."],
+["😅","Confusão no pátio","#5b4a8a","Qual é o bordão do Chaves depois de aprontar?","\"Foi sem querer querendo!\"",["\"Cale-se, cale-se, cale-se!\"","\"Pois é, pois é, pois é!\"","\"Gentalha, gentalha!\""],"\"Cale-se\" é do Quico, \"Pois é\" é da Chiquinha e \"Gentalha\" é da Dona Florinda."],
+["💎","Mãe coruja","#2f6f8f","Como Dona Florinda chama o filho Quico?","Tesouro",["Fofinho","Meu rei","Docinho"],"\"Vamos, tesouro, não se misture com essa gentalha!\""],
+["🧹","Casa 71","#4b3a5e","Qual é o apelido de Dona Clotilde?","Bruxa do 71",["Bruxa da Vila","Senhora do 14","Dona Vassoura"],"Ela é apaixonada pelo Seu Madruga."],
+["📚","Na escola","#6b5a2a","Quem é o professor da turma do Chaves?","Professor Girafales",["Professor Jaiminho","Professor Barriga","Professor Godinez"],"O Chaves o chama de \"Mestre Linguiça\"."],
+["🍩","Pai e filho","#8a5a2a","Quem é o filho do Senhor Barriga?","Nhonho",["Quico","Godinez","Jaiminho"],"Senhor Barriga e Nhonho eram interpretados pelo mesmo ator."],
+["🚲","Correio","#2f5f7a","Quem é o carteiro que aparece na vila?","Jaiminho",["Godinez","Seu Madruga","Nhonho"],"Jaiminho chegou nas temporadas finais da série."],
+["🌵","Origem","#3f7a4a","Em que país o seriado foi criado?","México",["Argentina","Espanha","Colômbia"],"Chaves foi produzido pela Televisa, na Cidade do México."],
+["📺","Na TV brasileira","#3a4f8f","Qual emissora ficou famosa por exibir Chaves no Brasil?","SBT",["Globo","Band","Record"],"O SBT exibe a série desde os anos 80."],
+["🧾","O calote","#6b3a2a","Quantos meses de aluguel o Seu Madruga deve ao Senhor Barriga?","14 meses",["6 meses","10 meses","24 meses"],"Os famosos 14 meses de aluguel atrasado."],
+["🏖️","Férias","#1f7a8a","Para qual praia a turma viaja em um dos episódios mais famosos?","Acapulco",["Cancún","Copacabana","Puerto Vallarta"],"A viagem a Acapulco é um dos episódios mais lembrados pelos fãs."],
+["💐","Visita","#8a3f6b","O que o Professor Girafales costuma levar para Dona Florinda?","Um buquê de flores",["Uma caixa de chocolates","Churros","Uma garrafa de café"],"E ela responde: \"Não gostaria de entrar para tomar uma xícara de café?\""],
+["😭","Choro","#4a5a7a","Qual é o choro característico do Chaves?","\"Pi-pi-pi-pi-pi\"",["\"Buá-buá-buá\"","\"Ai-ai-ai-ai\"","\"Snif-snif-snif\""],"O choro agudo virou marca registrada do personagem."]
+],
+dificil:[
+["🎬","Bastidores","#5a3a7a","Quem criou e interpretou o Chaves?","Roberto Gómez Bolaños",["Carlos Villagrán","Ramón Valdés","Rubén Aguirre"],"Ele também criou o Chapolin Colorado."],
+["✍️","O autor","#3a5a7a","Qual era o apelido do criador da série?","Chespirito",["Cantinflas","Tin Tan","El Flaco"],"\"Chespirito\" vem de \"Shakespearito\", um pequeno Shakespeare."],
+["🇲🇽","Título original","#7a3a3a","Qual é o nome original da série em espanhol?","El Chavo del Ocho",["El Niño del Barril","El Chavo de la Vecindad","Los Vecinos del Ocho"],"\"Chavo\" é gíria mexicana para garoto."],
+["🏠","Endereços","#4b3a5e","Qual é o número da casa da Dona Clotilde?","71",["72","14","8"],"Por isso ela é a \"Bruxa do 71\"."],
+["🗺️","Terra natal","#6b5a2a","De que cidade o carteiro Jaiminho vive falando?","Tangamandápio",["Guadalajara","Monterrey","Acapulco"],"Tangamandápio existe de verdade, no estado de Michoacán."],
+["😴","Lema","#2f5f7a","O que o Jaiminho sempre quer evitar?","A fadiga",["A chuva","O Senhor Barriga","Os cachorros"],"\"É que eu quero evitar a fadiga!\""],
+["🎭","Elenco","#3f6b4a","Quem interpretou o Seu Madruga?","Ramón Valdés",["Édgar Vivar","Carlos Villagrán","Raúl Padilla"],"Ramón Valdés é um dos atores mais queridos do elenco."],
+["👨‍👦","Dois papéis","#8a5a2a","Qual ator interpretou o Senhor Barriga e também o Nhonho?","Édgar Vivar",["Rubén Aguirre","Raúl Padilla","Horacio Gómez"],"Pai e filho com o mesmo rosto."],
+["🧸","A prima","#a8434f","Qual prima do Quico anda com o boneco Serapião?","Pópis",["Paty","Glória","Chiquinha"],"Pópis era interpretada por Florinda Meza, a mesma atriz da Dona Florinda."],
+["🎙️","Dublagem","#3a4f8f","Quem foi a voz clássica do Chaves na dublagem brasileira?","Marcelo Gastaldi",["Nelson Machado","Carlos Seidl","Osmiro Campos"],"Gastaldi também dublou o Chapolin."],
+["📅","Chegada ao Brasil","#1f7a8a","Em que ano Chaves estreou no SBT?","1984",["1979","1990","1996"],"A estreia no SBT foi em agosto de 1984."],
+["🎙️","Dublagem","#5b4a8a","Quem dublou o Quico no Brasil?","Nelson Machado",["Marcelo Gastaldi","Carlos Seidl","Osmiro Campos"],"Nelson Machado deu voz ao Quico na dublagem clássica."],
+["🗣️","Em espanhol","#a8434f","Como a Chiquinha se chama na versão original?","La Chilindrina",["La Chimoltrufia","La Pecosa","La Chiquis"],"La Chimoltrufia é outra personagem de Bolaños, de outra série."],
+["🎂","Aniversário","#6b3a2a","Quantos anos o Chaves diz ter?","8 anos",["6 anos","10 anos","12 anos"],"O personagem é uma criança de 8 anos."],
+["⚓","Família do Quico","#2f6f8f","Qual era a profissão do falecido pai do Quico?","Marinheiro",["Professor","Carteiro","Sapateiro"],"Dona Florinda vive lembrando do marido que se perdeu no mar."]
+],
+impossivel:[
+["📼","Primeira aparição","#5a3a7a","Em que ano o Chaves apareceu pela primeira vez, como quadro do programa Chespirito?","1971",["1968","1975","1979"],"Em 1971 era um quadro; a série própria veio em 1973."],
+["🦒","Nome completo","#6b5a2a","Qual é o primeiro nome do Professor Girafales?","Inocêncio",["Bartolomeu","Rubén","Germano"],"Inocêncio Girafales. Rubén era o nome do ator, Rubén Aguirre."],
+["💼","Nome completo","#3d6b45","Qual é o nome completo do Senhor Barriga?","Zenón Barriga y Pesado",["Pedro Barriga y Gordo","Zenón Barriga y Grande","Édgar Barriga y Vivar"],"\"Barriga y Pesado\" é um trocadilho com barriga pesada."],
+["🧙","Elenco","#4b3a5e","Qual atriz interpretou a Bruxa do 71?","Angelines Fernández",["Florinda Meza","María Antonieta de las Nieves","María Luisa Alcalá"],"Angelines Fernández era espanhola de nascimento."],
+["🚲","Elenco","#2f5f7a","Qual ator interpretou o carteiro Jaiminho?","Raúl \"Chato\" Padilla",["Horacio Gómez","Rubén Aguirre","Ramón Valdés"],"Raúl Padilla entrou na série nas temporadas finais."],
+["🚪","Saída do elenco","#a8434f","Em que ano Carlos Villagrán, o Quico, deixou a série?","1978",["1975","1980","1983"],"Depois ele levou o personagem para outros projetos."],
+["🔢","Endereços","#7a4b2a","Qual é o número da casa do Seu Madruga e da Chiquinha?","72",["71","14","8"],"Casa 72, ao lado da Bruxa do 71."],
+["🔢","Endereços","#2f6f8f","Qual é o número da casa da Dona Florinda e do Quico?","14",["72","71","8"],"A casa 14 fica no pátio principal da vila."],
+["🎙️","Dublagem","#3a4f8f","Quem dublou o Seu Madruga no Brasil?","Carlos Seidl",["Marcelo Gastaldi","Nelson Machado","Osmiro Campos"],"Carlos Seidl é a voz clássica do Seu Madruga."],
+["🎙️","Dublagem","#3d6b45","Quem dublou o Senhor Barriga no Brasil?","Osmiro Campos",["Carlos Seidl","Marcelo Gastaldi","Nelson Machado"],"Osmiro Campos fez a voz clássica do Senhor Barriga."],
+["📜","Sobrenome","#8a3f6b","Qual é o sobrenome de casada da Dona Florinda?","Matalascallando",["Corcuera","Villagrán","Barriga"],"Corcuera é o sobrenome de solteira dela."],
+["🎭","Elenco","#7a3a3a","Qual atriz interpretou a Chiquinha?","María Antonieta de las Nieves",["Florinda Meza","Angelines Fernández","María Luisa Alcalá"],"Ela interpretou a Chiquinha por décadas."],
+["🗣️","Em espanhol","#5b4a8a","Como o Seu Madruga se chama na versão original?","Don Ramón",["Don Madruga","Don Ramiro","Don Rodrigo"],"O personagem leva o primeiro nome do ator, Ramón Valdés."],
+["🗣️","Em espanhol","#8a5a2a","Como o Nhonho se chama na versão original?","Ñoño",["Ñoñito","Gordito","Barriguita"],"\"Ñoño\" é algo como bobinho em espanhol."],
+["💍","Bastidores","#6b3a2a","Qual atriz do elenco se casou com Roberto Gómez Bolaños?","Florinda Meza",["María Antonieta de las Nieves","Angelines Fernández","Edith Márquez"],"Florinda Meza interpretava a Dona Florinda e a Pópis."]
+]};
+const LEVELS={
+ normal:{name:"Normal",time:20,mult:1},
+ dificil:{name:"Difícil",time:15,mult:1.5},
+ impossivel:{name:"Impossível",time:10,mult:2}
+};
+const PER_GAME=10, LIVES=3;
+
+/* ---------------- SOM (sintetizado) ---------------- */
+let AC=null, muted=false;
+try{muted=localStorage.getItem("qv-mute")==="1"}catch(e){}
+function ac(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){} } if(AC&&AC.state==="suspended")AC.resume(); return AC }
+function tone(f,start,dur,type="square",vol=.12,slideTo){
+  const a=ac(); if(!a||muted) return;
+  const o=a.createOscillator(), g=a.createGain(), t=a.currentTime+start;
+  o.type=type; o.frequency.setValueAtTime(f,t); if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo,t+dur);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t+dur+.02);
+}
+const SFX={
+  ok(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.07,.18,"square",.1))},
+  bad(){tone(180,0,.45,"sawtooth",.14,90);tone(120,.05,.45,"square",.08,70)},
+  tick(){tone(1200,0,.05,"sine",.08)},
+  click(){tone(660,0,.05,"triangle",.08)},
+  power(){tone(300,0,.25,"triangle",.1,900)},
+  win(){[523,523,523,659,784,659,784,1047].forEach((f,i)=>tone(f,i*.12,.2,"square",.1));tone(1047,1,.6,"triangle",.1)},
+  lose(){[392,370,349].forEach((f,i)=>tone(f,i*.42,.38,"sawtooth",.1));tone(330,1.26,1.1,"sawtooth",.1,250)}
+};
+const muteBtn=document.getElementById("mute");
+function paintMute(){muteBtn.textContent=muted?"🔇 Sem som":"🔊 Som";muteBtn.setAttribute("aria-pressed",muted)}
+muteBtn.onclick=()=>{muted=!muted;try{localStorage.setItem("qv-mute",muted?"1":"0")}catch(e){};paintMute();if(!muted)SFX.click()};
+paintMute();
+
+/* ---------------- CONFETE ---------------- */
+const cv=document.getElementById("fx"), cx=cv.getContext("2d"); let parts=[], raf=0;
+function confetti(n=160){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  cv.width=innerWidth; cv.height=innerHeight;
+  const cols=["#f2b134","#e4572e","#5fd39b","#fdf3dc","#5aa9e6"];
+  for(let i=0;i<n;i++) parts.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*4,r:Math.random()*6.28,s:5+Math.random()*6,c:cols[i%5]});
+  cancelAnimationFrame(raf); (function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.y<cv.height+20);
+    parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=.1;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});
+    if(parts.length) raf=requestAnimationFrame(loop)})();
+}
+
+/* ---------------- JOGO ---------------- */
+const view=document.getElementById("view"), flash=document.getElementById("flash");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let G=null, timerId=null;
+function best(lv){try{return +localStorage.getItem("qv-best-"+lv)||0}catch(e){return 0}}
+function setBest(lv,v){try{localStorage.setItem("qv-best-"+lv,v)}catch(e){}}
+
+function home(){
+  clearInterval(timerId); G=null;
+  view.innerHTML=`
+  <div class="hero" style="display:flex;flex-direction:column;gap:10px">
+    <h1>Você conhece mesmo <span>a vila</span>?</h1>
+    <p>Dez perguntas por partida, sorteadas e embaralhadas a cada jogo. Responda rápido para ganhar mais pontos e emende acertos para multiplicar o placar.</p>
+  </div>
+  <div class="levels">
+    ${Object.entries(LEVELS).map(([k,l])=>`
+      <button class="level lv-${k}" data-lv="${k}">
+        <i>${l.time}s por pergunta · pontos ×${l.mult}</i>
+        <b>${l.name}</b>
+        <span>${k==="normal"?"Personagens, bordões e a rotina da vila.":k==="dificil"?"Elenco, dublagem e detalhes da série.":"Só para quem sabe o sobrenome da Dona Florinda."}</span>
+        <i>Recorde: ${best(k)} pts</i>
+      </button>`).join("")}
+  </div>
+  <div class="rules"><span>❤️ 3 vidas</span><span>🔥 Combo ×2 com 3 acertos seguidos, ×3 com 5</span><span>✂️ 50/50 · ⏭️ Pular · ⏱️ +10s (1 de cada)</span><span>⌨️ Teclas 1–4</span></div>`;
+  view.querySelectorAll(".level").forEach(b=>b.onclick=()=>{SFX.power();start(b.dataset.lv)});
+}
+
+function start(lv){
+  const qs=shuffle(BANK[lv]).slice(0,PER_GAME).map(q=>({img:q[0],cap:q[1],col:q[2],text:q[3],right:q[4],opts:shuffle([q[4],...q[5]]),fact:q[6]}));
+  G={lv,qs,i:0,score:0,lives:LIVES,streak:0,bestStreak:0,hits:0,log:[],tools:{fifty:1,skip:1,time:1}};
+  ask();
+}
+
+function mult(){return G.streak>=5?3:G.streak>=3?2:1}
+
+function ask(){
+  const q=G.qs[G.i], L=LEVELS[G.lv];
+  G.left=L.time; G.locked=false;
+  view.innerHTML=`
+  <div class="hud">
+    <span class="pill">${L.name} · ${G.i+1}/${G.qs.length}</span>
+    <span class="pill lives" aria-label="${G.lives} vidas">${"❤️".repeat(G.lives)}${"🖤".repeat(LIVES-G.lives)}</span>
+    <span class="pill combo">${G.streak>=3?`🔥 ×${mult()}`:"Combo ×1"}</span>
+    <span class="pill">⭐ ${G.score}</span>
+  </div>
+  <div class="timer" id="tm"><div id="bar"></div></div>
+  <div class="scene">
+    <div class="pic" style="--c:${q.col}" aria-hidden="true">${q.img}<small>${esc(q.cap)}</small></div>
+    <div><div class="qnum">Pergunta ${G.i+1} · <span id="sec">${G.left}</span>s</div><p class="question">${esc(q.text)}</p></div>
+  </div>
+  <div class="answers">${q.opts.map((o,n)=>`<button class="ans" data-o="${esc(o)}"><span class="k">${n+1}</span><span>${esc(o)}</span></button>`).join("")}</div>
+  <div class="tools">
+    <button class="tool" id="t-fifty" ${G.tools.fifty?"":"disabled"}>✂️ 50/50</button>
+    <button class="tool" id="t-skip" ${G.tools.skip?"":"disabled"}>⏭️ Pular</button>
+    <button class="tool" id="t-time" ${G.tools.time?"":"disabled"}>⏱️ +10s</button>
+  </div>
+  <div id="fb"></div>`;
+  view.querySelectorAll(".ans").forEach(b=>b.onclick=()=>answer(b));
+  document.getElementById("t-fifty").onclick=()=>{ if(G.locked||!G.tools.fifty)return; G.tools.fifty=0; SFX.power();
+    shuffle([...view.querySelectorAll(".ans")].filter(b=>b.dataset.o!==q.right)).slice(0,2).forEach(b=>{b.classList.add("gone");b.disabled=true});
+    document.getElementById("t-fifty").disabled=true };
+  document.getElementById("t-skip").onclick=()=>{ if(G.locked||!G.tools.skip)return; G.tools.skip=0; SFX.power(); clearInterval(timerId);
+    // troca por outra pergunta inédita do mesmo nível, se houver
+    const used=new Set(G.qs.map(x=>x.text)); const pool=BANK[G.lv].filter(x=>!used.has(x[3]));
+    if(pool.length){const n=pool[Math.floor(Math.random()*pool.length)];G.qs[G.i]={img:n[0],cap:n[1],col:n[2],text:n[3],right:n[4],opts:shuffle([n[4],...n[5]]),fact:n[6]};ask()}
+    else { G.log.push({q:q.text,ok:null,right:q.right}); nextQ() } };
+  document.getElementById("t-time").onclick=()=>{ if(G.locked||!G.tools.time)return; G.tools.time=0; SFX.power(); G.left+=10; G.max=G.left; paintTimer(); document.getElementById("t-time").disabled=true };
+  G.max=L.time; paintTimer();
+  clearInterval(timerId);
+  timerId=setInterval(()=>{ G.left--; paintTimer(); if(G.left<=5&&G.left>0)SFX.tick(); if(G.left<=0){clearInterval(timerId);answer(null)} },1000);
+}
+function paintTimer(){
+  const bar=document.getElementById("bar"), tm=document.getElementById("tm"), s=document.getElementById("sec");
+  if(!bar)return; bar.style.transform=`scaleX(${Math.max(0,G.left/G.max)})`; tm.classList.toggle("warn",G.left<=5); s.textContent=Math.max(0,G.left);
+}
+
+function answer(btn){
+  if(G.locked) return; G.locked=true; clearInterval(timerId);
+  const q=G.qs[G.i], ok=btn&&btn.dataset.o===q.right;
+  view.querySelectorAll(".ans").forEach(b=>{b.disabled=true; if(b.dataset.o===q.right)b.classList.add("ok")});
+  view.querySelectorAll(".tool").forEach(b=>b.disabled=true);
+  let pts=0;
+  if(ok){ G.streak++; G.bestStreak=Math.max(G.bestStreak,G.streak); G.hits++;
+    pts=Math.round((100+G.left*10)*LEVELS[G.lv].mult*mult()); G.score+=pts; SFX.ok(); fl("ok");
+    if(G.streak===3||G.streak===5) setTimeout(()=>confetti(60),150);
+  } else { if(btn)btn.classList.add("bad"); G.streak=0; G.lives--; SFX.bad(); fl("bad") }
+  G.log.push({q:q.text,ok,right:q.right});
+  const msg=ok?["Isso, isso, isso!","Boa!","Acertou!","Mandou bem!"][Math.floor(Math.random()*4)]
+             :btn?["Ninguém tem paciência comigo!","Tinha que ser...","Errou!"][Math.floor(Math.random()*3)]:"O tempo acabou!";
+  const fb=document.getElementById("fb");
+  fb.innerHTML=`<div class="feedback ${ok?"ok":"bad"}" role="status">
+     <b>${msg}</b>
+     ${ok?`<span class="pts">+${pts} pontos${mult()>1?` · combo ×${mult()}`:""}</span>`:`<span>Resposta certa: <strong>${esc(q.right)}</strong>${G.lives>0?` · restam ${G.lives} ${G.lives===1?"vida":"vidas"}`:""}</span>`}
+     <span>💡 ${esc(q.fact)}</span>
+   </div>
+   <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="next" id="nx">${G.lives<=0||G.i===G.qs.length-1?"Ver resultado":"Próxima →"}</button></div>`;
+  const nx=document.getElementById("nx"); nx.onclick=()=>{SFX.click();nextQ()}; nx.focus({preventScroll:true});
+}
+function fl(k){flash.className="flash";void flash.offsetWidth;flash.className="flash "+k}
+function nextQ(){ if(G.lives<=0||G.i>=G.qs.length-1) return end(); G.i++; ask() }
+
+function end(){
+  clearInterval(timerId);
+  const lv=G.lv, total=G.qs.length, rec=G.score>best(lv);
+  if(rec) setBest(lv,G.score);
+  const won=G.lives>0, pct=G.hits/total;
+  const rank= !won?"Fim de jogo! Até o Senhor Barriga ficou com pena.":
+    pct===1?"Perfeito! Você deveria morar na vila.":
+    pct>=.8?"Nível Professor Girafales: tá-tá-tá-tá!":
+    pct>=.6?"Bom vizinho! Merece um sanduíche de presunto.":"Passou raspando, igual aluguel do Seu Madruga.";
+  view.innerHTML=`
+  <div class="view end">
+    <h2>${won?"Partida concluída!":"Acabaram as vidas"}</h2>
+    ${rec&&G.score>0?`<span class="newrec">NOVO RECORDE · ${LEVELS[lv].name.toUpperCase()}</span>`:""}
+    <div class="big">${G.score}<small style="font-size:.35em"> pts</small></div>
+    <p class="rank">${rank}</p>
+    <div class="stats">
+      <div><b>${G.hits}/${total}</b><span>Acertos</span></div>
+      <div><b>${G.bestStreak}</b><span>Maior combo</span></div>
+      <div><b>${best(lv)}</b><span>Recorde</span></div>
+    </div>
+    <div class="endbtns">
+      <button class="next" id="again">Jogar de novo</button>
+      <button class="ghost" id="menu">Trocar nível</button>
+    </div>
+    <div class="review">${G.log.map((l,n)=>`<div>${l.ok?"✅":l.ok===null?"⏭️":"❌"} <em>${n+1}.</em> ${esc(l.q)} <br><span style="color:var(--muted)">Resposta: ${esc(l.right)}</span></div>`).join("")}</div>
+  </div>`;
+  document.getElementById("again").onclick=()=>{SFX.power();start(lv)};
+  document.getElementById("menu").onclick=()=>{SFX.click();home()};
+  if(won&&pct>=.6){SFX.win();confetti()} else SFX.lose();
+}
+
+document.addEventListener("keydown",e=>{
+  if(!G||G.locked&&e.key!=="Enter") return;
+  if(/^[1-4]$/.test(e.key)){const b=view.querySelectorAll(".ans")[+e.key-1]; if(b&&!b.disabled)answer(b)}
+  if(e.key==="Enter"&&G.locked){const nx=document.getElementById("nx"); if(nx){e.preventDefault();nx.click()}}
+});
+home();
+</script>
+
+</body></html>
