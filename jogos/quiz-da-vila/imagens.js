@@ -1,117 +1,106 @@
 window.QUIZ_IMAGENS = {
   "patio-vila": {
-    arquivo: null,
+    arquivo: "img/patio-vila.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Pátio da vila",
-    alt: "Pátio central de uma vila popular, com portas de casas, uma escada e varais ao fundo",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "pátio central da vila em dia claro, com as portas das casas, a escada e varais; plano geral" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Pátio de pedra da vila com um poço redondo no centro e portas de casas ao redor",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:2do_patio_1977-79.png"
   },
   "hora-do-lanche": {
-    arquivo: null,
+    arquivo: "img/hora-do-lanche.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Hora do lanche",
-    alt: "Cozinha simples de vila com a mesa posta, pratos e uma travessa de comida",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "cozinha simples de vila com mesa posta, pratos e travessa de comida; plano médio" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Balcão de restaurante com bule, xícaras e pratos sobre a mesa",
+    autor: "Chespirito Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://chaves.fandom.com/pt-br/wiki/Arquivo:Mesa_Restaurante.png"
   },
   "cobranca-aluguel": {
-    arquivo: null,
+    arquivo: "img/cobranca-aluguel.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Dia do aluguel",
-    alt: "Mesa com envelopes de cobrança e papéis de aluguel",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "mesa com envelopes e papéis de cobrança de aluguel; sem rosto de personagem" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Cena de mudança: caixas de papelão e objetos empilhados dentro de uma casa",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:Don_Ram%C3%B3n_se_va_de_la_vecindad_(1974).jpg"
   },
   "portas-da-vila": {
-    arquivo: null,
+    arquivo: "img/portas-da-vila.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Portas da vila",
-    alt: "Corredor da vila com várias portas de casas em sequência",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "corredor da vila com várias portas de casas em sequência, de frente; sem números legíveis" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Corredor de sobrado da vila com escadaria e várias portas em sequência",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:Vecindad_1972.jpg"
   },
   "bagunca-patio": {
-    arquivo: null,
+    arquivo: "img/bagunca-patio.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Confusão no pátio",
-    alt: "Crianças correndo e brincando no pátio da vila, em clima de bagunça",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "crianças correndo e brincando no pátio da vila, plano geral, clima de bagunça" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Crianças brincando com uma bicicleta no pátio de pedra da vila",
+    autor: "Chespirito Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://chaves.fandom.com/pt-br/wiki/Arquivo:Brincando_de_Bombeiros.jpg"
   },
   "sala-de-casa": {
-    arquivo: null,
+    arquivo: "img/sala-de-casa.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Dentro de casa",
-    alt: "Sala de estar simples com sofá, cortinas e uma mesa",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "sala de estar simples de casa de vila, com sofá, cortinas e mesa; sem personagens" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Sala de estar com sofá, mesa e escadaria ao fundo, numa casa antiga",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:SALA_DE_MANSI%C3%93N_BARRIGA.png"
   },
   "sala-de-aula": {
-    arquivo: null,
+    arquivo: "img/sala-de-aula.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Na escola",
-    alt: "Sala de aula com carteiras enfileiradas e um quadro-negro",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "sala de aula de escola antiga, carteiras enfileiradas e quadro-negro; sem pessoas em destaque" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Crianças sentadas em caixotes num pátio da vila, como numa escolinha",
+    autor: "Chespirito Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://chaves.fandom.com/pt-br/wiki/Arquivo:Escolinha_80_Grande.jpg"
   },
   "correio-carteiro": {
-    arquivo: null,
+    arquivo: "img/correio-carteiro.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Correio",
-    alt: "Bicicleta encostada num muro, com uma sacola de cartas",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "bicicleta com sacola de cartas encostada num muro de rua de vila; sem pessoas em destaque" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Mulher de bobes lendo uma carta dentro de uma casa antiga",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:Confusi%C3%B3n_de_cartas_(1977).jpg"
   },
   "cidade-mexico": {
     arquivo: null,
     legenda: "Rua de bairro popular",
     alt: "Rua de bairro popular com fachadas coloridas e postes de luz",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "rua de bairro popular com fachadas coloridas, sem placas legíveis; plano geral" },
+    procurar: { fandom: "chaves.fandom.com/pt-br (Chespirito Wiki)", cena: "rua de bairro popular com fachadas coloridas, sem placas legíveis; plano geral" },
     autor: "",
     licenca: "",
     fonte: ""
   },
   "tv-antiga": {
-    arquivo: null,
+    arquivo: "img/tv-antiga.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Televisão antiga",
-    alt: "Televisor de tubo antigo ligado numa sala escura",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "televisor de tubo antigo ligado numa sala escura, tela mostrando um programa; sem logotipo de emissora visível" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Televisor de tubo antigo exibindo um programa com pessoas dançando",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:La_posada_de_la_vecindad_(1972).jpg"
   },
   "praia-viagem": {
-    arquivo: null,
+    arquivo: "img/praia-viagem.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Férias",
-    alt: "Praia com ondas, areia e coqueiros ao entardecer",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "praia tropical ao entardecer com ondas, areia e coqueiros; sem placas nem cidades identificáveis" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Malas e malões no pátio, prontos para uma viagem de férias",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:Vacaciones_en_Acapulco_1_(1977).png"
   },
   "visita-porta": {
-    arquivo: null,
+    arquivo: "img/visita-porta.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Visita",
-    alt: "Porta de entrada de uma casa da vila com um pequeno degrau",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "porta de entrada de casa de vila com pequeno degrau e pátio ao fundo" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Corredor da vila com uma porta de casa, plantas e pátio ao fundo",
+    autor: "Chespirito Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://chaves.fandom.com/pt-br/wiki/Arquivo:Corredor_1.png"
   },
   "bastidores-estudio": {
     arquivo: null,
     legenda: "Bastidores",
     alt: "Estúdio de televisão antigo, com câmera e cenário montado",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "bastidores de estúdio de TV antiga, câmera e cenário de vila montado; sem atores em close" },
+    procurar: { fandom: "chaves.fandom.com/pt-br (Chespirito Wiki)", cena: "bastidores de estúdio de TV antiga, câmera e cenário de vila montado; sem atores em close" },
     autor: "",
     licenca: "",
     fonte: ""
@@ -120,54 +109,51 @@ window.QUIZ_IMAGENS = {
     arquivo: null,
     legenda: "Terra natal",
     alt: "Estrada de terra num vilarejo do interior, com casas baixas e céu aberto",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "estrada de terra em vilarejo do interior do México, casas baixas e céu aberto; plano geral sem placas" },
+    procurar: { fandom: "chaves.fandom.com/pt-br (Chespirito Wiki)", cena: "estrada de terra em vilarejo do interior do México, casas baixas e céu aberto; plano geral sem placas" },
     autor: "",
     licenca: "",
     fonte: ""
   },
   "brinquedos-patio": {
-    arquivo: null,
+    arquivo: "img/brinquedos-patio.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Brincadeira",
-    alt: "Caixa de brinquedos antigos e uma bola de pano sobre um banco",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "caixa de brinquedos antigos e bola de pano sobre um banco de pátio; sem bonecos em destaque" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Menino de boné brincando no chão com brinquedos vermelhos e uma caixa de papelão",
+    autor: "Chespirito Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://chaves.fandom.com/pt-br/wiki/Arquivo:O_Menino_Que_Jogou_Fora_os_Brinquedos_-_Parte_2.png"
   },
   "estudio-dublagem": {
     arquivo: null,
     legenda: "Dublagem",
     alt: "Cabine de gravação com microfone e fones de ouvido",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "cabine de gravação de dublagem com microfone e fones de ouvido; sem rosto de dubladores" },
+    procurar: { fandom: "chaves.fandom.com/pt-br (Chespirito Wiki)", cena: "cabine de gravação de dublagem com microfone e fones de ouvido; sem rosto de dubladores" },
     autor: "",
     licenca: "",
     fonte: ""
   },
   "festa-patio": {
-    arquivo: null,
+    arquivo: "img/festa-patio.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Aniversário",
-    alt: "Pátio decorado com balões coloridos e uma mesa de festa",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "pátio da vila decorado com balões coloridos e mesa de festa; sem números nos balões" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Balões coloridos seguros por pessoas em frente a uma escadaria da vila",
+    autor: "El Chavo Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://elchavo.fandom.com/es/wiki/Archivo:Los_globos_(1972).jpg"
   },
   "janela-entardecer": {
     arquivo: null,
     legenda: "Fim de tarde",
     alt: "Janela de casa da vila ao entardecer, com cortina e um vaso",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "janela de casa de vila ao entardecer, com cortina e vaso; sem pessoas" },
+    procurar: { fandom: "chaves.fandom.com/pt-br (Chespirito Wiki)", cena: "janela de casa de vila ao entardecer, com cortina e vaso; sem pessoas" },
     autor: "",
     licenca: "",
     fonte: ""
   },
   "arquivo-antigo": {
-    arquivo: null,
+    arquivo: "img/arquivo-antigo.webp",      // relativo a jogos/quiz-da-vila/
     legenda: "Arquivo",
-    alt: "Prateleira com fitas de vídeo antigas e caixas de arquivo",
-    procurar: { tmdb: "tv:El Chavo del Ocho (1973)", cena: "prateleira de arquivo com fitas de vídeo antigas e caixas de papelão; sem legendas legíveis" },
-    autor: "",
-    licenca: "",
-    fonte: ""
+    alt: "Caixa vermelha de fita de vídeo com etiqueta 'El Chavo' nas mãos de alguém",
+    autor: "Chespirito Wiki (Fandom)",
+    licenca: "Captura de cena",
+    fonte: "https://chaves.fandom.com/pt-br/wiki/Arquivo:Chaves_c1_fitas_sbt3.jpg"
   }
 };
