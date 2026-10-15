@@ -117,8 +117,25 @@ button,input{font:inherit;color:inherit}
 .no.entregue text{fill:#fff}
 .no .anel{fill:none;stroke:var(--acc);stroke-width:3;opacity:0}
 .no.sel .anel{opacity:1}
-.no.novo{animation:pop .55s cubic-bezier(.3,1.6,.5,1)}
-@keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.no>g{transform-box:fill-box;transform-origin:center}
+.no.novo>g{animation:pop .6s cubic-bezier(.3,1.7,.5,1)}
+@keyframes pop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+.no.oculto,.fio.oculto,.anel-guia.oculto{display:none}
+.no.nasce>g{animation:nasce .6s cubic-bezier(.3,1.5,.5,1) both;animation-delay:var(--dl,0s)}
+@keyframes nasce{from{transform:scale(0);opacity:0}}
+.fio.nasce{animation:aparece .5s both;animation-delay:var(--dl,0s)}
+@keyframes aparece{from{opacity:0}}
+.anel-guia{transform-box:fill-box;transform-origin:center}
+.anel-guia.nasce{animation:anelNasce 1.1s cubic-bezier(.2,.8,.3,1) both}
+@keyframes anelNasce{from{opacity:0;transform:scale(.6)}}
+.no text.cai{animation:cai .32s cubic-bezier(.3,1.4,.5,1) both;animation-delay:var(--dl)}
+@keyframes cai{from{opacity:0;transform:translateY(-9px)}}
+.no rect.pulso{fill:none;stroke:var(--acc);stroke-width:3;pointer-events:none;transform-box:fill-box;transform-origin:center;animation:pulso .9s ease-out forwards}
+@keyframes pulso{from{opacity:.85}to{opacity:0;transform:scale(1.35,2.1)}}
+.no.onda>g{animation:onda .7s ease-in-out both;animation-delay:var(--dl)}
+@keyframes onda{35%{transform:scale(1.2) translateY(-3px)}70%{transform:scale(.97)}}
+.anel-guia.brilha{animation:brilha 1.3s ease-out both;animation-delay:var(--dl)}
+@keyframes brilha{20%{stroke:var(--acc);stroke-opacity:1;stroke-width:4}}
 .no .selo circle{fill:var(--acc)}
 .no .selo path{stroke:var(--acc-ink);stroke-width:1.6;fill:none;stroke-linecap:round}
 .no.escolher{cursor:help}
@@ -221,11 +238,10 @@ dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
 <dialog id="regras" aria-labelledby="rt">
   <h3 id="rt">Como jogar</h3>
   <ul>
-    <li>O mapa começa só com a <b>palavra do tema</b> aberta. As outras aparecem como casinhas vazias, uma para cada letra.</li>
+    <li>O mapa começa com a <b>palavra do tema</b> aberta e as vizinhas dela como casinhas vazias, uma para cada letra.</li>
     <li>Cada fio liga duas palavras que têm alguma relação: “bola” e “gol”, “rei” e “coroa”. Às vezes a ligação é um trocadilho, como “banco” de reservas e “banco” de dinheiro.</li>
     <li>Digite qualquer palavra que você acha que está no mapa. Se acertar, ela aparece sozinha. Acentos e maiúsculas não importam.</li>
-    <li>As casinhas com borda cheia estão ligadas a uma palavra já descoberta: são as mais fáceis de achar.</li>
-    <li>Os anéis pontilhados mostram a distância até a palavra do tema: no primeiro anel ficam as palavras ligadas direto a ela, no segundo as ligadas a essas, e assim por diante.</li>
+    <li>Cada palavra que você descobre faz brotar as vizinhas dela no anel seguinte. As palavras mais distantes só aparecem quando você abre o caminho até elas.</li>
     <li>Toque numa palavra para destacar os fios dela.</li>
     <li>Travou? Toque em <b>Dica</b> e escolha uma palavra escondida: aparece uma pista sobre ela, como “propriedade de todos os seres vivos” para <i>vida</i>. A pista fica guardada na palavra.</li>
     <li>Arraste as palavras para onde quiser: os fios puxam as vizinhas e as outras abrem espaço. Arraste um fio para levar as duas pontas juntas. Use dois dedos ou a roda do mouse para dar zoom.</li>
@@ -340,7 +356,16 @@ function abrir(tema,nv){
     const ok=J.pos&&J.asp&&J.nos.every(n=>J.pos[n.k]);
     if(ok){J.nos.forEach(n=>{const p=J.pos[n.k];n.x=p[0];n.y=p[1];n.preso=!!p[2];n.fixo=n.preso});aquecer(.05)}
     else planejar();
-    posicionar(); ajustar(false);
+    const intro=J.rev.size===1&&!J.fim;
+    if(intro){ // a palavra do tema aparece e as vizinhas brotam dela
+      J.nos[0].ativo=true; J.nos[0].el.classList.remove("oculto"); posicionar(); ajustar(false);
+      const novos=aplicarVisao().filter(i=>i!==0); novos.forEach(i=>J.nos[i].el.classList.add("oculto"));
+      pintarNo(0,"novo"); J.pronto=true;
+      setTimeout(()=>brotar(0,novos),350);
+    }else{
+      aplicarVisao(); posicionar(); ajustar(false); J.pronto=true;
+      J.nos.forEach(n=>{if(n.ativo){n.el.style.setProperty("--dl",`${n.d*90}ms`);n.el.classList.add("nasce")}});
+    }
     atualizar();
     if(J.fim) mostrarFim(false); else {iniciarRelogio(); if(matchMedia("(pointer:fine)").matches) $("resp").focus()}
   });
@@ -359,6 +384,17 @@ const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
 function pintarRelogio(){$("relogio").textContent=fmt(J.seg)}
 function pararTudo(){clearInterval(relT);cancelAnimationFrame(simRaf);simRaf=0;if(J)salvar()}
 
+/* ---------- O que está à vista: as abertas e as vizinhas delas ---------- */
+function visivel(i){return J.desistiu||J.rev.has(J.nos[i].k)||J.nos[i].viz.some(j=>J.rev.has(J.nos[j].k))}
+function aplicarVisao(){ // devolve as peças que acabaram de aparecer
+  const novos=[];
+  J.nos.forEach((n,i)=>{const v=visivel(i);if(v&&!n.ativo)novos.push(i);n.ativo=v;n.el.classList.toggle("oculto",!v)});
+  for(const f of J.fios) f.el.classList.toggle("oculto",!(J.nos[f[0]].ativo&&J.nos[f[1]].ativo));
+  const prof=Math.max(0,...J.nos.filter(n=>n.ativo).map(n=>n.d));
+  J.guias.forEach((g,i)=>{const v=i+1<=prof;if(v&&g.classList.contains("oculto")&&J.pronto){g.classList.remove("nasce");void g.getBBox();g.classList.add("nasce")}g.classList.toggle("oculto",!v)});
+  return novos;
+}
+
 /* ---------- Desenho ---------- */
 const svg=$("svg"), mundo=$("mundo"), gF=$("fios"), gN=$("nos");
 const gA=$("aneis");
@@ -373,7 +409,7 @@ function desenharMapa(){
     const g=el("g",{class:"no","data-n":i},gN); n.el=g;
     n.gi=el("g",{},g);
   });
-  J.nos.forEach((n,i)=>pintarNo(i));
+  J.nos.forEach((n,i)=>{n.ativo=false;pintarNo(i)});
 }
 function pintarNo(i,efeito){
   const n=J.nos[i], g=n.gi, aberto=J.rev.has(n.k)||J.desistiu;
@@ -386,10 +422,11 @@ function pintarNo(i,efeito){
     cls.push(J.rev.has(n.k)?"aberto":"entregue");
     const t=el("text",{x:0,y:1},g); t.textContent=n.txt;
   }else{
-    const vg=n.vg, w=vg.length?vg[vg.length-1].x+LETRA:0, x0=-w/2;
+    const vg=n.vg, w=vg.length?vg[vg.length-1].x+LETRA:0, x0=-w/2; let k=0;
     for(const s of vg){
       if(!s.letra){const t=el("text",{class:"l",x:x0+s.x+LETRA/2,y:1},g);t.textContent=s.c;continue}
       el("rect",{class:"v",x:x0+s.x,y:-9.5,width:LETRA,height:19,rx:3},g);
+      if(efeito==="letras"){const t=el("text",{class:"l cai",x:x0+s.x+LETRA/2,y:1,style:`--dl:${k++*45}ms`},g);t.textContent=s.c.toUpperCase()}
     }
     if(n.viz.some(j=>J.rev.has(J.nos[j].k))) cls.push("perto");
     if(J.pistas.has(n.k)){ // selo de lâmpada: esta palavra já tem pista
@@ -398,7 +435,7 @@ function pintarNo(i,efeito){
     }
   }
   if(J.sel===i) cls.push("sel");
-  if(efeito==="novo") cls.push("novo");
+  if(efeito==="novo"){cls.push("novo");el("rect",{class:"pulso",x:-n.hw,y:-n.hh,width:n.w,height:n.h,rx:n.hh},g)}
   n.el.setAttribute("class",cls.join(" "));
   n.el.setAttribute("aria-label",aberto?n.txt:`Palavra escondida de ${n.vg.filter(s=>s.letra).length} letras`+(J.pistas.has(n.k)?`. Pista: ${PISTAS[n.txt]||""}`:""));
 }
@@ -457,7 +494,7 @@ function passo(nos,fios,alpha){
   const N=nos.length;
   // molas
   for(const [a,b] of fios){
-    const A=nos[a],B=nos[b];
+    const A=nos[a],B=nos[b]; if(!A.ativo||!B.ativo) continue;
     let dx=B.x+B.vx-A.x-A.vx, dy=B.y+B.vy-A.y-A.vy, d=Math.hypot(dx,dy)||1;
     const ux=dx/d,uy=dy/d, gap=d-raio(A,ux,uy)-raio(B,ux,uy);
     const f=(gap-FIO_GAP)*.08*alpha, ba=B.viz.length/(A.viz.length+B.viz.length);
@@ -465,7 +502,7 @@ function passo(nos,fios,alpha){
     A.vx+=ux*f*ba*2*.5; A.vy+=uy*f*ba*2*.5;
   }
   // repulsão (pela distância entre bordas, para palavras compridas não se espremerem)
-  for(let i=0;i<N;i++){const A=nos[i];for(let j=i+1;j<N;j++){const B=nos[j];
+  for(let i=0;i<N;i++){const A=nos[i];if(!A.ativo)continue;for(let j=i+1;j<N;j++){const B=nos[j];if(!B.ativo)continue;
     let dx=B.x-A.x, dy=B.y-A.y, d=Math.hypot(dx,dy);
     if(d<1){dx=Math.random()-.5;dy=Math.random()-.5;d=1}
     const ux=dx/d,uy=dy/d, gap=Math.max(8,d-raio(A,ux,uy)-raio(B,ux,uy)+30);
@@ -474,8 +511,8 @@ function passo(nos,fios,alpha){
   }}
   // fios não passam por cima de peças que não são suas pontas
   for(const [a,b] of fios){
-    const A=nos[a],B=nos[b], sx=B.x-A.x, sy=B.y-A.y, L2=sx*sx+sy*sy||1;
-    for(let c=0;c<N;c++){ if(c===a||c===b) continue; const C=nos[c];
+    const A=nos[a],B=nos[b], sx=B.x-A.x, sy=B.y-A.y, L2=sx*sx+sy*sy||1; if(!A.ativo||!B.ativo) continue;
+    for(let c=0;c<N;c++){ if(c===a||c===b||!nos[c].ativo) continue; const C=nos[c];
       let t=((C.x-A.x)*sx+(C.y-A.y)*sy)/L2; if(t<=0||t>=1) continue;
       const px=A.x+sx*t, py=A.y+sy*t; let dx=C.x-px, dy=C.y-py, d=Math.hypot(dx,dy)||1;
       const r=raio(C,dx/d,dy/d)+12; if(d>=r) continue;
@@ -486,18 +523,19 @@ function passo(nos,fios,alpha){
   // cada palavra é puxada para o seu anel; a do tema, para o centro
   const {sx,sy}=escalaAneis();
   for(const n of nos){
+    if(!n.ativo) continue;
     if(!n.d){n.vx+=-n.x*.2;n.vy+=-n.y*.2;continue}
     const nx=n.x/sx, ny=n.y/sy, r=Math.hypot(nx,ny)||1, k=(J.raios[n.d]-r)*.35*Math.max(alpha,.35);
     n.vx+=nx/r*k*sx; n.vy+=ny/r*k*sy;
   }
   for(const n of nos){
-    if(n.fixo){n.vx=n.vy=0;continue}
+    if(n.fixo||!n.ativo){n.vx=n.vy=0;continue}
     n.vx*=.6;n.vy*=.6;
     const v=Math.hypot(n.vx,n.vy); if(v>40){n.vx*=40/v;n.vy*=40/v}
     n.x+=n.vx;n.y+=n.vy;
   }
   // colisão
-  for(let k=0;k<2;k++) for(let i=0;i<N;i++){const A=nos[i];for(let j=i+1;j<N;j++){const B=nos[j];
+  for(let k=0;k<2;k++) for(let i=0;i<N;i++){const A=nos[i];if(!A.ativo)continue;for(let j=i+1;j<N;j++){const B=nos[j];if(!B.ativo)continue;
     const dx=B.x-A.x, dy=B.y-A.y, ox=A.hw+B.hw+14-Math.abs(dx), oy=A.hh+B.hh+12-Math.abs(dy);
     if(ox<=0||oy<=0) continue;
     const wa=A.fixo?0:B.fixo?1:.5, wb=B.fixo?0:A.fixo?1:.5; if(!wa&&!wb) continue;
@@ -557,7 +595,7 @@ function simular(nos,fios,iters){
 }
 /* Testa várias sementes e fica com o desenho de menos cruzamentos */
 function planejar(de){
-  const copia=()=>J.nos.map(n=>({x:0,y:0,vx:0,vy:0,hw:n.hw,hh:n.hh,w:n.w,h:n.h,viz:n.viz,d:n.d,fixo:false}));
+  const copia=()=>J.nos.map(n=>({x:0,y:0,vx:0,vy:0,hw:n.hw,hh:n.hh,w:n.w,h:n.h,viz:n.viz,d:n.d,fixo:false,ativo:true}));
   J.asp=Math.max(.7,Math.min(1.8,aspecto())); // peças são largas: anel estreito demais não as acomoda
   const tent=J.nos.length>24?10:8, base=Math.floor(Math.random()*100000);
   let melhor=null,mn=1e9;
@@ -594,7 +632,7 @@ const V={k:1,tx:0,ty:0};
 function aplicarV(){mundo.setAttribute("transform",`translate(${V.tx.toFixed(1)} ${V.ty.toFixed(1)}) scale(${V.k.toFixed(4)})`)}
 const KMIN=.25,KMAX=2.6;
 function alvoAjuste(){
-  const bb=caixa(J.nos), p=Math.min(28,VW*.05);
+  const bb=caixa(J.nos.filter(n=>n.ativo)), p=Math.min(28,VW*.05);
   let k=Math.min((VW-p*2-44)/bb.w,(VH-p*2)/bb.h,1.35); k=Math.max(KMIN,k);
   return {k,tx:VW/2-44/2-(bb.x0+bb.w/2)*k,ty:VH/2-(bb.y0+bb.h/2)*k};
 }
@@ -719,7 +757,7 @@ function pintarInfo(){
   if(J.modoDica){$("info").hidden=false;$("infoTxt").innerHTML=`<b>Dica:</b> toque numa palavra escondida para ver uma pista sobre ela.`;return}
   const i=J.sel; $("info").hidden=i<0; if(i<0) return;
   const n=J.nos[i], aberto=J.rev.has(n.k)||J.desistiu;
-  const vz=n.viz.map(j=>J.nos[j]), vis=vz.filter(v=>J.rev.has(v.k)||J.desistiu).map(v=>`<b>${esc(v.txt)}</b>`), oc=vz.length-vis.length;
+  const vz=n.viz.map(j=>J.nos[j]).filter(v=>v.ativo), vis=vz.filter(v=>J.rev.has(v.k)||J.desistiu).map(v=>`<b>${esc(v.txt)}</b>`), oc=vz.length-vis.length; // só conta o que está à vista
   const lig=[...vis]; if(oc) lig.push(oc===1?"1 escondida":`${oc} escondidas`);
   const nl=n.vg.filter(s=>s.letra).length;
   const pista=!aberto&&J.pistas.has(n.k)?`<span class="pista"><i>Pista:</i> ${esc(PISTAS[n.txt]||"sem pista")}</span>`:"";
@@ -735,7 +773,7 @@ function procurar(v){
 }
 const aberto=i=>J.rev.has(J.nos[i].k);
 function ambiguo(v,i){ // outra palavra escondida começa com o que já foi digitado?
-  return J.nos.some((n,j)=>j!==i&&!aberto(j)&&n.alts.some(a=>a.length>v.length&&a.startsWith(v)));
+  return J.nos.some((n,j)=>j!==i&&!aberto(j)&&visivel(j)&&n.alts.some(a=>a.length>v.length&&a.startsWith(v)));
 }
 let esperaT=null;
 $("resp").addEventListener("animationend",e=>e.target.classList.remove("treme"));
@@ -744,7 +782,7 @@ $("resp").addEventListener("input",()=>{
   if(!J||J.fim) return;
   const v=norm($("resp").value); if(!v) return;
   const i=procurar(v);
-  if(i<0||aberto(i)) return;
+  if(i<0||aberto(i)||!visivel(i)) return;
   if(ambiguo(v,i)) esperaT=setTimeout(()=>{if(norm($("resp").value)===v)revelar(i)},900);
   else revelar(i);
 });
@@ -753,7 +791,8 @@ $("form").addEventListener("submit",e=>{
   if(!J||J.fim) return;
   const v=norm($("resp").value); if(!v) return;
   const i=procurar(v);
-  if(i>=0&&!aberto(i)) return revelar(i);
+  if(i>=0&&!aberto(i)&&visivel(i)) return revelar(i);
+  if(i>=0&&!aberto(i)){aviso("Essa fica mais para fora: abra o caminho até ela");$("resp").value="";return}
   if(i>=0){aviso(`“${J.nos[i].txt}” já foi descoberta`);destacar(i);$("resp").value="";return}
   const c=$("resp"); c.classList.remove("treme"); void c.offsetWidth; c.classList.add("treme");
   aviso("Essa palavra não está no mapa");
@@ -762,12 +801,49 @@ function destacar(i){selecionar(i);mostrarNo(J.nos[i])}
 function revelar(i,porDica){
   const n=J.nos[i];
   J.rev.add(n.k); $("resp").value="";
-  pintarNo(i,"novo"); n.viz.forEach(j=>pintarNo(j));
-  if(J.sel>=0) selecionar(J.sel); else atualizar();
-  mostrarNo(n); aquecer(.06);
+  pintarNo(i,"letras"); mostrarNo(n);
   if(!porDica) aviso(["Boa!","Isso!","Acertou!","Muito bem!","Mandou bem!"][J.rev.size%5]);
   salvar();
-  if(J.rev.size===J.nos.length) vencer();
+  const ultima=J.rev.size===J.nos.length;
+  if(ultima){J.fim=true;clearInterval(relT);$("resp").disabled=true}
+  const espera=n.vg.filter(s=>s.letra).length*45+330;
+  setTimeout(()=>{
+    if(!J||J.nos[i]!==n) return;
+    pintarNo(i,"novo"); n.viz.forEach(j=>pintarNo(j));
+    const novos=aplicarVisao();
+    if(J.sel>=0) selecionar(J.sel); else atualizar();
+    if(novos.length) brotar(i,novos); else aquecer(.06);
+    if(ultima) setTimeout(vencer,500);
+  },espera);
+}
+/* As vizinhas novas saem de dentro da palavra descoberta e esticam o fio até o lugar delas */
+function brotar(i,novos){
+  const o=J.nos[i];
+  novos.forEach((j,k)=>{
+    const n=J.nos[j], de={x:o.x,y:o.y}, para={x:n.x,y:n.y}, dl=k*110;
+    n.fixo=true; n.x=de.x; n.y=de.y;
+    n.el.classList.add("oculto");
+    setTimeout(()=>{
+      if(!J||J.nos[j]!==n) return;
+      n.el.classList.remove("oculto","nasce"); void n.el.getBBox(); n.el.classList.add("nasce"); n.el.style.setProperty("--dl","0s");
+      J.fios.forEach(f=>{if((f[0]===j||f[1]===j)&&!f.el.classList.contains("oculto")){f.el.classList.remove("nasce");void f.el.getBBox();f.el.classList.add("nasce")}});
+      const t0=performance.now(), T=700;
+      const voa=now=>{
+        let t=Math.min(1,(now-t0)/T); const c=1.5; t=1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2); // sai e passa um pouquinho
+        n.x=de.x+(para.x-de.x)*t; n.y=de.y+(para.y-de.y)*t; posicionar();
+        if(now-t0<T) requestAnimationFrame(voa); else {n.fixo=n.preso;aquecer(.08)}
+      };
+      requestAnimationFrame(voa);
+    },dl);
+  });
+  setTimeout(()=>{if(J&&!J.fim)abrirCamera()},novos.length*110+500);
+}
+function abrirCamera(){ // só afasta se algo ficou fora da tela; nunca aproxima no meio do jogo
+  const vis=J.nos.filter(n=>n.ativo); if(!vis.length) return;
+  const m=24, fora=vis.some(n=>{const sx=n.x*V.k+V.tx, sy=n.y*V.k+V.ty;return sx-n.hw*V.k<m||sx+n.hw*V.k>VW-m-44||sy-n.hh*V.k<m||sy+n.hh*V.k>VH-m});
+  if(!fora) return;
+  const a=alvoAjuste(); if(a.k>V.k) a.k=V.k, a.tx=VW/2-22-(caixa(vis).x0+caixa(vis).w/2)*V.k, a.ty=VH/2-(caixa(vis).y0+caixa(vis).h/2)*V.k;
+  animarV(a,800);
 }
 
 /* ---------- Dica: escolha uma palavra escondida e ganhe uma pista sobre ela ---------- */
@@ -826,9 +902,15 @@ $("bSacudir").onclick=()=>{
 function pontos(){const N=J.N;return Math.round(Math.max(N.base*.1,N.base-J.seg-J.dicas*N.base*.04))}
 function vencer(){
   J.fim=true; J.pts=pontos(); clearInterval(relT); salvar();
-  $("resp").disabled=true; $("resp").blur(); atualizar();
-  setTimeout(()=>{ajustar(true);setTimeout(()=>mostrarFim(true),600)},500);
+  $("resp").disabled=true; $("resp").blur(); selecionar(-1); atualizar();
+  ajustar(true);
+  setTimeout(()=>onda(),700);
+  setTimeout(()=>mostrarFim(true),700+J.nAneis*130+1100);
   try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome},"*") }catch(e){}
+}
+function onda(){ // uma onda passa pelos anéis, do centro para fora
+  J.nos.forEach(n=>{n.el.classList.remove("onda");void n.el.getBBox();n.el.style.setProperty("--dl",`${n.d*130}ms`);n.el.classList.add("onda")});
+  J.guias.forEach((g,i)=>{g.classList.remove("nasce","brilha");void g.getBBox();g.style.setProperty("--dl",`${(i+1)*130-60}ms`);g.classList.add("brilha")});
 }
 function mostrarFim(agora){
   $("fim").hidden=false;
@@ -860,8 +942,10 @@ $("confDesiste").addEventListener("close",()=>{
   if($("confDesiste").returnValue!=="sim"||!J) return;
   J.desistiu=true; J.fim=true; J.pts=0; clearInterval(relT);
   $("resp").disabled=true;
-  J.nos.forEach((n,i)=>pintarNo(i)); atualizar(); salvar(); ajustar(true);
-  setTimeout(()=>mostrarFim(true),500);
+  J.nos.forEach((n,i)=>pintarNo(i));
+  const novos=aplicarVisao(); novos.forEach(i=>{const n=J.nos[i];n.el.style.setProperty("--dl",`${n.d*110}ms`);n.el.classList.add("nasce")});
+  selecionar(-1); atualizar(); salvar(); aquecer(.1); ajustar(true);
+  setTimeout(()=>mostrarFim(true),900+J.nAneis*110);
 });
 
 /* ---------- Aviso ---------- */
