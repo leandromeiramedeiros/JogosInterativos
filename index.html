@@ -17,7 +17,7 @@
       <h1>Jogos <span>Interativos</span></h1>
       <p>Escolha um cartucho e jogue aqui mesmo, sem sair da página. No fim de cada partida, salve sua pontuação com seu nome e dispute o placar.</p>
     </div>
-    <div class="count"><b id="n">9</b> jogos na prateleira</div>
+    <div class="count"><b id="n">10</b> jogos na prateleira</div>
   </header>
 
   <ul class="shelf" id="shelf" aria-label="Jogos"></ul>
@@ -440,6 +440,48 @@ const JOGOS=[
         <rect y="168" width="400" height="132" fill="url(#pa-fade)"/>
       </svg>
       <div class="mark m" aria-hidden="true">Pal<span>pite</span></div>
+    </div>`
+  },
+  {
+    id:"interligado",
+    titulo:"Interligado",
+    arquivo:"jogos/interligado.html",
+    resumo:"Descubra as palavras escondidas num mapa de associações. Arraste palavras e fios, sacuda o mapa e peça pistas.",
+    tags:["Palavras","4 temas","3 níveis"],
+    cor:["#f2b134","#1b2230"],
+    arte:`<div class="label art-int">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <radialGradient id="in-bg" cx=".5" cy=".4" r=".8"><stop offset="0" stop-color="#2b3548"/><stop offset="1" stop-color="#141a25"/></radialGradient>
+          <pattern id="in-dot" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#fff" opacity=".12"/></pattern>
+          <linearGradient id="in-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141a25" stop-opacity="0"/><stop offset="1" stop-color="#141a25" stop-opacity=".94"/></linearGradient>
+        </defs>
+        <rect width="400" height="300" fill="url(#in-bg)"/>
+        <rect width="400" height="300" fill="url(#in-dot)"/>
+        <g stroke="#c9c2b0" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round">
+          <path d="M200 112 92 58M200 112 316 50M200 112 330 140M200 112 84 160M92 58 46 120M316 50 360 98M330 140 360 98M84 160 46 120M84 160 170 196M330 140 262 200M170 196 262 200M92 58 196 26M316 50 196 26"/>
+        </g>
+        <g font-family="Figtree,Arial,sans-serif" font-weight="800" font-size="17" text-anchor="middle">
+          <rect x="146" y="94" width="108" height="36" rx="18" fill="#f4f1ea"/><text x="200" y="118" fill="#1b2230">palavra</text>
+          <rect x="44" y="40" width="96" height="36" rx="18" fill="#2f8a4e"/><text x="92" y="64" fill="#fff">bola</text>
+          <rect x="268" y="32" width="96" height="36" rx="18" fill="#7a4cc2"/><text x="316" y="56" fill="#fff">nota</text>
+          <rect x="282" y="122" width="96" height="36" rx="18" fill="#c9671f"/><text x="330" y="146" fill="#fff">leão</text>
+          <rect x="36" y="142" width="96" height="36" rx="18" fill="#3f7f3a"/><text x="84" y="166" fill="#fff">flor</text>
+        </g>
+        <g fill="#1b2230" stroke="#c9c2b0" stroke-width="1.6" stroke-dasharray="4 3">
+          <rect x="158" y="10" width="76" height="32" rx="16"/><rect x="14" y="104" width="64" height="32" rx="16"/><rect x="328" y="82" width="64" height="32" rx="16"/>
+          <rect x="128" y="180" width="84" height="32" rx="16"/><rect x="222" y="184" width="80" height="32" rx="16"/>
+        </g>
+        <g fill="#c9c2b0" opacity=".45">
+          <rect x="170" y="19" width="10" height="14" rx="2"/><rect x="183" y="19" width="10" height="14" rx="2"/><rect x="196" y="19" width="10" height="14" rx="2"/><rect x="209" y="19" width="10" height="14" rx="2"/>
+          <rect x="25" y="113" width="10" height="14" rx="2"/><rect x="38" y="113" width="10" height="14" rx="2"/><rect x="51" y="113" width="10" height="14" rx="2"/>
+          <rect x="339" y="91" width="10" height="14" rx="2"/><rect x="352" y="91" width="10" height="14" rx="2"/><rect x="365" y="91" width="10" height="14" rx="2"/>
+          <rect x="141" y="189" width="10" height="14" rx="2"/><rect x="154" y="189" width="10" height="14" rx="2"/><rect x="167" y="189" width="10" height="14" rx="2"/><rect x="180" y="189" width="10" height="14" rx="2"/>
+          <rect x="236" y="193" width="10" height="14" rx="2"/><rect x="249" y="193" width="10" height="14" rx="2"/><rect x="262" y="193" width="10" height="14" rx="2"/><rect x="275" y="193" width="10" height="14" rx="2"/>
+        </g>
+        <rect y="168" width="400" height="132" fill="url(#in-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Inter<span>ligado</span></div>
     </div>`
   }
 ];

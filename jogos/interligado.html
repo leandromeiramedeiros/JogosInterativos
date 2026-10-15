@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<title>Interligado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Figtree:wght@400;600;800&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Mapa de palavras ligadas por fios: as peças podem ser arrastadas, e os fios puxam as vizinhas. */
+:root{
+  --bg:#f1ede3; --card:#fffdf8; --ink:#1f2226; --muted:#6c6a62; --line:#d8d0be;
+  --fio:#b8af9b; --fio-on:#1f2226; --vaga:#ebe5d6; --vaga-ink:#1f2226; --oculta:#fffdf8; --oculta-borda:#c9c0ac;
+  --perto:#1f2226; --raiz:#1f2226; --raiz-ink:#fffdf8; --desistiu:#9b968a;
+  --acc:#2f8a4e; --acc-ink:#fff; --erro:#c0392b;
+  --display:"Bowlby One SC","Arial Black",Impact,sans-serif; --sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14161a; --card:#1e2126; --ink:#ebe8e1; --muted:#a19d93; --line:#33373e;
+  --fio:#4b5058; --fio-on:#ebe8e1; --vaga:#2c3037; --vaga-ink:#ebe8e1; --oculta:#1e2126; --oculta-borda:#454a52;
+  --perto:#cfcac0; --raiz:#ebe8e1; --raiz-ink:#14161a; --desistiu:#5d6168; --erro:#ef6a5a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161a; --card:#1e2126; --ink:#ebe8e1; --muted:#a19d93; --line:#33373e;
+  --fio:#4b5058; --fio-on:#ebe8e1; --vaga:#2c3037; --vaga-ink:#ebe8e1; --oculta:#1e2126; --oculta-borda:#454a52;
+  --perto:#cfcac0; --raiz:#ebe8e1; --raiz-ink:#14161a; --desistiu:#5d6168; --erro:#ef6a5a; color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+button,input{font:inherit;color:inherit}
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:14px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn:hover{border-color:var(--muted)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.btn svg{width:15px;height:15px;flex:none}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn:focus-visible,.ib:focus-visible,.nv:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.ib{all:unset;cursor:pointer;width:38px;height:38px;border-radius:8px;display:grid;place-items:center;border:1.5px solid var(--line);background:var(--card);flex:none;-webkit-tap-highlight-color:transparent}
+.ib svg{width:18px;height:18px}
+
+/* ---------- Tela inicial ---------- */
+.inicio{max-width:760px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.inicio header{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1.5px solid var(--line);padding-bottom:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo svg{width:44px;height:30px;flex:none}
+.logo h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(22px,6vw,30px);letter-spacing:.02em;line-height:1}
+.intro{margin:0;color:var(--muted);line-height:1.55;font-size:15px}
+.temas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px}
+.tema{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px;border-top:6px solid var(--tc)}
+.tema h2{margin:0;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:400;font-size:21px;letter-spacing:.02em}
+.tema h2 .ic{width:34px;height:34px;border-radius:50%;background:var(--tc);display:grid;place-items:center;flex:none}
+.tema h2 .ic svg{width:20px;height:20px}
+.nvs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nv{all:unset;cursor:pointer;border:1.5px solid var(--line);border-radius:10px;padding:9px 8px;display:flex;flex-direction:column;gap:2px;text-align:center;transition:border-color .15s,transform .15s;-webkit-tap-highlight-color:transparent}
+.nv:hover{border-color:var(--tc);transform:translateY(-2px)}
+.nv b{font-weight:800;font-size:15px}
+.nv small{font-size:12px;color:var(--muted)}
+.nv .st{font-family:var(--mono);font-size:11.5px;margin-top:3px;color:var(--muted)}
+.nv .st.ok{color:var(--tc);font-weight:500}
+.nv .st.and{color:var(--ink)}
+
+/* ---------- Jogo ---------- */
+.jogo{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:calc(10px + env(safe-area-inset-top,0px)) 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.topo{display:flex;align-items:center;gap:8px;padding:0 16px 8px}
+.topo .tit{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15}
+.topo .tit b{font-family:var(--display);font-weight:400;font-size:19px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo .tit span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.cont{font-family:var(--mono);font-size:13px;text-align:right;line-height:1.3;white-space:nowrap}
+.cont b{font-family:var(--display);font-weight:400;font-size:20px;color:var(--acc)}
+.palpite{padding:0 16px 8px;display:flex;gap:8px;align-items:center}
+.campo{flex:1;min-width:0;position:relative}
+.campo input{width:100%;border:2px solid var(--line);background:var(--card);border-radius:10px;padding:11px 14px;font-size:17px;font-weight:600;outline:none;transition:border-color .15s}
+.campo input:focus{border-color:var(--acc)}
+.campo input.treme{animation:treme .4s;border-color:var(--erro)}
+@keyframes treme{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.mapa{flex:1;min-height:180px;position:relative;margin:0 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.mapa>svg{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
+.mapa>svg.pan{cursor:grabbing}
+.mapa .ponto{fill:var(--line)}
+.zoom{position:absolute;right:8px;bottom:8px;display:flex;flex-direction:column;gap:6px;z-index:2}
+.zoom .ib{width:36px;height:36px;background:var(--card)}
+.info{position:absolute;left:8px;top:8px;right:52px;z-index:2;pointer-events:none;display:flex}
+.info>span{background:var(--card);border:1.5px solid var(--line);border-radius:9px;padding:6px 10px;font-size:13px;line-height:1.4;box-shadow:0 2px 8px rgba(0,0,0,.06);max-width:100%}
+.info>span b{font-weight:800}
+.info .pista{display:block;margin-top:4px;padding-top:4px;border-top:1px dashed var(--line);font-size:14px}
+.info .pista i{font-style:normal;color:var(--acc);font-weight:800}
+.info.modo>span{border-color:var(--acc);border-width:2px}
+.dicaTxt{position:absolute;left:8px;bottom:8px;right:52px;z-index:2;pointer-events:none;font-size:12px;color:var(--muted);line-height:1.35}
+.acoes{display:flex;gap:8px;padding:8px 16px 0;flex-wrap:wrap}
+.acoes .esp{flex:1}
+.acoes .btn{padding:8px 11px;font-size:13.5px}
+.acoes .btn.ativo{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.acoes .btn.ativo .n{background:rgba(255,255,255,.25)}
+.mapa.treme>svg{animation:sacode .45s}
+@keyframes sacode{15%,55%{transform:translate(-5px,2px) rotate(-.6deg)}35%,75%{transform:translate(5px,-2px) rotate(.6deg)}}
+.acoes .btn .n{font-family:var(--mono);font-weight:500;background:var(--vaga);border-radius:5px;padding:0 5px;font-size:12px}
+
+/* nós e fios */
+.anel-guia{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:2 7;stroke-linecap:round}
+.anel-guia.d1{stroke:var(--acc);stroke-opacity:.35}
+.fio line.v{stroke:var(--fio);stroke-width:2;stroke-linecap:round;transition:stroke .2s,stroke-width .2s,opacity .2s}
+.fio.aberto line.v{stroke:var(--acc);stroke-opacity:.55}
+.fio line.h{stroke:transparent;stroke-width:18;cursor:move}
+.fio:hover line.v{stroke:var(--fio-on);stroke-opacity:1}
+.no{cursor:pointer}
+.no rect.p{fill:var(--oculta);stroke:var(--oculta-borda);stroke-width:1.5;stroke-dasharray:4 3;transition:stroke .2s,fill .2s}
+.no.perto rect.p{stroke:var(--perto);stroke-dasharray:none;stroke-width:2}
+.no rect.v{fill:var(--vaga)}
+.no text{font-family:var(--sans);font-weight:800;font-size:15px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.no text.l{font-size:12.5px;fill:var(--vaga-ink)}
+.no text.q{fill:var(--muted);font-weight:600;font-size:11px}
+.no.aberto rect.p{fill:var(--acc);stroke:var(--acc);stroke-dasharray:none}
+.no.aberto text{fill:var(--acc-ink)}
+.no.raiz rect.p{fill:var(--raiz);stroke:var(--raiz)}
+.no.raiz text{fill:var(--raiz-ink);font-size:16px}
+.no.entregue rect.p{fill:var(--desistiu);stroke:var(--desistiu)}
+.no.entregue text{fill:#fff}
+.no .anel{fill:none;stroke:var(--acc);stroke-width:3;opacity:0}
+.no.sel .anel{opacity:1}
+.no.novo{animation:pop .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.no .selo circle{fill:var(--acc)}
+.no .selo path{stroke:var(--acc-ink);stroke-width:1.6;fill:none;stroke-linecap:round}
+.no.escolher{cursor:help}
+svg.modoDica .no:not(.aberto):not(.entregue) rect.p{stroke:var(--acc);stroke-dasharray:none;stroke-width:2.5;animation:chama 1.1s infinite}
+svg.modoDica .no.aberto,svg.modoDica .no.raiz{opacity:.4}
+@keyframes chama{50%{stroke-opacity:.35}}
+svg.foco .no{opacity:.32;transition:opacity .2s}
+svg.foco .no.sel,svg.foco .no.viz{opacity:1}
+svg.foco .fio{opacity:.18}
+svg.foco .fio.on{opacity:1}
+svg.foco .fio.on line.v{stroke:var(--fio-on);stroke-width:3;stroke-opacity:1}
+
+/* aviso e fim */
+.aviso{position:fixed;left:50%;top:calc(110px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 15px;border-radius:8px;font-weight:800;font-size:14px;z-index:50;animation:desce .18s;max-width:calc(100vw - 32px);text-align:center;pointer-events:none}
+@keyframes desce{from{opacity:0;transform:translate(-50%,-6px)}}
+.fim{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(0,0,0,.42);animation:surge .25s}
+@keyframes surge{from{opacity:0}}
+.fim .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px;width:min(400px,100%);display:flex;flex-direction:column;gap:14px;border-top:6px solid var(--acc);animation:sobe .35s}
+@keyframes sobe{from{transform:translateY(12px)}}
+.fim h2{margin:0;font-family:var(--display);font-weight:400;font-size:25px;letter-spacing:.02em}
+.fim p{margin:0;color:var(--muted);line-height:1.45}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
+.nums b{display:block;font-family:var(--display);font-weight:400;font-size:24px;font-variant-numeric:tabular-nums}
+.nums span{font-size:11.5px;color:var(--muted)}
+.fim .bts{display:flex;gap:8px;flex-wrap:wrap}
+.fim .bts .btn{flex:1}
+
+dialog{border:1.5px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);max-width:min(460px,calc(100vw - 32px));padding:18px 20px;line-height:1.5}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h3{margin:0 0 8px;font-family:var(--display);font-weight:400;font-size:22px}
+dialog p,dialog li{font-size:14.5px}
+dialog ul{padding-left:20px;margin:8px 0}
+dialog li{margin:5px 0}
+dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+@media (max-width:420px){
+  .acoes .btn .t{display:none}
+  .topo .tit b{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="inicio" id="inicio">
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 44 30" aria-hidden="true"><g stroke="currentColor" stroke-width="2"><path d="M9 21 22 8M22 8l13 13M9 21h26"/></g><rect x="15" y="3" width="14" height="10" rx="5" fill="#2f8a4e"/><rect x="2" y="16" width="14" height="10" rx="5" fill="#7a4cc2"/><rect x="28" y="16" width="14" height="10" rx="5" fill="#c9671f"/></svg>
+      <h1>Interligado</h1>
+    </div>
+    <button class="ib" id="ajuda1" aria-label="Como jogar"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r=".9" fill="currentColor"/></svg></button>
+  </header>
+  <p class="intro">Cada palavra está ligada a outras por algum tipo de associação. Comece pela palavra do tema e vá descobrindo as vizinhas. Arraste as palavras e os fios para arrumar o mapa do seu jeito.</p>
+  <div class="temas" id="temas"></div>
+</div>
+
+<div class="jogo" id="jogo" hidden>
+  <div class="topo">
+    <button class="ib" id="voltar" aria-label="Voltar aos temas"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="tit"><b id="titulo"></b><span id="sub"></span></div>
+    <div class="cont"><b id="achadas">0</b>/<span id="total">0</span><br><span id="relogio">0:00</span></div>
+    <button class="ib" id="ajuda2" aria-label="Como jogar"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r=".9" fill="currentColor"/></svg></button>
+  </div>
+  <form class="palpite" id="form" autocomplete="off">
+    <div class="campo"><input id="resp" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" placeholder="Digite uma palavra…" aria-label="Sua resposta"></div>
+  </form>
+  <div class="mapa" id="mapa">
+    <svg id="svg" aria-label="Mapa de palavras" role="img">
+      <defs><pattern id="pontos" width="24" height="24" patternUnits="userSpaceOnUse"><circle class="ponto" cx="2" cy="2" r="1.2"/></pattern></defs>
+      <rect id="fundo" width="100%" height="100%" fill="url(#pontos)"/>
+      <g id="mundo"><g id="aneis"></g><g id="fios"></g><g id="nos"></g></g>
+    </svg>
+    <div class="info" id="info" hidden><span id="infoTxt"></span></div>
+    <div class="dicaTxt" id="dicaTxt">Toque numa palavra para ver as ligações. Arraste palavras ou fios para arrumar.</div>
+    <div class="zoom">
+      <button class="ib" id="zMais" aria-label="Aproximar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <button class="ib" id="zMenos" aria-label="Afastar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <button class="ib" id="zAjusta" aria-label="Mostrar o mapa inteiro"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+  <div class="acoes">
+    <button class="btn" id="bDica" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8a4.4 4.4 0 0 0-2.6 8c.5.4.8.9.8 1.5V12h3.6v-.7c0-.6.3-1.1.8-1.5A4.4 4.4 0 0 0 8 1.8zM6.3 14.2h3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="t">Dica</span><span class="n" id="nDicas">0</span></button>
+    <button class="btn" id="bSacudir" type="button" title="Embaralha o mapa: as palavras ganham posições novas"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6" transform="rotate(-12 8 8)"/><path d="M1.5 5.5q-1 2.5 0 5M14.5 5.5q1 2.5 0 5M3 3.5q-.8.8-1 1.6M13 12.5q.8-.8 1-1.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">Sacudir</span></button>
+    <span class="esp"></span>
+    <button class="btn" id="bDesiste" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14V2.5M3.5 3h8.5l-2 3 2 3H3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="t">Desistir</span></button>
+  </div>
+</div>
+
+<div class="fim" id="fim" hidden>
+  <section class="card" role="dialog" aria-modal="true" aria-labelledby="fimT">
+    <h2 id="fimT"></h2>
+    <p id="fimP"></p>
+    <div class="nums" id="fimN"></div>
+    <div class="bts">
+      <button class="btn" id="fVer" type="button">Ver o mapa</button>
+      <button class="btn pri" id="fOutro" type="button">Outro tema</button>
+    </div>
+  </section>
+</div>
+
+<dialog id="regras" aria-labelledby="rt">
+  <h3 id="rt">Como jogar</h3>
+  <ul>
+    <li>O mapa começa só com a <b>palavra do tema</b> aberta. As outras aparecem como casinhas vazias, uma para cada letra.</li>
+    <li>Cada fio liga duas palavras que têm alguma relação: “bola” e “gol”, “rei” e “coroa”. Às vezes a ligação é um trocadilho, como “banco” de reservas e “banco” de dinheiro.</li>
+    <li>Digite qualquer palavra que você acha que está no mapa. Se acertar, ela aparece sozinha. Acentos e maiúsculas não importam.</li>
+    <li>As casinhas com borda cheia estão ligadas a uma palavra já descoberta: são as mais fáceis de achar.</li>
+    <li>Os anéis pontilhados mostram a distância até a palavra do tema: no primeiro anel ficam as palavras ligadas direto a ela, no segundo as ligadas a essas, e assim por diante.</li>
+    <li>Toque numa palavra para destacar os fios dela.</li>
+    <li>Travou? Toque em <b>Dica</b> e escolha uma palavra escondida: aparece uma pista sobre ela, como “propriedade de todos os seres vivos” para <i>vida</i>. A pista fica guardada na palavra.</li>
+    <li>Arraste as palavras para onde quiser: os fios puxam as vizinhas e as outras abrem espaço. Arraste um fio para levar as duas pontas juntas. Use dois dedos ou a roda do mouse para dar zoom.</li>
+    <li><b>Sacudir</b> embaralha o mapa e dá posições novas a todas as palavras. Olhar o desenho de outro jeito ajuda a enxergar ligações.</li>
+  </ul>
+  <p>Quanto mais rápido e com menos dicas, mais pontos.</p>
+  <form method="dialog" class="bts"><button class="btn pri">Entendi</button></form>
+</dialog>
+
+<dialog id="confDesiste" aria-labelledby="dt">
+  <h3 id="dt">Desistir?</h3>
+  <p>Todas as palavras serão mostradas e esta partida não vai pontuar. Dá para jogar de novo depois.</p>
+  <form method="dialog" class="bts"><button class="btn" value="nao">Continuar jogando</button><button class="btn pri" value="sim">Mostrar tudo</button></form>
+</dialog>
+
+<script src="interligado/temas.js?v=1"></script>
+<script src="interligado/pistas.js?v=1"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const NS="http://www.w3.org/2000/svg";
+const el=(tag,attrs,pai)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(pai)pai.appendChild(e);return e};
+
+const TEMAS=window.INTERLIGADO_TEMAS, PISTAS=window.INTERLIGADO_PISTAS||{};
+const NIVEIS={
+  facil:{nome:"Fácil",base:1000,dicas:5},
+  medio:{nome:"Médio",base:2000,dicas:6},
+  dificil:{nome:"Difícil",base:3000,dicas:6}
+};
+const ICONES={
+  futebol:`<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#fff"/><path d="M10 6.2l3 2.2-1.1 3.6H8.1L7 8.4z" fill="#1f2226"/><path d="M10 2v4.2M13 8.4l4-1.3M11.9 12l2.4 3.4M8.1 12l-2.4 3.4M7 8.4 3 7.1" stroke="#1f2226" stroke-width="1.1"/></svg>`,
+  natureza:`<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16C4 8 9 4 17 3c0 8-4 13-11 13" fill="#fff"/><path d="M4 17C7 12 10 9 14 6.5" fill="none" stroke="#3f7f3a" stroke-width="1.4" stroke-linecap="round"/></svg>`,
+  musica:`<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 14.5V4.5l9-2v10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><ellipse cx="5.5" cy="14.8" rx="2.6" ry="2.1" fill="#fff"/><ellipse cx="14.5" cy="12.8" rx="2.6" ry="2.1" fill="#fff"/></svg>`,
+  animais:`<svg viewBox="0 0 20 20" aria-hidden="true" fill="#fff"><ellipse cx="10" cy="13.3" rx="4.2" ry="3.6"/><ellipse cx="4.6" cy="9" rx="1.8" ry="2.3"/><ellipse cx="15.4" cy="9" rx="1.8" ry="2.3"/><ellipse cx="7.6" cy="5.2" rx="1.8" ry="2.4"/><ellipse cx="12.4" cy="5.2" rx="1.8" ry="2.4"/></svg>`
+};
+
+/* ---------- Montagem do mapa a partir das ligações ---------- */
+function montar(tema,nv){
+  const L=TEMAS[tema].niveis[nv].ligacoes, idx=new Map(), nos=[], fios=[];
+  const no=w=>{
+    const alts=w.split("|"), k=norm(alts[0]);
+    if(!idx.has(k)){idx.set(k,nos.length);nos.push({k,txt:alts[0],alts:alts.map(norm),viz:[]})}
+    return idx.get(k);
+  };
+  for(const [a,b] of L){const i=no(a),j=no(b);fios.push([i,j]);nos[i].viz.push(j);nos[j].viz.push(i)}
+  return {nos,fios};
+}
+
+/* ---------- Tela inicial ---------- */
+const kEst=(t,n)=>`interligado:${t}:${n}`;
+function telaInicio(){
+  pararTudo(); J=null;
+  $("jogo").hidden=true; $("inicio").hidden=false; $("fim").hidden=true;
+  $("temas").innerHTML=Object.entries(TEMAS).map(([id,T])=>`<section class="tema" style="--tc:${T.cor}">
+    <h2><span class="ic">${ICONES[id]||""}</span>${esc(T.nome)}</h2>
+    <div class="nvs">${Object.entries(NIVEIS).map(([nv,N])=>{
+      const m=montar(id,nv), e=LS.get(kEst(id,nv),null);
+      let st=`<span class="st">Nova</span>`;
+      if(e&&e.fim) st=e.desistiu?`<span class="st">Revelada</span>`:`<span class="st ok">✓ ${e.pts} pts</span>`;
+      else if(e&&e.rev&&e.rev.length>1) st=`<span class="st and">● ${e.rev.length}/${m.nos.length}</span>`;
+      return `<button class="nv" data-t="${id}" data-n="${nv}"><b>${N.nome}</b><small>${m.nos.length} palavras</small>${st}</button>`}).join("")}</div>
+  </section>`).join("");
+  $("temas").querySelectorAll(".nv").forEach(b=>b.onclick=()=>abrir(b.dataset.t,b.dataset.n));
+  history.replaceState(null,"",location.pathname+location.search);
+}
+
+/* ---------- Medidas das peças ---------- */
+const ALT=34, LETRA=13, LGAP=3, PAD=14;
+const ctx=document.createElement("canvas").getContext("2d");
+function largura(txt,raiz){ctx.font=`800 ${raiz?16:15}px Figtree, system-ui, sans-serif`;return ctx.measureText(txt).width}
+function vagas(txt){ // posições das letras escondidas: [{i, x}] e largura total
+  const v=[]; let x=0;
+  [...txt].forEach((c,i)=>{
+    if(/\s/.test(c)){x+=9;return}
+    if(i>0&&!/\s/.test(txt[i-1])&&v.length) x+=LGAP;
+    v.push({i,c,x,letra:/[\p{L}\p{N}]/u.test(c)}); x+=LETRA;
+  });
+  return {v,w:x};
+}
+
+/* ---------- Estado da partida ---------- */
+let J=null;
+function abrir(tema,nv){
+  const T=TEMAS[tema], N=NIVEIS[nv], m=montar(tema,nv);
+  const e=LS.get(kEst(tema,nv),null);
+  J={tema,nv,T,N,nos:m.nos,fios:m.fios,
+     rev:new Set(e&&e.rev?e.rev:[m.nos[0].k]), pistas:new Set(e&&e.pistas?e.pistas:[]), dicas:e?e.dicas||0:0, modoDica:false,
+     seg:e?e.seg||0:0, fim:!!(e&&e.fim), desistiu:!!(e&&e.desistiu), pts:e?e.pts||0:0, pos:e&&e.pos||null, asp:e&&e.asp||0, sel:-1};
+  J.rev.add(m.nos[0].k);
+  J.nos.forEach((n,i)=>{
+    n.raiz=i===0;
+    const vg=vagas(n.txt);
+    n.vg=vg.v;
+    n.w=Math.ceil(Math.max(largura(n.txt,n.raiz),vg.w)+PAD*2); n.h=ALT; n.hw=n.w/2; n.hh=n.h/2;
+    n.x=0;n.y=0;n.vx=0;n.vy=0;n.fixo=false;n.preso=false;
+  });
+  const pr=profundidades(J.nos); J.nos.forEach((n,i)=>n.d=pr[i]);
+  J.nAneis=Math.max(...pr); J.raios=raiosAneis(J.nos);
+  document.documentElement.style.setProperty("--acc",T.cor);
+  $("inicio").hidden=true; $("jogo").hidden=false;
+  $("titulo").textContent=T.nome; $("sub").textContent=`${N.nome} · ${J.nos.length} palavras`;
+  $("total").textContent=J.nos.length;
+  $("resp").value=""; $("resp").disabled=J.fim;
+  history.replaceState(null,"",`#${tema}-${nv}`);
+  desenharMapa();
+  requestAnimationFrame(()=>{
+    medirMapa();
+    const ok=J.pos&&J.asp&&J.nos.every(n=>J.pos[n.k]);
+    if(ok){J.nos.forEach(n=>{const p=J.pos[n.k];n.x=p[0];n.y=p[1];n.preso=!!p[2];n.fixo=n.preso});aquecer(.05)}
+    else planejar();
+    posicionar(); ajustar(false);
+    atualizar();
+    if(J.fim) mostrarFim(false); else {iniciarRelogio(); if(matchMedia("(pointer:fine)").matches) $("resp").focus()}
+  });
+}
+function salvar(){
+  if(!J) return;
+  const pos={}; J.nos.forEach(n=>pos[n.k]=[Math.round(n.x),Math.round(n.y),n.preso?1:0]);
+  LS.set(kEst(J.tema,J.nv),{rev:[...J.rev],pistas:[...J.pistas],dicas:J.dicas,seg:J.seg,fim:J.fim,desistiu:J.desistiu,pts:J.pts,pos,asp:J.asp});
+}
+let salvarT=null; const salvarDepois=()=>{clearTimeout(salvarT);salvarT=setTimeout(salvar,600)};
+
+/* ---------- Relógio ---------- */
+let relT=null;
+function iniciarRelogio(){clearInterval(relT);relT=setInterval(()=>{if(!J||J.fim||document.hidden)return;J.seg++;pintarRelogio();if(J.seg%5===0)salvar()},1000);pintarRelogio()}
+const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+function pintarRelogio(){$("relogio").textContent=fmt(J.seg)}
+function pararTudo(){clearInterval(relT);cancelAnimationFrame(simRaf);simRaf=0;if(J)salvar()}
+
+/* ---------- Desenho ---------- */
+const svg=$("svg"), mundo=$("mundo"), gF=$("fios"), gN=$("nos");
+const gA=$("aneis");
+function desenharMapa(){
+  gF.innerHTML=""; gN.innerHTML=""; gA.innerHTML=""; J.guias=[];
+  for(let d=1;d<=J.nAneis;d++) J.guias.push(el("ellipse",{class:"anel-guia d"+d,cx:0,cy:0},gA));
+  J.fios.forEach(([a,b],i)=>{
+    const g=el("g",{class:"fio","data-f":i},gF);
+    J.fios[i].el=g; J.fios[i].lv=el("line",{class:"v"},g); J.fios[i].lh=el("line",{class:"h"},g);
+  });
+  J.nos.forEach((n,i)=>{
+    const g=el("g",{class:"no","data-n":i},gN); n.el=g;
+    n.gi=el("g",{},g);
+  });
+  J.nos.forEach((n,i)=>pintarNo(i));
+}
+function pintarNo(i,efeito){
+  const n=J.nos[i], g=n.gi, aberto=J.rev.has(n.k)||J.desistiu;
+  g.innerHTML="";
+  el("rect",{class:"anel",x:-n.hw-5,y:-n.hh-5,width:n.w+10,height:n.h+10,rx:n.hh+5},g);
+  el("rect",{class:"p",x:-n.hw,y:-n.hh,width:n.w,height:n.h,rx:n.hh},g);
+  const cls=["no"];
+  if(n.raiz) cls.push("raiz");
+  if(aberto){
+    cls.push(J.rev.has(n.k)?"aberto":"entregue");
+    const t=el("text",{x:0,y:1},g); t.textContent=n.txt;
+  }else{
+    const vg=n.vg, w=vg.length?vg[vg.length-1].x+LETRA:0, x0=-w/2;
+    for(const s of vg){
+      if(!s.letra){const t=el("text",{class:"l",x:x0+s.x+LETRA/2,y:1},g);t.textContent=s.c;continue}
+      el("rect",{class:"v",x:x0+s.x,y:-9.5,width:LETRA,height:19,rx:3},g);
+    }
+    if(n.viz.some(j=>J.rev.has(J.nos[j].k))) cls.push("perto");
+    if(J.pistas.has(n.k)){ // selo de lâmpada: esta palavra já tem pista
+      const s=el("g",{class:"selo",transform:`translate(${n.hw-4} ${-n.hh+2})`},g);
+      el("circle",{r:8},s); el("path",{d:"M-2.2 -1.2a2.6 2.6 0 1 1 4.4 0c-.6.8-.9 1.3-.9 2.2h-2.6c0-.9-.3-1.4-.9-2.2zM-1.1 3.4h2.2"},s);
+    }
+  }
+  if(J.sel===i) cls.push("sel");
+  if(efeito==="novo") cls.push("novo");
+  n.el.setAttribute("class",cls.join(" "));
+  n.el.setAttribute("aria-label",aberto?n.txt:`Palavra escondida de ${n.vg.filter(s=>s.letra).length} letras`+(J.pistas.has(n.k)?`. Pista: ${PISTAS[n.txt]||""}`:""));
+}
+function pintarFios(){
+  J.fios.forEach(([a,b],i)=>{
+    const f=J.fios[i], ab=J.rev.has(J.nos[a].k)&&J.rev.has(J.nos[b].k);
+    f.el.classList.toggle("aberto",ab);
+    f.el.classList.toggle("on",J.sel===a||J.sel===b);
+  });
+}
+function posicionar(){
+  const {sx,sy}=escalaAneis();
+  J.guias.forEach((e,i)=>{e.setAttribute("rx",(J.raios[i+1]*sx).toFixed(1));e.setAttribute("ry",(J.raios[i+1]*sy).toFixed(1))});
+  for(const n of J.nos) n.el.setAttribute("transform",`translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})`);
+  for(const f of J.fios){
+    const a=J.nos[f[0]], b=J.nos[f[1]];
+    for(const l of [f.lv,f.lh]){l.setAttribute("x1",a.x.toFixed(1));l.setAttribute("y1",a.y.toFixed(1));l.setAttribute("x2",b.x.toFixed(1));l.setAttribute("y2",b.y.toFixed(1))}
+  }
+}
+function atualizar(){
+  $("achadas").textContent=J.rev.size;
+  $("nDicas").textContent=J.N.dicas-J.dicas;
+  $("bDica").disabled=J.fim||(J.dicas>=J.N.dicas&&!J.modoDica);
+  $("bDica").classList.toggle("ativo",J.modoDica);
+  svg.classList.toggle("modoDica",J.modoDica);
+  $("bDesiste").disabled=J.fim;
+  pintarFios(); pintarInfo();
+  svg.classList.toggle("foco",J.sel>=0);
+}
+
+/* ---------- Física: molas nos fios, repulsão entre peças, colisão de retângulos ---------- */
+const FIO_GAP=58;
+/* Anéis: cada palavra fica no anel da sua distância (em fios) até a palavra do tema.
+   Os anéis são elipses que acompanham o formato da tela. */
+const ANEL=105;
+function raiosAneis(nos){ // cada anel tem a volta necessária para as palavras dele caberem
+  const R=[0], max=Math.max(...nos.map(n=>n.d));
+  for(let d=1;d<=max;d++){
+    const volta=nos.filter(n=>n.d===d).reduce((a,n)=>a+n.w*.8+n.h+26,0);
+    R[d]=Math.max(R[d-1]+ANEL*(d===1?1:.85),volta/(2*Math.PI));
+  }
+  return R;
+}
+function escalaAneis(){const a=(J&&J.asp)||aspecto(); // fixo por desenho: o teclado do celular não deforma os anéis
+ return {sx:Math.sqrt(a),sy:1/Math.sqrt(a)}}
+function profundidades(nos){
+  const d=nos.map(()=>-1); d[0]=0; const f=[0];
+  while(f.length){const i=f.shift();for(const j of nos[i].viz)if(d[j]<0){d[j]=d[i]+1;f.push(j)}}
+  return d;
+}
+function raio(n,ux,uy){ // distância do centro até a borda na direção (ux,uy)
+  const ax=Math.abs(ux)||1e-9, ay=Math.abs(uy)||1e-9;
+  return Math.min(n.hw/ax,n.hh/ay);
+}
+function passo(nos,fios,alpha){
+  const N=nos.length;
+  // molas
+  for(const [a,b] of fios){
+    const A=nos[a],B=nos[b];
+    let dx=B.x+B.vx-A.x-A.vx, dy=B.y+B.vy-A.y-A.vy, d=Math.hypot(dx,dy)||1;
+    const ux=dx/d,uy=dy/d, gap=d-raio(A,ux,uy)-raio(B,ux,uy);
+    const f=(gap-FIO_GAP)*.08*alpha, ba=B.viz.length/(A.viz.length+B.viz.length);
+    B.vx-=ux*f*(1-ba)*2*.5; B.vy-=uy*f*(1-ba)*2*.5;
+    A.vx+=ux*f*ba*2*.5; A.vy+=uy*f*ba*2*.5;
+  }
+  // repulsão (pela distância entre bordas, para palavras compridas não se espremerem)
+  for(let i=0;i<N;i++){const A=nos[i];for(let j=i+1;j<N;j++){const B=nos[j];
+    let dx=B.x-A.x, dy=B.y-A.y, d=Math.hypot(dx,dy);
+    if(d<1){dx=Math.random()-.5;dy=Math.random()-.5;d=1}
+    const ux=dx/d,uy=dy/d, gap=Math.max(8,d-raio(A,ux,uy)-raio(B,ux,uy)+30);
+    const f=2600*alpha/(gap*gap);
+    A.vx-=ux*f;A.vy-=uy*f;B.vx+=ux*f;B.vy+=uy*f;
+  }}
+  // fios não passam por cima de peças que não são suas pontas
+  for(const [a,b] of fios){
+    const A=nos[a],B=nos[b], sx=B.x-A.x, sy=B.y-A.y, L2=sx*sx+sy*sy||1;
+    for(let c=0;c<N;c++){ if(c===a||c===b) continue; const C=nos[c];
+      let t=((C.x-A.x)*sx+(C.y-A.y)*sy)/L2; if(t<=0||t>=1) continue;
+      const px=A.x+sx*t, py=A.y+sy*t; let dx=C.x-px, dy=C.y-py, d=Math.hypot(dx,dy)||1;
+      const r=raio(C,dx/d,dy/d)+12; if(d>=r) continue;
+      const f=(r-d)/d*.12*Math.max(alpha,.15);
+      C.vx+=dx*f;C.vy+=dy*f; A.vx-=dx*f*.5;A.vy-=dy*f*.5;B.vx-=dx*f*.5;B.vy-=dy*f*.5;
+    }
+  }
+  // cada palavra é puxada para o seu anel; a do tema, para o centro
+  const {sx,sy}=escalaAneis();
+  for(const n of nos){
+    if(!n.d){n.vx+=-n.x*.2;n.vy+=-n.y*.2;continue}
+    const nx=n.x/sx, ny=n.y/sy, r=Math.hypot(nx,ny)||1, k=(J.raios[n.d]-r)*.35*Math.max(alpha,.35);
+    n.vx+=nx/r*k*sx; n.vy+=ny/r*k*sy;
+  }
+  for(const n of nos){
+    if(n.fixo){n.vx=n.vy=0;continue}
+    n.vx*=.6;n.vy*=.6;
+    const v=Math.hypot(n.vx,n.vy); if(v>40){n.vx*=40/v;n.vy*=40/v}
+    n.x+=n.vx;n.y+=n.vy;
+  }
+  // colisão
+  for(let k=0;k<2;k++) for(let i=0;i<N;i++){const A=nos[i];for(let j=i+1;j<N;j++){const B=nos[j];
+    const dx=B.x-A.x, dy=B.y-A.y, ox=A.hw+B.hw+14-Math.abs(dx), oy=A.hh+B.hh+12-Math.abs(dy);
+    if(ox<=0||oy<=0) continue;
+    const wa=A.fixo?0:B.fixo?1:.5, wb=B.fixo?0:A.fixo?1:.5; if(!wa&&!wb) continue;
+    if(ox/(A.w+B.w)<oy/(A.h+B.h)){const s=Math.sign(dx)||1;A.x-=s*ox*wa;B.x+=s*ox*wb}
+    else{const s=Math.sign(dy)||1;A.y-=s*oy*wa;B.y+=s*oy*wb}
+  }}
+}
+let VW=600,VH=500;
+function medirMapa(){const r=$("mapa").getBoundingClientRect();VW=Math.max(200,r.width);VH=Math.max(180,r.height)}
+const aspecto=()=>VW/VH/1.5; // as peças são mais largas que altas: um mapa "quadrado" já sai largo
+
+/* Posição inicial: anéis a partir da palavra do tema, filhas perto do ângulo da mãe */
+function semear(nos,seed){
+  let s=seed*9301+49297; const rnd=()=>(s=(s*9301+49297)%233280)/233280;
+  const prof=new Array(nos.length).fill(-1), pai=new Array(nos.length).fill(-1), ang=new Array(nos.length).fill(0);
+  prof[0]=0; const fila=[0], niveis=[[0]];
+  while(fila.length){const i=fila.shift();const vz=nos[i].viz.slice().sort(()=>rnd()-.5);for(const j of vz)if(prof[j]<0){prof[j]=prof[i]+1;pai[j]=i;fila.push(j);(niveis[prof[j]]||(niveis[prof[j]]=[])).push(j)}}
+  const {sx,sy}=escalaAneis(), off=rnd()*Math.PI*2;
+  nos[0].x=0;nos[0].y=0;
+  (niveis[1]||[]).forEach((j,k,arr)=>{ang[j]=off+k/arr.length*Math.PI*2});
+  for(let d=2;d<niveis.length;d++){
+    const g=niveis[d].slice().sort((p,q)=>ang[pai[p]]-ang[pai[q]]);
+    const porPai={}; g.forEach(j=>(porPai[pai[j]]||(porPai[pai[j]]=[])).push(j));
+    for(const p in porPai){const fs=porPai[p];fs.forEach((j,k)=>{ang[j]=ang[p]+(k-(fs.length-1)/2)*(.9/d)+(rnd()-.5)*.25})}
+  }
+  for(let i=1;i<nos.length;i++){const r=J.raios[prof[i]]||prof[i]*ANEL;nos[i].x=Math.cos(ang[i])*r*sx;nos[i].y=Math.sin(ang[i])*r*sy}
+}
+function cruza(p1,p2,p3,p4){
+  const d=(ax,ay,bx,by,cx,cy)=>(bx-ax)*(cy-ay)-(by-ay)*(cx-ax);
+  const d1=d(p3.x,p3.y,p4.x,p4.y,p1.x,p1.y),d2=d(p3.x,p3.y,p4.x,p4.y,p2.x,p2.y),d3=d(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y),d4=d(p1.x,p1.y,p2.x,p2.y,p4.x,p4.y);
+  return ((d1>0)!==(d2>0))&&((d3>0)!==(d4>0));
+}
+function segRet(A,B,C){ // o segmento AB atravessa o retângulo de C?
+  const steps=24;
+  for(let s=1;s<steps;s++){const t=s/steps,x=A.x+(B.x-A.x)*t,y=A.y+(B.y-A.y)*t;if(Math.abs(x-C.x)<C.hw+2&&Math.abs(y-C.y)<C.hh+2)return true}
+  return false;
+}
+function nota(nos,fios){
+  let cr=0,th=0,ov=0;
+  for(let i=0;i<fios.length;i++)for(let j=i+1;j<fios.length;j++){
+    const [a,b]=fios[i],[c,d]=fios[j]; if(a===c||a===d||b===c||b===d) continue;
+    if(cruza(nos[a],nos[b],nos[c],nos[d])) cr++;
+  }
+  for(const [a,b] of fios) for(let c=0;c<nos.length;c++) if(c!==a&&c!==b&&segRet(nos[a],nos[b],nos[c])) th++;
+  for(let i=0;i<nos.length;i++)for(let j=i+1;j<nos.length;j++){const A=nos[i],B=nos[j];if(Math.abs(A.x-B.x)<A.hw+B.hw&&Math.abs(A.y-B.y)<A.hh+B.hh)ov++}
+  const bb=caixa(nos), k=Math.min(VW/bb.w,VH/bb.h), asp=Math.abs(Math.log((bb.w/bb.h)/(VW/VH)));
+  return cr*10+th*14+ov*40+asp*6+Math.max(0,.75-k)*30;
+}
+function caixa(nos){
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  for(const n of nos){x0=Math.min(x0,n.x-n.hw);x1=Math.max(x1,n.x+n.hw);y0=Math.min(y0,n.y-n.hh);y1=Math.max(y1,n.y+n.hh)}
+  return {x0,y0,x1,y1,w:x1-x0,h:y1-y0};
+}
+function simular(nos,fios,iters){
+  let alpha=1;
+  for(let t=0;t<iters;t++){passo(nos,fios,alpha);alpha*=.985;if(alpha<.02)alpha=.02}
+}
+/* Testa várias sementes e fica com o desenho de menos cruzamentos */
+function planejar(de){
+  const copia=()=>J.nos.map(n=>({x:0,y:0,vx:0,vy:0,hw:n.hw,hh:n.hh,w:n.w,h:n.h,viz:n.viz,d:n.d,fixo:false}));
+  J.asp=Math.max(.7,Math.min(1.8,aspecto())); // peças são largas: anel estreito demais não as acomoda
+  const tent=J.nos.length>24?10:8, base=Math.floor(Math.random()*100000);
+  let melhor=null,mn=1e9;
+  for(let s=0;s<tent;s++){
+    const c=copia(); semear(c,base+s);
+    if(de&&s%2){c.forEach(p=>p.x=-p.x)} // espelha metade das tentativas para variar mais
+    simular(c,J.fios,320);
+    let sc=nota(c,J.fios);
+    if(de){ // quanto mais parecido com o desenho atual, pior: a ideia é ver o mapa de outro jeito
+      const mx=de.reduce((a,p)=>a+p.x,0)/de.length, my=de.reduce((a,p)=>a+p.y,0)/de.length;
+      const dist=c.reduce((a,p,i)=>a+Math.hypot(p.x-(de[i].x-mx),p.y-(de[i].y-my)),0)/c.length;
+      sc+=Math.max(0,220-dist)*.25;
+    }
+    if(sc<mn){mn=sc;melhor=c}
+  }
+  J.nos.forEach((n,i)=>{n.x=melhor[i].x;n.y=melhor[i].y;n.vx=n.vy=0;n.fixo=n.preso=false});
+  return melhor;
+}
+
+/* Laço de animação: só roda enquanto há movimento */
+let simRaf=0, alpha=0, alvo=0;
+function aquecer(a){alpha=Math.max(alpha,a);if(!simRaf)simRaf=requestAnimationFrame(tick)}
+function tick(){
+  simRaf=0; if(!J) return;
+  alpha+=(alvo-alpha)*.03;
+  passo(J.nos,J.fios,alpha);
+  posicionar();
+  if(alpha>.004||alvo>0) simRaf=requestAnimationFrame(tick);
+  else salvarDepois();
+}
+
+/* ---------- Câmera: arrastar o fundo, pinça e roda ---------- */
+const V={k:1,tx:0,ty:0};
+function aplicarV(){mundo.setAttribute("transform",`translate(${V.tx.toFixed(1)} ${V.ty.toFixed(1)}) scale(${V.k.toFixed(4)})`)}
+const KMIN=.25,KMAX=2.6;
+function alvoAjuste(){
+  const bb=caixa(J.nos), p=Math.min(28,VW*.05);
+  let k=Math.min((VW-p*2-44)/bb.w,(VH-p*2)/bb.h,1.35); k=Math.max(KMIN,k);
+  return {k,tx:VW/2-44/2-(bb.x0+bb.w/2)*k,ty:VH/2-(bb.y0+bb.h/2)*k};
+}
+let camRaf=0;
+function animarV(to,ms=420){
+  cancelAnimationFrame(camRaf);
+  const de={...V}, t0=performance.now();
+  const f=now=>{let t=Math.min(1,(now-t0)/ms);t=1-Math.pow(1-t,3);V.k=de.k+(to.k-de.k)*t;V.tx=de.tx+(to.tx-de.tx)*t;V.ty=de.ty+(to.ty-de.ty)*t;aplicarV();if(t<1)camRaf=requestAnimationFrame(f)};
+  camRaf=requestAnimationFrame(f);
+}
+function ajustar(anim=true){medirMapa();const a=alvoAjuste();if(anim)animarV(a);else{Object.assign(V,a);aplicarV()}}
+function zoomEm(fator,sx,sy,anim){
+  const k=Math.max(KMIN,Math.min(KMAX,V.k*fator)), f=k/V.k;
+  const to={k,tx:sx-(sx-V.tx)*f,ty:sy-(sy-V.ty)*f};
+  if(anim) animarV(to,220); else {Object.assign(V,to);aplicarV()}
+}
+function mostrarNo(n){ // traz a peça para dentro da tela se estiver fora
+  const sx=n.x*V.k+V.tx, sy=n.y*V.k+V.ty, m=40;
+  if(sx-n.hw*V.k>m&&sx+n.hw*V.k<VW-m-44&&sy-n.hh*V.k>m&&sy+n.hh*V.k<VH-m) return;
+  let k=V.k; if(k<.55) k=.8;
+  animarV({k,tx:VW/2-n.x*k,ty:VH/2-n.y*k},500);
+}
+const tela2mundo=(cx,cy)=>{const r=svg.getBoundingClientRect();return {x:(cx-r.left-V.tx)/V.k,y:(cy-r.top-V.ty)/V.k,sx:cx-r.left,sy:cy-r.top}};
+
+/* ponteiros */
+const ptrs=new Map(); let gesto=null;
+svg.addEventListener("pointerdown",e=>{
+  if(!J) return;
+  e.preventDefault();
+  try{svg.setPointerCapture(e.pointerId)}catch(_){}
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  cancelAnimationFrame(camRaf);
+  if(ptrs.size===2){
+    soltarGesto();
+    const [p,q]=[...ptrs.values()];
+    gesto={tipo:"pinca",d:Math.hypot(p.x-q.x,p.y-q.y),cx:(p.x+q.x)/2,cy:(p.y+q.y)/2};
+    return;
+  }
+  if(ptrs.size>2) return;
+  const w=tela2mundo(e.clientX,e.clientY);
+  const gn=e.target.closest(".no"), gf=e.target.closest(".fio");
+  if(gn){
+    const i=+gn.dataset.n, n=J.nos[i];
+    gesto={tipo:"no",i,dx:n.x-w.x,dy:n.y-w.y,x0:e.clientX,y0:e.clientY,moveu:false};
+  }else if(gf){
+    const f=J.fios[+gf.dataset.f], A=J.nos[f[0]], B=J.nos[f[1]];
+    gesto={tipo:"fio",a:f[0],b:f[1],ax:A.x-w.x,ay:A.y-w.y,bx:B.x-w.x,by:B.y-w.y,x0:e.clientX,y0:e.clientY,moveu:false};
+  }else{
+    gesto={tipo:"pan",x0:e.clientX,y0:e.clientY,tx:V.tx,ty:V.ty,moveu:false};
+    svg.classList.add("pan");
+  }
+});
+svg.addEventListener("pointermove",e=>{
+  if(!ptrs.has(e.pointerId)||!gesto) return;
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(gesto.tipo==="pinca"){
+    if(ptrs.size<2) return;
+    const [p,q]=[...ptrs.values()], d=Math.hypot(p.x-q.x,p.y-q.y), cx=(p.x+q.x)/2, cy=(p.y+q.y)/2;
+    const r=svg.getBoundingClientRect();
+    V.tx+=cx-gesto.cx; V.ty+=cy-gesto.cy;
+    zoomEm(d/gesto.d,cx-r.left,cy-r.top,false);
+    gesto.d=d;gesto.cx=cx;gesto.cy=cy; aplicarV(); return;
+  }
+  if(!gesto.moveu&&Math.hypot(e.clientX-gesto.x0,e.clientY-gesto.y0)<6) return;
+  const w=tela2mundo(e.clientX,e.clientY);
+  if(!gesto.moveu){
+    gesto.moveu=true;
+    if(gesto.tipo!=="pan"){alvo=.22;aquecer(.22)}
+  }
+  if(gesto.tipo==="pan"){V.tx=gesto.tx+e.clientX-gesto.x0;V.ty=gesto.ty+e.clientY-gesto.y0;aplicarV()}
+  else if(gesto.tipo==="no"){const n=J.nos[gesto.i];n.fixo=true;n.x=w.x+gesto.dx;n.y=w.y+gesto.dy}
+  else if(gesto.tipo==="fio"){const A=J.nos[gesto.a],B=J.nos[gesto.b];A.fixo=B.fixo=true;A.x=w.x+gesto.ax;A.y=w.y+gesto.ay;B.x=w.x+gesto.bx;B.y=w.y+gesto.by}
+});
+function soltarGesto(){
+  if(!gesto) return;
+  svg.classList.remove("pan");
+  if(gesto.tipo==="no"&&gesto.moveu){J.nos[gesto.i].preso=true}
+  if(gesto.tipo==="fio"&&gesto.moveu){J.nos[gesto.a].preso=J.nos[gesto.b].preso=true}
+  if(gesto.moveu&&gesto.tipo!=="pan"&&gesto.tipo!=="pinca"){alvo=0;aquecer(.12)}
+  gesto=null;
+}
+function fimPtr(e){
+  if(!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if(!gesto) return;
+  if(gesto.tipo==="pinca"){if(ptrs.size<2)gesto=null;return}
+  if(!gesto.moveu&&e.type==="pointerup"){
+    if(gesto.tipo==="no"&&J.modoDica) usarDica(gesto.i);
+    else if(gesto.tipo==="no") selecionar(J.sel===gesto.i?-1:gesto.i);
+    else if(gesto.tipo==="fio"){const f=[gesto.a,gesto.b];selecionar(J.sel===f[0]?f[1]:f[0])}
+    else {if(J.modoDica){J.modoDica=false;atualizar()} selecionar(-1)}
+  }
+  soltarGesto();
+}
+svg.addEventListener("pointerup",fimPtr);
+svg.addEventListener("pointercancel",fimPtr);
+svg.addEventListener("wheel",e=>{
+  if(!J) return; e.preventDefault(); cancelAnimationFrame(camRaf);
+  const r=svg.getBoundingClientRect();
+  zoomEm(Math.exp(-e.deltaY*(e.deltaMode===1?.05:.0018)),e.clientX-r.left,e.clientY-r.top,false);
+},{passive:false});
+$("zMais").onclick=()=>zoomEm(1.3,VW/2,VH/2,true);
+$("zMenos").onclick=()=>zoomEm(1/1.3,VW/2,VH/2,true);
+$("zAjusta").onclick=()=>ajustar(true);
+new ResizeObserver(()=>{
+  if(!J||$("jogo").hidden) return;
+  const ow=VW,oh=VH; medirMapa();
+  if(ow!==VW||oh!==VH){V.tx+=(VW-ow)/2;V.ty+=(VH-oh)/2;aplicarV()}
+}).observe($("mapa"));
+
+/* ---------- Seleção ---------- */
+function selecionar(i){
+  const ant=J.sel; J.sel=i;
+  for(const n of J.nos) n.el.classList.remove("sel","viz");
+  if(i>=0){J.nos[i].el.classList.add("sel");J.nos[i].viz.forEach(j=>J.nos[j].el.classList.add("viz"))}
+  atualizar();
+  if(i>=0&&ant!==i) $("dicaTxt").hidden=true;
+}
+const lista=a=>a.length<=1?a.join(""):a.slice(0,-1).join(", ")+" e "+a[a.length-1];
+function pintarInfo(){
+  $("info").classList.toggle("modo",J.modoDica);
+  if(J.modoDica){$("info").hidden=false;$("infoTxt").innerHTML=`<b>Dica:</b> toque numa palavra escondida para ver uma pista sobre ela.`;return}
+  const i=J.sel; $("info").hidden=i<0; if(i<0) return;
+  const n=J.nos[i], aberto=J.rev.has(n.k)||J.desistiu;
+  const vz=n.viz.map(j=>J.nos[j]), vis=vz.filter(v=>J.rev.has(v.k)||J.desistiu).map(v=>`<b>${esc(v.txt)}</b>`), oc=vz.length-vis.length;
+  const lig=[...vis]; if(oc) lig.push(oc===1?"1 escondida":`${oc} escondidas`);
+  const nl=n.vg.filter(s=>s.letra).length;
+  const pista=!aberto&&J.pistas.has(n.k)?`<span class="pista"><i>Pista:</i> ${esc(PISTAS[n.txt]||"sem pista")}</span>`:"";
+  $("infoTxt").innerHTML=(aberto?`<b>${esc(n.txt)}</b> · `:`${nl} letras · `)+`ligada a ${lista(lig)}`+pista;
+}
+
+/* ---------- Palpites ---------- */
+function procurar(v){
+  for(let i=0;i<J.nos.length;i++){const n=J.nos[i];
+    if(n.alts.some(a=>v===a||v===a+"s"||v===a+"es")) return i;
+  }
+  return -1;
+}
+const aberto=i=>J.rev.has(J.nos[i].k);
+function ambiguo(v,i){ // outra palavra escondida começa com o que já foi digitado?
+  return J.nos.some((n,j)=>j!==i&&!aberto(j)&&n.alts.some(a=>a.length>v.length&&a.startsWith(v)));
+}
+let esperaT=null;
+$("resp").addEventListener("animationend",e=>e.target.classList.remove("treme"));
+$("resp").addEventListener("input",()=>{
+  clearTimeout(esperaT);
+  if(!J||J.fim) return;
+  const v=norm($("resp").value); if(!v) return;
+  const i=procurar(v);
+  if(i<0||aberto(i)) return;
+  if(ambiguo(v,i)) esperaT=setTimeout(()=>{if(norm($("resp").value)===v)revelar(i)},900);
+  else revelar(i);
+});
+$("form").addEventListener("submit",e=>{
+  e.preventDefault(); clearTimeout(esperaT);
+  if(!J||J.fim) return;
+  const v=norm($("resp").value); if(!v) return;
+  const i=procurar(v);
+  if(i>=0&&!aberto(i)) return revelar(i);
+  if(i>=0){aviso(`“${J.nos[i].txt}” já foi descoberta`);destacar(i);$("resp").value="";return}
+  const c=$("resp"); c.classList.remove("treme"); void c.offsetWidth; c.classList.add("treme");
+  aviso("Essa palavra não está no mapa");
+});
+function destacar(i){selecionar(i);mostrarNo(J.nos[i])}
+function revelar(i,porDica){
+  const n=J.nos[i];
+  J.rev.add(n.k); $("resp").value="";
+  pintarNo(i,"novo"); n.viz.forEach(j=>pintarNo(j));
+  if(J.sel>=0) selecionar(J.sel); else atualizar();
+  mostrarNo(n); aquecer(.06);
+  if(!porDica) aviso(["Boa!","Isso!","Acertou!","Muito bem!","Mandou bem!"][J.rev.size%5]);
+  salvar();
+  if(J.rev.size===J.nos.length) vencer();
+}
+
+/* ---------- Dica: escolha uma palavra escondida e ganhe uma pista sobre ela ---------- */
+$("bDica").onclick=()=>{
+  if(!J||J.fim) return;
+  if(J.modoDica){J.modoDica=false;return atualizar()}
+  const i=J.sel;
+  if(i>=0&&!aberto(i)) return usarDica(i);
+  if(J.dicas>=J.N.dicas) return aviso("Acabaram as dicas");
+  J.modoDica=true; selecionar(-1); $("dicaTxt").hidden=true;
+};
+function usarDica(i){
+  if(aberto(i)||J.desistiu){aviso("Escolha uma palavra escondida");return}
+  J.modoDica=false;
+  const n=J.nos[i];
+  if(!J.pistas.has(n.k)){
+    if(J.dicas>=J.N.dicas){aviso("Acabaram as dicas");return selecionar(i)}
+    J.pistas.add(n.k); J.dicas++; salvar();
+    pintarNo(i);
+  }
+  selecionar(i); mostrarNo(n);
+  if(matchMedia("(pointer:fine)").matches) $("resp").focus();
+}
+
+/* ---------- Sacudir: as peças tremem e ganham um desenho novo ---------- */
+let arrRaf=0, sacudindo=false;
+$("bSacudir").onclick=()=>{
+  if(!J||sacudindo) return;
+  sacudindo=true; medirMapa();
+  cancelAnimationFrame(simRaf); simRaf=0; alpha=0; alvo=0;
+  const de=J.nos.map(n=>({x:n.x,y:n.y}));
+  const novo=planejar(de).map(n=>({x:n.x,y:n.y}));
+  J.nos.forEach((n,i)=>{n.x=de[i].x;n.y=de[i].y;n.fixo=true});
+  const mp=$("mapa"); mp.classList.remove("treme"); void mp.offsetWidth; mp.classList.add("treme");
+  const bb=caixa(novo.map((p,i)=>({x:p.x,y:p.y,hw:J.nos[i].hw,hh:J.nos[i].hh})));
+  let k=Math.min((VW-100)/bb.w,(VH-56)/bb.h,1.35);k=Math.max(KMIN,k);
+  const T1=380,T2=750, t0=performance.now(), fase=J.nos.map(()=>Math.random()*6.28);
+  cancelAnimationFrame(arrRaf);
+  const f=now=>{
+    const e=now-t0;
+    if(e<T1){ // tremedeira
+      const amp=9*Math.sin(e/T1*Math.PI);
+      J.nos.forEach((n,i)=>{n.x=de[i].x+Math.sin(e/28+fase[i])*amp;n.y=de[i].y+Math.cos(e/23+fase[i])*amp});
+    }else{
+      if(!f.cam){f.cam=1;animarV({k,tx:VW/2-22-(bb.x0+bb.w/2)*k,ty:VH/2-(bb.y0+bb.h/2)*k},T2)}
+      let t=Math.min(1,(e-T1)/T2); t=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+      J.nos.forEach((n,i)=>{n.x=de[i].x+(novo[i].x-de[i].x)*t;n.y=de[i].y+(novo[i].y-de[i].y)*t});
+      if(t>=1){posicionar();J.nos.forEach(n=>n.fixo=false);sacudindo=false;salvar();return}
+    }
+    posicionar(); arrRaf=requestAnimationFrame(f);
+  };
+  arrRaf=requestAnimationFrame(f);
+};
+
+/* ---------- Fim ---------- */
+function pontos(){const N=J.N;return Math.round(Math.max(N.base*.1,N.base-J.seg-J.dicas*N.base*.04))}
+function vencer(){
+  J.fim=true; J.pts=pontos(); clearInterval(relT); salvar();
+  $("resp").disabled=true; $("resp").blur(); atualizar();
+  setTimeout(()=>{ajustar(true);setTimeout(()=>mostrarFim(true),600)},500);
+  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome},"*") }catch(e){}
+}
+function mostrarFim(agora){
+  $("fim").hidden=false;
+  if(J.desistiu){
+    $("fimT").textContent="Mapa revelado";
+    $("fimP").textContent=`Você tinha descoberto ${J.rev.size} de ${J.nos.length} palavras. As que faltavam aparecem em cinza.`;
+    $("fimN").innerHTML="";
+  }else{
+    $("fimT").textContent=agora?"Mapa completo!":"Você já completou este mapa";
+    $("fimP").textContent=`${J.T.nome} · ${J.N.nome}: todas as ${J.nos.length} palavras descobertas.`;
+    $("fimN").innerHTML=`<div><b>${fmt(J.seg)}</b><span>Tempo</span></div><div><b>${J.dicas}</b><span>Dica${J.dicas===1?"":"s"}</span></div><div><b>${J.pts}</b><span>Pontos</span></div>`;
+  }
+  $("fVer").textContent="Ver o mapa";
+  setTimeout(()=>$("fOutro").focus(),50);
+}
+$("fVer").onclick=()=>{$("fim").hidden=true;mostrarBotaoNovo()};
+$("fOutro").onclick=telaInicio;
+function mostrarBotaoNovo(){
+  const b=$("bDesiste"); b.disabled=false; b.querySelector(".t").textContent="Jogar de novo";
+  b.onclick=recomecar;
+}
+function recomecar(){
+  const t=J.tema,n=J.nv; LS.del(kEst(t,n)); restaurarDesiste(); abrir(t,n);
+}
+function restaurarDesiste(){const b=$("bDesiste");b.querySelector(".t").textContent="Desistir";b.onclick=pedirDesistir}
+function pedirDesistir(){if(!J||J.fim)return;$("confDesiste").returnValue="";$("confDesiste").showModal()}
+$("bDesiste").onclick=pedirDesistir;
+$("confDesiste").addEventListener("close",()=>{
+  if($("confDesiste").returnValue!=="sim"||!J) return;
+  J.desistiu=true; J.fim=true; J.pts=0; clearInterval(relT);
+  $("resp").disabled=true;
+  J.nos.forEach((n,i)=>pintarNo(i)); atualizar(); salvar(); ajustar(true);
+  setTimeout(()=>mostrarFim(true),500);
+});
+
+/* ---------- Aviso ---------- */
+let avisoT=null;
+function aviso(t){
+  let a=document.querySelector(".aviso"); if(a) a.remove();
+  a=document.createElement("div"); a.className="aviso"; a.setAttribute("role","status"); a.textContent=t; document.body.appendChild(a);
+  clearTimeout(avisoT); avisoT=setTimeout(()=>a.remove(),1500);
+}
+
+$("voltar").onclick=telaInicio;
+$("ajuda1").onclick=$("ajuda2").onclick=()=>$("regras").showModal();
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&J&&J.sel>=0&&!document.querySelector("dialog[open]")) selecionar(-1);
+});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&J)salvar()});
+window.addEventListener("pagehide",()=>{if(J)salvar()});
+
+/* Recomeçar no tema certo se o endereço tiver #tema-nivel; mostrar as regras na primeira visita */
+const pronto=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+Promise.race([pronto,new Promise(r=>setTimeout(r,1500))]).then(()=>{
+  const m=location.hash.slice(1).split("-");
+  if(m.length===2&&TEMAS[m[0]]&&NIVEIS[m[1]]) abrir(m[0],m[1]); else telaInicio();
+  if(!LS.get("interligado:viu-regras",false)){LS.set("interligado:viu-regras",true);setTimeout(()=>{try{$("regras").showModal()}catch(e){}},300)}
+});
+})();
+</script>
+</body>
+</html>

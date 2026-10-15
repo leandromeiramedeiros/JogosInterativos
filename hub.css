@@ -143,6 +143,9 @@ a{color:inherit}
 .art-pal{background:#14261c}
 .art-pal .mark{font-family:"Bowlby One SC","Arial Black",Impact,sans-serif;color:#fbf8f1;letter-spacing:.03em;text-shadow:0 2px 0 rgba(0,0,0,.45);font-size:clamp(18px,9.4cqw,32px)}
 .art-pal .mark span{color:#e9b84a}
+.art-int{background:#1b2230}
+.art-int .mark{font-family:"Bowlby One SC","Arial Black",Impact,sans-serif;color:#f4f1ea;letter-spacing:.02em;text-shadow:0 2px 0 rgba(0,0,0,.45);font-size:clamp(17px,8.8cqw,30px)}
+.art-int .mark span{color:#f2b134}
 
 /* ---------- Jogador ---------- */
 .player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}
