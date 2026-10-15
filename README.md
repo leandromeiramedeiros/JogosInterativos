@@ -13,6 +13,8 @@ Uma prateleira de jogos para jogar no navegador.
 | [Quiz Velozes e Furiosos](https://leandromeiramedeiros.github.io/JogosInterativos/#velozes-e-furiosos) | Carros, rachas e a família Toretto, com cenas dos filmes. |
 | [Quiz The Office](https://leandromeiramedeiros.github.io/JogosInterativos/#the-office) | Dunder Mifflin e Michael Scott, com cenas da série. |
 | [Quiz Sertanejo Raiz](https://leandromeiramedeiros.github.io/JogosInterativos/#sertanejo-raiz) | Duplas, violeiros e modas de viola da música caipira. |
+| [Palavras Cruzadas](https://leandromeiramedeiros.github.io/JogosInterativos/#palavras-cruzadas) | Uma cruzada nova por dia em 3 níveis (7, 10 e 14 palavras). Pontua pelo tempo e pelas ajudas usadas. |
+| [Palpite](https://leandromeiramedeiros.github.io/JogosInterativos/#palpite) | Descubra a palavra do dia em 6 tentativas. 3 níveis: 4, 5 e 6 letras. |
 
 ## Placar
 
@@ -33,6 +35,7 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 
 - `index.html`, `hub.css`, `hub.js` — a página com a grade de jogos. Cada jogo abre por cima da grade, e o endereço ganha `#id-do-jogo` para poder ser compartilhado.
 - `jogos/` — um HTML por jogo. Os quizzes usam o motor em `jogos/quiz/` (veja `jogos/quiz/LEIAME.md`) e guardam perguntas, imagens e tema em `jogos/<id>/`. No fim da partida, o jogo avisa a página com `parent.postMessage({tipo: "jogos:fim", pontos, nivel}, "*")`.
+- `jogos/palavras-cruzadas/pistas.js` e `jogos/palpite/palavras.js` — palavras dos dois jogos diários. O jogo do dia sai da data no próprio navegador (sem servidor nem agendamento): a mesma data dá o mesmo jogo para todo mundo, e o Nº 1 é 15/10/2026. No Palpite, acrescente palavras no fim de `respostas` para não trocar as palavras de dias já sorteados. Nas Palavras Cruzadas, qualquer mudança no banco de pistas redesenha as grades de todos os dias.
 - `placar-config.js` — endereço e chave pública do Supabase (vazio = placar só no navegador).
 - `supabase/placar.sql` — criação da tabela do placar e das regras de acesso.
 - `.github/workflows/pages.yml` — publica o site no GitHub Pages a cada push no branch padrão.

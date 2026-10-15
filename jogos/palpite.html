@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Palpite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Figtree:wght@400;600;800&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Peças de madeira sobre feltro: verde = lugar certo, mostarda = está na palavra, cinza = não está. */
+:root{
+  --bg:#efe9dc; --card:#fbf8f1; --ink:#22201b; --muted:#6f685b; --line:#d6cdb9;
+  --tile:#fffdf8; --tile-line:#cfc5ae; --tile-ink:#22201b;
+  --ok:#3a8f5c; --ok-ink:#fff; --has:#d99a1e; --has-ink:#fff; --no:#8a8476; --no-ink:#fff;
+  --accent:#3a8f5c; --key:#e2dac8; --key-ink:#22201b;
+  --display:"Bowlby One SC","Arial Black",Impact,sans-serif; --sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151612; --card:#1f201b; --ink:#ece7da; --muted:#a29b8c; --line:#363830;
+  --tile:#1f201b; --tile-line:#4a4c42; --tile-ink:#ece7da;
+  --ok:#4aa870; --ok-ink:#08140d; --has:#e0a832; --has-ink:#1a1204; --no:#4a4b44; --no-ink:#ece7da;
+  --accent:#4aa870; --key:#34362e; --key-ink:#ece7da; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151612; --card:#1f201b; --ink:#ece7da; --muted:#a29b8c; --line:#363830;
+  --tile:#1f201b; --tile-line:#4a4c42; --tile-ink:#ece7da;
+  --ok:#4aa870; --ok-ink:#08140d; --has:#e0a832; --has-ink:#1a1204; --no:#4a4b44; --no-ink:#ece7da;
+  --accent:#4aa870; --key:#34362e; --key-ink:#ece7da; color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:100vh;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px))}
+button{font:inherit;color:inherit}
+.wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1.5px solid var(--line);padding-bottom:10px}
+.logo{display:flex;gap:3px}
+.logo i{font-style:normal;font-family:var(--display);font-size:clamp(17px,5vw,22px);width:1.55em;height:1.55em;display:grid;place-items:center;border-radius:5px;background:var(--no);color:var(--no-ink)}
+.logo i:nth-child(1),.logo i:nth-child(5){background:var(--ok);color:var(--ok-ink)}
+.logo i:nth-child(3),.logo i:nth-child(7){background:var(--has);color:var(--has-ink)}
+.hbtns{display:flex;gap:6px}
+.ib{all:unset;cursor:pointer;width:38px;height:38px;border-radius:8px;display:grid;place-items:center;border:1.5px solid var(--line);background:var(--card)}
+.ib svg{width:18px;height:18px}
+.ib:focus-visible,.btn:focus-visible,.nivel:focus-visible,.teclas button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.sub{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;display:flex;justify-content:space-between;gap:8px}
+.intro{margin:0;color:var(--muted);line-height:1.55}
+.niveis{display:flex;flex-direction:column;gap:10px}
+.nivel{all:unset;cursor:pointer;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;transition:transform .15s,border-color .15s}
+.nivel:hover{transform:translateY(-2px);border-color:var(--ink)}
+.nivel .tiles{grid-row:span 2;display:flex;gap:2px}
+.nivel .tiles i{width:13px;height:13px;border-radius:2px;background:var(--no)}
+.nivel .tiles i.g{background:var(--ok)}.nivel .tiles i.y{background:var(--has)}
+.nivel b{font-family:var(--display);font-weight:400;font-size:20px;letter-spacing:.02em}
+.nivel p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.35;grid-column:2}
+.nivel .st{grid-row:span 2;grid-column:3;font-size:12.5px;font-weight:800;text-align:right;white-space:nowrap}
+.st.ok{color:var(--ok)}.st.bad{color:var(--muted)}.st.and{color:var(--has)}.st.novo{color:var(--muted);font-weight:600}
+
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);white-space:nowrap}
+.btn.pri{background:var(--ok);border-color:var(--ok);color:var(--ok-ink)}
+.btn svg{width:14px;height:14px}
+.bar .lv{font-family:var(--display);font-size:18px;letter-spacing:.02em}
+.bar .lv small{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:6px;letter-spacing:0}
+
+.tabuleiro{display:grid;gap:6px;margin:0 auto;width:min(100%,var(--bw))}
+.linha{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:6px}
+.linha.treme{animation:treme .45s}
+@keyframes treme{15%,55%{transform:translateX(-7px)}35%,75%{transform:translateX(7px)}}
+.t{aspect-ratio:1;border:2px solid var(--tile-line);background:var(--tile);border-radius:6px;display:grid;place-items:center;font-family:var(--display);font-size:clamp(20px,calc(var(--bw)/var(--n)*.45),34px);color:var(--tile-ink);text-transform:uppercase;line-height:1;position:relative}
+.t.cheia{border-color:var(--ink);animation:bate .12s}
+@keyframes bate{50%{transform:scale(1.08)}}
+.t.ok,.t.has,.t.no{border-color:transparent}
+.t.ok{background:var(--ok);color:var(--ok-ink)}.t.has{background:var(--has);color:var(--has-ink)}.t.no{background:var(--no);color:var(--no-ink)}
+.t.vira{animation:vira .5s both;animation-delay:calc(var(--i)*.22s)}
+@keyframes vira{0%{transform:rotateX(0);background:var(--tile);color:var(--tile-ink);border-color:var(--ink)}49%{transform:rotateX(90deg);background:var(--tile);color:var(--tile-ink);border-color:var(--ink)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.linha.ganhou .t{animation:pula .5s both;animation-delay:calc(var(--i)*.09s + .1s)}
+@keyframes pula{40%{transform:translateY(-14px)}70%{transform:translateY(3px)}}
+
+.teclas{display:flex;flex-direction:column;gap:6px;user-select:none;-webkit-user-select:none;touch-action:manipulation;margin-top:4px}
+.teclas div{display:flex;gap:5px;justify-content:center}
+.teclas button{all:unset;cursor:pointer;flex:1;max-width:44px;height:52px;border-radius:6px;background:var(--key);color:var(--key-ink);display:grid;place-items:center;font-weight:800;font-size:16px;-webkit-tap-highlight-color:transparent;transition:background .2s}
+.teclas button.w{max-width:70px;flex:1.5;font-size:12.5px;letter-spacing:.03em}
+.teclas button:active{filter:brightness(.92)}
+.teclas button.ok{background:var(--ok);color:var(--ok-ink)}.teclas button.has{background:var(--has);color:var(--has-ink)}.teclas button.no{background:var(--no);color:var(--no-ink);opacity:.75}
+
+.aviso{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:800;font-size:14px;z-index:50;animation:pop .18s;max-width:calc(100vw - 32px);text-align:center}
+@keyframes pop{from{opacity:0;transform:translate(-50%,-6px)}}
+
+.fim{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;animation:sobe .35s}
+@keyframes sobe{from{opacity:0;transform:translateY(8px)}}
+.fim h2{margin:0;font-family:var(--display);font-weight:400;font-size:24px;letter-spacing:.02em}
+.fim .palavra{font-size:15px;color:var(--muted)}
+.fim .palavra b{font-family:var(--display);font-weight:400;color:var(--ink);font-size:20px;letter-spacing:.06em;text-transform:uppercase}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.nums div{text-align:center}
+.nums b{display:block;font-family:var(--display);font-weight:400;font-size:24px;font-variant-numeric:tabular-nums}
+.nums span{font-size:11px;color:var(--muted);line-height:1.2;display:block}
+.dist{display:flex;flex-direction:column;gap:3px}
+.dist div{display:grid;grid-template-columns:14px 1fr;gap:6px;align-items:center;font-family:var(--mono);font-size:12px}
+.dist i{display:block;font-style:normal;background:var(--no);color:var(--no-ink);padding:2px 6px;border-radius:3px;text-align:right;min-width:22px;width:var(--w);font-weight:500}
+.dist i.eu{background:var(--ok);color:var(--ok-ink)}
+.fim .prox{font-size:14px;color:var(--muted);margin:0}
+.fim .prox b{font-family:var(--mono);color:var(--ink);font-weight:500}
+.fim .acoes{display:flex;gap:8px;flex-wrap:wrap}
+
+dialog{border:1.5px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);max-width:min(440px,calc(100vw - 32px));padding:18px 20px;line-height:1.5}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h3{margin:0 0 8px;font-family:var(--display);font-weight:400;font-size:22px}
+dialog p{margin:8px 0;font-size:14.5px}
+.ex{display:flex;gap:4px;margin:6px 0}
+.ex .t{width:36px;font-size:18px;border-radius:5px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-label="Palpite" role="img"><i>P</i><i>A</i><i>L</i><i>P</i><i>I</i><i>T</i><i>E</i></div>
+    <div class="hbtns">
+      <button class="ib" id="comojogar" aria-label="Como jogar"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r=".9" fill="currentColor"/></svg></button>
+    </div>
+  </header>
+  <div class="sub"><span id="data"></span><span id="numero"></span></div>
+  <main id="app"></main>
+</div>
+
+<dialog id="regras" aria-labelledby="rt">
+  <h3 id="rt">Como jogar</h3>
+  <p>Descubra a palavra do dia em até <b>6 tentativas</b>. Cada palpite precisa ser uma palavra que existe. Depois de cada palpite, as peças mudam de cor:</p>
+  <div class="ex"><div class="t ok">C</div><div class="t">A</div><div class="t">S</div><div class="t">A</div></div>
+  <p><b>Verde:</b> a letra está na palavra e no lugar certo.</p>
+  <div class="ex"><div class="t">R</div><div class="t has">O</div><div class="t">D</div><div class="t">A</div></div>
+  <p><b>Amarelo:</b> a letra está na palavra, mas em outro lugar.</p>
+  <div class="ex"><div class="t">F</div><div class="t">I</div><div class="t no">T</div><div class="t">A</div></div>
+  <p><b>Cinza:</b> a letra não está na palavra.</p>
+  <p>Acentos e cedilha são preenchidos sozinhos: digite <b>MACA</b> e o jogo entende <b>MAÇÃ</b>. Há uma palavra nova por dia em cada nível: Fácil tem 4 letras, Médio 5 e Difícil 6.</p>
+  <form method="dialog"><button class="btn pri">Entendi</button></form>
+</dialog>
+
+<script src="palpite/palavras.js?v=1"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const app=$("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const TENT=6;
+const NIVEIS={
+  facil:{nome:"Fácil",n:4,base:100,desc:"Palavras de 4 letras bem conhecidas."},
+  medio:{nome:"Médio",n:5,base:200,desc:"Palavras de 5 letras do dia a dia."},
+  dificil:{nome:"Difícil",n:6,base:300,desc:"Palavras de 6 letras, algumas menos comuns."}
+};
+
+/* Dicionário: chave sem acento -> grafia com acento */
+const DIC={};
+for(const n of [4,5,6]){
+  const d=PALPITE_PALAVRAS[n];
+  DIC[n]={validas:new Set(d.validas.split(" ")),acentos:d.acentos,respostas:d.respostas};
+}
+const grafia=(n,k)=>DIC[n].acentos[k]||k;
+
+/* Palavra do dia: a lista de respostas já vem na ordem dos dias (Nº 1 = 15/10/2026) */
+const INICIO=Date.UTC(2026,9,15), DIA_MS=864e5;
+function hojeInfo(){const d=new Date(),utc=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());return {chave:new Date(utc).toISOString().slice(0,10),numero:Math.floor((utc-INICIO)/DIA_MS)+1,data:d}}
+function palavraDoDia(nv,numero){
+  const L=DIC[NIVEIS[nv].n].respostas, i=((numero-1)%L.length+L.length)%L.length;
+  return L[i];
+}
+let HOJE=hojeInfo();
+
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const kEstado=(nv,ch)=>`palpite:${ch}:${nv}`, kStats=nv=>`palpite:stats:${nv}`;
+function stats(nv){return LS.get(kStats(nv),{jogos:0,vitorias:0,seq:0,melhorSeq:0,ultimo:null,dist:[0,0,0,0,0,0]})}
+
+/* Avaliação com letras repetidas: primeiro os verdes, depois os amarelos até acabar o estoque */
+function avaliar(palpite,resp){
+  const n=resp.length,res=Array(n).fill("no"),sobra={};
+  for(let i=0;i<n;i++){ if(palpite[i]===resp[i]) res[i]="ok"; else sobra[resp[i]]=(sobra[resp[i]]||0)+1; }
+  for(let i=0;i<n;i++){ if(res[i]!=="ok"&&sobra[palpite[i]]){res[i]="has";sobra[palpite[i]]--} }
+  return res;
+}
+
+function pintarTopo(){
+  $("data").textContent=HOJE.data.toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}).replace(/\./g,"");
+  $("numero").textContent="Nº "+HOJE.numero;
+}
+
+/* ---------- Tela inicial ---------- */
+const TILES={facil:"gynn",medio:"ngyng",dificil:"ynngyg"};
+function telaInicio(){
+  G=null; HOJE=hojeInfo(); pintarTopo();
+  app.innerHTML=`<p class="intro">Uma palavra nova por dia em cada nível. Você tem seis palpites para descobrir.</p>
+  <div class="niveis">${Object.entries(NIVEIS).map(([id,N])=>{
+    const e=LS.get(kEstado(id,HOJE.chave),null), s=stats(id);
+    let st=`<span class="st novo">Nova</span>`;
+    if(e&&e.fim) st=e.ganhou?`<span class="st ok">✓ ${e.tent.length}/${TENT}</span>`:`<span class="st bad">✗ ${TENT}/${TENT}</span>`;
+    else if(e&&e.tent.length) st=`<span class="st and">● ${e.tent.length}/${TENT}</span>`;
+    return `<button class="nivel" data-nv="${id}">
+      <span class="tiles" aria-hidden="true">${[...TILES[id]].slice(0,N.n).map(x=>`<i class="${x==="g"?"g":x==="y"?"y":""}"></i>`).join("")}</span>
+      <b>${N.nome}</b>${st}
+      <p>${N.desc}${s.seq>1?` Sequência: ${s.seq}.`:""}</p>
+    </button>`}).join("")}</div>`;
+  app.querySelectorAll(".nivel").forEach(b=>b.onclick=()=>abrir(b.dataset.nv));
+}
+
+/* ---------- Jogo ---------- */
+let G=null, ocupado=false;
+function abrir(nv){
+  HOJE=hojeInfo();
+  const N=NIVEIS[nv], resp=palavraDoDia(nv,HOJE.numero);
+  const e=LS.get(kEstado(nv,HOJE.chave),null);
+  G={nv,N,n:N.n,resp,chave:norm(resp),numero:HOJE.numero,dia:HOJE.chave,tent:e?e.tent:[],fim:e?e.fim:false,ganhou:e?e.ganhou:false,pts:e?e.pts||0:0,atual:""};
+  desenhar();
+}
+function salvar(){LS.set(kEstado(G.nv,G.dia),{tent:G.tent,fim:G.fim,ganhou:G.ganhou,pts:G.pts})}
+
+function desenhar(){
+  const {N,n}=G;
+  app.innerHTML=`<div class="bar"><span class="lv">${N.nome}<small>${n} letras</small></span><button class="btn" id="voltar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Níveis</button></div>
+  <div class="tabuleiro" id="tab" style="--n:${n};--bw:${n*64}px" role="grid" aria-label="Tabuleiro">${Array.from({length:TENT},(_,r)=>`<div class="linha" role="row" id="l${r}">${Array.from({length:n},(_,i)=>`<div class="t" role="gridcell" style="--i:${i}"></div>`).join("")}</div>`).join("")}</div>
+  <div id="fimbox"></div>
+  <div class="teclas" id="teclas"${G.fim?" hidden":""}>
+    ${["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].map((l,i)=>`<div>${i===2?`<button class="w" data-k="enter">ENTER</button>`:""}${[...l].map(c=>`<button data-k="${c.toLowerCase()}">${c}</button>`).join("")}${i===2?`<button class="w" data-k="apaga" aria-label="Apagar">⌫</button>`:""}</div>`).join("")}
+  </div>`;
+  $("voltar").onclick=telaInicio;
+  $("teclas").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;b.blur();tecla(b.dataset.k)});
+  G.tent.forEach((p,r)=>pintarLinha(r,p,false));
+  pintarAtual(); pintarTeclado();
+  if(G.fim) mostrarFim(false);
+}
+function pintarLinha(r,palpite,animar){
+  const cores=avaliar(palpite,G.chave), shown=grafia(G.n,palpite);
+  const ts=$("l"+r).children;
+  for(let i=0;i<G.n;i++){
+    const t=ts[i]; t.textContent=shown[i]; t.className="t "+cores[i]+(animar?" vira":"");
+    t.setAttribute("aria-label",`${shown[i]}: ${{ok:"lugar certo",has:"outro lugar",no:"não está"}[cores[i]]}`);
+  }
+}
+function pintarAtual(){
+  if(G.fim) return;
+  const r=G.tent.length; if(r>=TENT) return;
+  const ts=$("l"+r).children;
+  for(let i=0;i<G.n;i++){const ch=G.atual[i]||"";ts[i].textContent=ch;ts[i].className="t"+(ch?" cheia":"");ts[i].removeAttribute("aria-label")}
+}
+function pintarTeclado(){
+  const melhor={}, rank={no:1,has:2,ok:3};
+  G.tent.forEach(p=>avaliar(p,G.chave).forEach((c,i)=>{const l=p[i];if(!melhor[l]||rank[c]>rank[melhor[l]])melhor[l]=c}));
+  $("teclas").querySelectorAll("button[data-k]").forEach(b=>{const k=b.dataset.k;if(k.length===1){b.className=melhor[k]||"";}});
+}
+function tecla(k){
+  if(!G||G.fim||ocupado) return;
+  if(k==="enter") return enviar();
+  if(k==="apaga"){G.atual=G.atual.slice(0,-1);return pintarAtual()}
+  if(/^[a-z]$/.test(k)&&G.atual.length<G.n){G.atual+=k;pintarAtual()}
+}
+function enviar(){
+  const p=G.atual, r=G.tent.length;
+  if(p.length<G.n){treme(r);return aviso(`A palavra tem ${G.n} letras`)}
+  if(!DIC[G.n].validas.has(p)){treme(r);return aviso("Essa palavra não está na lista")}
+  G.tent.push(p); G.atual="";
+  pintarLinha(r,p,true);
+  ocupado=true;
+  const venceu=p===G.chave, acabou=venceu||G.tent.length>=TENT;
+  if(acabou){G.fim=true;G.ganhou=venceu;G.pts=venceu?G.N.base*(TENT-G.tent.length+1):0;registrar()}
+  salvar();
+  setTimeout(()=>{
+    ocupado=false; pintarTeclado();
+    if(acabou){
+      if(venceu){ $("l"+r).classList.add("ganhou"); aviso(["Genial!","Incrível!","Muito bem!","Boa!","Ufa, foi!","Na última!"][G.tent.length-1]); }
+      else aviso(grafia(G.n,G.chave).toUpperCase());
+      setTimeout(()=>{ $("teclas").hidden=true; mostrarFim(true); },venceu?1100:1600);
+      if(venceu) try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:G.pts,nivel:G.N.nome},"*") }catch(e){}
+    }
+  },G.n*220+320);
+}
+function registrar(){
+  const s=stats(G.nv);
+  const ontem=new Date(Date.parse(G.dia)-DIA_MS).toISOString().slice(0,10);
+  s.jogos++;
+  if(G.ganhou){s.vitorias++;s.dist[G.tent.length-1]++;s.seq=(s.ultimo===ontem?s.seq:0)+1;s.melhorSeq=Math.max(s.melhorSeq,s.seq)}
+  else s.seq=0;
+  s.ultimo=G.ganhou?G.dia:null;
+  LS.set(kStats(G.nv),s);
+}
+function treme(r){const l=$("l"+r);l.classList.remove("treme");void l.offsetWidth;l.classList.add("treme")}
+
+let cont=null;
+function mostrarFim(agora){
+  const s=stats(G.nv), mx=Math.max(1,...s.dist), pal=grafia(G.n,G.chave);
+  $("fimbox").innerHTML=`<section class="fim" aria-labelledby="ft">
+    <h2 id="ft">${G.ganhou?(agora?"Acertou!":"Você já acertou hoje"):"Não foi dessa vez"}</h2>
+    <div class="palavra">A palavra era <b>${esc(pal)}</b>${G.ganhou?` · ${G.pts} pontos`:""}</div>
+    <div class="nums">
+      <div><b>${s.jogos}</b><span>Jogos</span></div>
+      <div><b>${s.jogos?Math.round(s.vitorias/s.jogos*100):0}%</b><span>Vitórias</span></div>
+      <div><b>${s.seq}</b><span>Sequência</span></div>
+      <div><b>${s.melhorSeq}</b><span>Melhor sequência</span></div>
+    </div>
+    <div class="dist" aria-label="Distribuição de acertos">${s.dist.map((v,i)=>`<div><span>${i+1}</span><i class="${G.ganhou&&G.tent.length===i+1?"eu":""}" style="--w:${Math.max(7,Math.round(v/mx*100))}%">${v}</i></div>`).join("")}</div>
+    <p class="prox">Nova palavra em <b id="cont">--:--:--</b></p>
+    <div class="acoes"><button class="btn pri" id="compart">Copiar resultado</button><button class="btn" id="outro">Outro nível</button></div>
+  </section>`;
+  $("outro").onclick=telaInicio;
+  $("compart").onclick=()=>{
+    const q={ok:"🟩",has:"🟨",no:"⬛"};
+    const linhas=G.tent.map(p=>avaliar(p,G.chave).map(c=>q[c]).join("")).join("\n");
+    copiar(`Palpite Nº ${G.numero} · ${G.N.nome} ${G.ganhou?G.tent.length:"X"}/${TENT}\n\n${linhas}`);
+  };
+  if(cont) clearInterval(cont);
+  const tick=()=>{const el=$("cont");if(!el){clearInterval(cont);return}const a=new Date(),m=new Date(a.getFullYear(),a.getMonth(),a.getDate()+1);const x=Math.floor((m-a)/1000);el.textContent=[Math.floor(x/3600),Math.floor(x%3600/60),x%60].map(v=>String(v).padStart(2,"0")).join(":")};
+  tick(); cont=setInterval(tick,1000);
+}
+function copiar(t){
+  const ok=()=>aviso("Resultado copiado!");
+  const alt=()=>{const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok()}catch(e){aviso("Não deu para copiar.")}ta.remove()};
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(t).then(ok,alt); else alt();
+}
+let avisoT=null;
+function aviso(t){
+  let el=document.querySelector(".aviso"); if(el) el.remove();
+  el=document.createElement("div"); el.className="aviso"; el.setAttribute("role","status"); el.textContent=t; document.body.appendChild(el);
+  clearTimeout(avisoT); avisoT=setTimeout(()=>el.remove(),1800);
+}
+
+document.addEventListener("keydown",e=>{
+  if(!G||e.ctrlKey||e.metaKey||e.altKey||$("regras").open) return;
+  if(e.key==="Enter"){ if(e.target.closest&&e.target.closest("button")) return; e.preventDefault(); tecla("enter"); }
+  else if(e.key==="Backspace"){e.preventDefault();tecla("apaga")}
+  else if(/^[a-zA-ZçÇ]$/.test(e.key)){tecla(norm(e.key).replace("ç","c"))}
+});
+$("comojogar").onclick=()=>$("regras").showModal();
+if(!LS.get("palpite:viu-regras",false)){LS.set("palpite:viu-regras",true);setTimeout(()=>{try{$("regras").showModal()}catch(e){}},300)}
+
+telaInicio();
+})();
+</script>
+</body>
+</html>

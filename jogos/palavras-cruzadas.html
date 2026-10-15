@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Palavras Cruzadas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Figtree:wght@400;600;800&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Visual de caderno de jornal: papel creme, tinta preta, destaque vermelho. */
+:root{
+  --paper:#f4efe4; --card:#fffdf8; --ink:#1d1b17; --muted:#6b6458; --line:#d9d0bf; --rule:#1d1b17;
+  --accent:#c8372d; --accent-ink:#fff; --hl:#fde9a6; --cur:#f6c33c; --rev:#2f6fb5; --bad:#c8372d; --ok:#2e8b57; --ok-bg:#e3f2e8;
+  --serif:"DM Serif Display",Georgia,"Times New Roman",serif; --sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#17150f; --card:#221f18; --ink:#efe8da; --muted:#a59c8b; --line:#3b362b; --rule:#efe8da;
+  --accent:#ff6b5c; --accent-ink:#1b0c09; --hl:#4b3f17; --cur:#a57f12; --rev:#7fb2ff; --bad:#ff6b5c; --ok:#5fd18f; --ok-bg:#16301f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#17150f; --card:#221f18; --ink:#efe8da; --muted:#a59c8b; --line:#3b362b; --rule:#efe8da;
+  --accent:#ff6b5c; --accent-ink:#1b0c09; --hl:#4b3f17; --cur:#a57f12; --rev:#7fb2ff; --bad:#ff6b5c; --ok:#5fd18f; --ok-bg:#16301f; color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;min-height:100vh;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))}
+button{font:inherit;color:inherit}
+button:focus-visible,.cell:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+
+/* Cabeçalho tipo manchete */
+.mast{border-bottom:3px double var(--rule);padding-bottom:10px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.mast h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,7vw,48px);line-height:.95;margin:0;letter-spacing:-.01em}
+.mast h1 span{color:var(--accent)}
+.edicao{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;text-align:right;line-height:1.5}
+.edicao b{color:var(--ink);font-weight:500}
+
+/* Escolha de nível */
+.intro{margin:4px 0 0;color:var(--muted);line-height:1.55;max-width:62ch}
+.niveis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:720px){.niveis{grid-template-columns:1fr}}
+.nivel{all:unset;cursor:pointer;background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative;transition:transform .15s,border-color .15s;box-shadow:0 1px 0 var(--line)}
+.nivel:hover{transform:translateY(-2px);border-color:var(--ink)}
+.nivel:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.nivel .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.nivel b{font-family:var(--serif);font-weight:400;font-size:26px}
+.nivel .q{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.nivel p{margin:0;font-size:14px;color:var(--muted);line-height:1.45}
+.mini{display:grid;grid-template-columns:repeat(6,12px);grid-auto-rows:12px;gap:2px;margin:2px 0}
+.mini i{background:var(--ink);opacity:.85;border-radius:1px}.mini i.o{background:transparent;opacity:1}
+.estado{margin-top:auto;font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px}
+.estado.ok{color:var(--ok)}.estado.and{color:var(--accent)}.estado.novo{color:var(--muted);font-weight:600}
+.dica{font-size:13px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);padding-top:12px}
+
+/* Barra do jogo */
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;padding:9px 12px;border-radius:6px;border:1.5px solid var(--line);background:var(--card);white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn.pri{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn svg{width:15px;height:15px}
+.bar .lv{font-family:var(--serif);font-size:22px;margin-right:auto;display:flex;align-items:baseline;gap:10px}
+.bar .lv small{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.relogio{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;padding:8px 10px;border-radius:6px;background:var(--card);border:1.5px solid var(--line)}
+.menu{position:relative}
+.menu-lista{position:absolute;right:0;top:calc(100% + 6px);background:var(--card);border:1.5px solid var(--ink);border-radius:6px;z-index:20;min-width:210px;padding:6px;box-shadow:0 12px 30px -12px rgba(0,0,0,.4)}
+.menu-lista button{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box;padding:10px 12px;border-radius:4px;font-size:14px;font-weight:600}
+.menu-lista button:hover,.menu-lista button:focus-visible{background:var(--hl)}
+.menu-lista small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+
+/* Grade + pistas */
+.jogo{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+@media (max-width:860px){.jogo{grid-template-columns:1fr}}
+.gradebox{background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:12px;display:flex;justify-content:center}
+.grade{display:grid;gap:0;--cs:36px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.cell{width:var(--cs);height:var(--cs);position:relative}
+.cell.l{background:var(--card);border:1.5px solid var(--rule);margin:-.75px;cursor:pointer;display:grid;place-items:center;z-index:1}
+.cell.l .n{position:absolute;top:1px;left:2px;font-family:var(--mono);font-size:calc(var(--cs)*.27);line-height:1;color:var(--ink)}
+.cell.l .c{font-family:var(--sans);font-weight:800;font-size:calc(var(--cs)*.56);line-height:1;text-transform:uppercase;margin-top:calc(var(--cs)*.1)}
+.cell.l.hl{background:var(--hl)}
+.cell.l.cur{background:var(--cur)}
+.cell.l.rev .c{color:var(--rev)}
+.cell.l.err::after{content:"";position:absolute;inset:3px;background:linear-gradient(to top right,transparent calc(50% - 1px),var(--bad) calc(50% - 1px),var(--bad) calc(50% + 1px),transparent calc(50% + 1px))}
+.cell.l.ok .c{color:var(--ok)}
+.feito .cell.l{cursor:default}
+.feito .cell.l.win{animation:onda .5s both;animation-delay:calc(var(--d)*25ms)}
+@keyframes onda{40%{transform:translateY(-4px);background:var(--ok-bg)}}
+
+.pistabar{display:flex;align-items:stretch;gap:6px;background:var(--ink);color:var(--paper);border-radius:6px;min-height:52px}
+.pistabar button{all:unset;cursor:pointer;padding:0 12px;display:grid;place-items:center;font-size:22px;font-weight:800}
+.pistabar button:focus-visible{outline:3px solid var(--cur);outline-offset:-3px}
+.pistabar .txt{flex:1;padding:9px 4px;display:flex;flex-direction:column;justify-content:center;gap:2px;font-size:15px;line-height:1.3}
+.pistabar .txt small{font-family:var(--mono);font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.06em}
+
+.pistas{display:flex;flex-direction:column;gap:14px}
+@media (max-width:860px){.pistas{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+@media (max-width:520px){.pistas{grid-template-columns:1fr}}
+.pistas h3{font-family:var(--serif);font-weight:400;font-size:20px;margin:0 0 4px;border-bottom:2px solid var(--rule);padding-bottom:3px}
+.pistas ol{list-style:none;margin:0;padding:0}
+.pistas li button{all:unset;cursor:pointer;display:grid;grid-template-columns:26px 1fr;gap:4px;padding:6px 6px;border-radius:4px;font-size:14px;line-height:1.35;width:100%;box-sizing:border-box}
+.pistas li button:hover{background:var(--hl)}
+.pistas li button:focus-visible{outline:2px solid var(--accent)}
+.pistas li b{font-family:var(--mono);font-weight:500;font-size:13px}
+.pistas li.on button{background:var(--hl)}
+.pistas li.cruz button{box-shadow:inset 3px 0 0 var(--cur)}
+.pistas li.feita span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted)}
+
+/* Teclado na tela */
+.teclado{display:flex;flex-direction:column;gap:6px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.teclado div{display:flex;gap:5px;justify-content:center}
+.teclado button{all:unset;cursor:pointer;flex:1;max-width:44px;height:46px;border-radius:5px;background:var(--card);border:1.5px solid var(--line);display:grid;place-items:center;font-weight:800;font-size:16px;-webkit-tap-highlight-color:transparent}
+.teclado button:active{background:var(--hl)}
+.teclado button.w{max-width:72px;flex:1.6;font-size:13px}
+@media (hover:hover) and (pointer:fine) and (min-width:861px){.teclado{display:none}}
+
+.aviso{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:6px;font-weight:600;font-size:14px;z-index:50;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);animation:pop .2s;max-width:calc(100vw - 32px);text-align:center}
+@keyframes pop{from{opacity:0;transform:translate(-50%,-6px)}}
+
+/* Fim */
+.fim{background:var(--card);border:1.5px solid var(--ink);border-radius:6px;padding:clamp(16px,4vw,24px);display:flex;flex-direction:column;gap:14px;animation:subir .35s}
+@keyframes subir{from{opacity:0;transform:translateY(8px)}}
+.fim h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,6vw,36px);margin:0;line-height:1.05}
+.fim .linha{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:520px){.fim .linha{grid-template-columns:repeat(2,1fr)}}
+.fim .linha div{border:1.5px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.fim .linha b{font-family:var(--serif);font-weight:400;font-size:26px;font-variant-numeric:tabular-nums}
+.fim .linha span{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fim .prox{font-size:14px;color:var(--muted)}
+.fim .prox b{font-family:var(--mono);color:var(--ink);font-weight:500}
+.fim .acoes{display:flex;gap:8px;flex-wrap:wrap}
+.glossario{font-size:13.5px;color:var(--muted);line-height:1.6}
+.glossario b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <h1>Palavras <span>Cruzadas</span></h1>
+    <div class="edicao" id="edicao"></div>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script src="palavras-cruzadas/pistas.js?v=1"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const app=$("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- Nível, data e sorteio ---------- */
+const NIVEIS={
+  facil:{nome:"Fácil",alvo:7,max:11,base:1000,desc:"Sete palavras do dia a dia, com pistas diretas."},
+  medio:{nome:"Médio",alvo:10,max:13,base:2000,desc:"Dez palavras: Brasil, natureza, profissões e cultura geral."},
+  dificil:{nome:"Difícil",alvo:14,max:15,base:3000,desc:"Catorze palavras: vocabulário raro, literatura, história e ciência."}
+};
+const INICIO=Date.UTC(2026,9,15);  // Nº 1 = 15/10/2026
+const DIA_MS=864e5;
+function hojeInfo(){
+  const d=new Date();
+  const utc=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
+  const chave=new Date(utc).toISOString().slice(0,10);
+  return {chave,numero:Math.floor((utc-INICIO)/DIA_MS)+1,data:d};
+}
+let HOJE=hojeInfo();
+
+function hash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rngDe(seed){let a=seed>>>0;return function(){a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+function embaralha(arr,rng){for(let i=arr.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase();
+
+/* ---------- Gerador de grade ---------- */
+function montar(ordem,alvo,max){
+  const cel=new Map(), postas=[], k=(r,c)=>r+","+c;
+  let r0=0,r1=0,c0=0,c1=0,cruzTotal=0;
+  function avaliar(w,r,c,dir){
+    const dr=dir==="v"?1:0, dc=dir==="h"?1:0, n=w.length;
+    if(cel.has(k(r-dr,c-dc))||cel.has(k(r+dr*n,c+dc*n))) return null;
+    let cruz=0;
+    for(let i=0;i<n;i++){
+      const rr=r+dr*i, cc=c+dc*i, x=cel.get(k(rr,cc));
+      if(x){ if(x.ch!==w[i]||x[dir]) return null; cruz++; }
+      else if(cel.has(k(rr+dc,cc+dr))||cel.has(k(rr-dc,cc-dr))) return null;
+    }
+    if(!cruz||cruz===n) return null;
+    const nr0=Math.min(r0,r),nr1=Math.max(r1,r+dr*(n-1)),nc0=Math.min(c0,c),nc1=Math.max(c1,c+dc*(n-1));
+    const h=nr1-nr0+1, wd=nc1-nc0+1;
+    if(h>max||wd>max) return null;
+    // prefere cruzar mais, crescer pouco e manter a grade quadrada
+    return {r,c,dir,cruz,nota:cruz*12-(h*wd-(r1-r0+1)*(c1-c0+1))*0.35-Math.abs(h-wd)*1.2};
+  }
+  function colocar(w,r,c,dir,cruz){
+    const dr=dir==="v"?1:0, dc=dir==="h"?1:0;
+    for(let i=0;i<w.r.length;i++){
+      const key=k(r+dr*i,c+dc*i); let x=cel.get(key);
+      if(!x){x={ch:w.r[i]};cel.set(key,x)}
+      x[dir]=true;
+    }
+    r0=Math.min(r0,r);r1=Math.max(r1,r+dr*(w.r.length-1));c0=Math.min(c0,c);c1=Math.max(c1,c+dc*(w.r.length-1));
+    postas.push({...w,lr:r,lc:c,dir}); cruzTotal+=cruz;
+  }
+  const primeira=ordem.find(w=>w.r.length>=5&&w.r.length<=Math.min(9,max))||ordem[0];
+  colocar(primeira,0,0,"h",0);
+  let passou=true;
+  while(postas.length<alvo&&passou){
+    passou=false;
+    for(const w of ordem){
+      if(postas.length>=alvo) break;
+      if(postas.some(p=>p.r===w.r)) continue;
+      let melhor=null;
+      for(const [key,x] of cel){
+        const [rr,cc]=key.split(",").map(Number);
+        for(let i=0;i<w.r.length;i++){
+          if(w.r[i]!==x.ch) continue;
+          for(const dir of ["h","v"]){
+            if(x[dir]) continue;
+            const o=dir==="h"?avaliar(w.r,rr,cc-i,dir):avaliar(w.r,rr-i,cc,dir);
+            if(o&&(!melhor||o.nota>melhor.nota)) melhor=o;
+          }
+        }
+      }
+      if(melhor){colocar(w,melhor.r,melhor.c,melhor.dir,melhor.cruz);passou=true}
+    }
+  }
+  if(postas.length<alvo) return null;
+  const h=r1-r0+1, wd=c1-c0+1;
+  return {postas:postas.map(p=>({...p,lr:p.lr-r0,lc:p.lc-c0})),linhas:h,colunas:wd,cruz:cruzTotal,
+    nota:cruzTotal*10-h*wd*0.6-Math.abs(h-wd)*3};
+}
+function gerar(nivel,chave){
+  const N=NIVEIS[nivel];
+  const rng=rngDe(hash(chave+"|"+nivel));
+  const pool=PC_PISTAS[nivel].map(l=>{const i=l.indexOf("|");const p=l.slice(0,i);return {palavra:p,pista:l.slice(i+1),r:norm(p)}})
+    .filter(w=>/^[A-Z]{3,}$/.test(w.r)&&w.r.length<=N.max);
+  let melhor=null;
+  for(let t=0;t<40;t++){
+    const ordem=embaralha(pool.slice(),rng).slice(0,Math.max(N.alvo*4,30));
+    const g=montar(ordem,N.alvo,N.max);
+    if(g&&(!melhor||g.nota>melhor.nota)) melhor=g;
+  }
+  if(!melhor){ for(let t=0;t<40&&!melhor;t++) melhor=montar(embaralha(pool.slice(),rng),N.alvo,N.max); }
+  return numerar(melhor);
+}
+function numerar(g){
+  const grade=Array.from({length:g.linhas},()=>Array(g.colunas).fill(null));
+  g.postas.forEach((p,idx)=>{
+    const dr=p.dir==="v"?1:0, dc=p.dir==="h"?1:0;
+    for(let i=0;i<p.r.length;i++){
+      const r=p.lr+dr*i,c=p.lc+dc*i;
+      if(!grade[r][c]) grade[r][c]={ch:p.r[i],w:{}};
+      grade[r][c].w[p.dir]=idx;
+    }
+  });
+  const inicios=[...new Set(g.postas.map(p=>p.lr*1000+p.lc))].sort((a,b)=>a-b);
+  const palavras=g.postas.map(p=>({palavra:p.palavra,pista:p.pista,resp:p.r,dir:p.dir,r:p.lr,c:p.lc,num:inicios.indexOf(p.lr*1000+p.lc)+1,
+    cels:Array.from(p.r,(_,i)=>[p.lr+(p.dir==="v"?i:0),p.lc+(p.dir==="h"?i:0)])}));
+  palavras.forEach(p=>{grade[p.r][p.c].num=p.num});
+  const ordem=palavras.map((p,i)=>i).sort((a,b)=>(palavras[a].dir===palavras[b].dir?0:palavras[a].dir==="h"?-1:1)||palavras[a].num-palavras[b].num);
+  return {linhas:g.linhas,colunas:g.colunas,grade,palavras,ordem};
+}
+
+/* ---------- Armazenamento ---------- */
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const kEstado=(nv,ch)=>`pc:${ch}:${nv}`;
+const kHist=nv=>`pc:hist:${nv}`;
+function sequencia(nv){
+  const h=new Set(LS.get(kHist(nv),[]));
+  let n=0, t=Date.UTC(HOJE.data.getFullYear(),HOJE.data.getMonth(),HOJE.data.getDate());
+  if(!h.has(new Date(t).toISOString().slice(0,10))) t-=DIA_MS;
+  while(h.has(new Date(t).toISOString().slice(0,10))){n++;t-=DIA_MS}
+  return n;
+}
+
+/* ---------- Tela inicial ---------- */
+const fmtTempo=s=>{s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(x).padStart(2,"0")};
+const MINI={facil:"111110000100011110000100000000000000",medio:"111111100100111110001001011111000001",dificil:"111111101010111111101010111111101010"};
+function pintarEdicao(){
+  const dt=HOJE.data.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  $("edicao").innerHTML=`${esc(dt)}<br><b>Edição Nº ${HOJE.numero}</b> · uma cruzada nova por dia`;
+}
+function telaInicio(){
+  pararRelogio(); fecharMenu();
+  HOJE=hojeInfo(); pintarEdicao();
+  app.innerHTML=`<p class="intro">Todo dia há três cruzadas novas, iguais para todo mundo. Escolha o nível. Acentos e cedilha não contam: escreva <b>AVIAO</b> para AVIÃO.</p>
+  <div class="niveis">${Object.entries(NIVEIS).map(([id,N])=>{
+    const st=LS.get(kEstado(id,HOJE.chave),null);
+    const seq=sequencia(id);
+    let est=`<span class="estado novo">Ainda não jogada hoje</span>`;
+    if(st&&st.fim) est=`<span class="estado ok">✓ Resolvida em ${fmtTempo(st.seg)} · ${st.pts} pts</span>`;
+    else if(st) est=`<span class="estado and">● Em andamento · ${fmtTempo(st.seg)}</span>`;
+    return `<button class="nivel" data-nv="${id}">
+      <div class="t"><b>${N.nome}</b><span class="q">${N.alvo} palavras</span></div>
+      <div class="mini" aria-hidden="true">${[...MINI[id]].map(x=>`<i class="${x==="1"?"":"o"}"></i>`).join("")}</div>
+      <p>${N.desc}</p>
+      ${seq>1?`<p>Sequência: <b>${seq} dias</b></p>`:""}
+      ${est}
+    </button>`}).join("")}</div>
+  <p class="dica">Toque numa casa para escolher a palavra; toque de novo para trocar entre horizontal e vertical. No computador, use as setas, <b>Tab</b> para a próxima pista e <b>Espaço</b> para virar a direção. Quanto mais rápido e com menos ajudas, mais pontos.</p>`;
+  app.querySelectorAll(".nivel").forEach(b=>b.onclick=()=>abrir(b.dataset.nv));
+}
+
+/* ---------- Jogo ---------- */
+let J=null, relogio=null;
+function abrir(nv){
+  HOJE=hojeInfo();
+  const P=gerar(nv,HOJE.chave);
+  const salvo=LS.get(kEstado(nv,HOJE.chave),null);
+  J={nv,N:NIVEIS[nv],P,chave:HOJE.chave,numero:HOJE.numero,
+    ent:P.grade.map((row,r)=>row.map((x,c)=>salvo&&salvo.e&&salvo.e[r]?(salvo.e[r][c]||"").trim():"")),
+    rev:new Set(salvo?salvo.rev||[]:[]), err:new Set(),
+    seg:salvo?salvo.seg||0:0, ver:salvo?salvo.ver||0:0, fim:!!(salvo&&salvo.fim), pts:salvo?salvo.pts||0:0,
+    sel:null, avisouCheia:false};
+  const p0=P.palavras[P.ordem[0]];
+  J.sel={r:p0.r,c:p0.c,dir:p0.dir};
+  if(!J.fim){ const prox=proximaVazia(-1); if(prox) J.sel=prox; }
+  desenharJogo();
+  if(!J.fim) iniciarRelogio();
+}
+function salvar(){
+  LS.set(kEstado(J.nv,J.chave),{e:J.ent.map(r=>r.map(x=>x||" ").join("")),rev:[...J.rev],seg:J.seg,ver:J.ver,fim:J.fim,pts:J.pts});
+}
+function iniciarRelogio(){
+  pararRelogio();
+  relogio=setInterval(()=>{
+    if(document.hidden||!J||J.fim) return;
+    J.seg++; const el=$("rel"); if(el) el.textContent=fmtTempo(J.seg);
+    if(J.seg%5===0) salvar();
+  },1000);
+}
+function pararRelogio(){ if(relogio){clearInterval(relogio);relogio=null} }
+
+const palavraEm=(r,c,dir)=>{const x=J.P.grade[r]&&J.P.grade[r][c];return x&&x.w[dir]!=null?x.w[dir]:null};
+function palavraAtual(){ return palavraEm(J.sel.r,J.sel.c,J.sel.dir) }
+function completa(i){ return J.P.palavras[i].cels.every(([r,c])=>J.ent[r][c]) }
+
+function desenharJogo(){
+  const {P,N}=J;
+  app.innerHTML=`
+  <div class="bar">
+    <div class="lv">${N.nome}<small>Nº ${J.numero}</small></div>
+    <span class="relogio" id="rel" aria-label="Tempo">${fmtTempo(J.seg)}</span>
+    <div class="menu">
+      <button class="btn" id="ajuda" aria-haspopup="true" aria-expanded="false"${J.fim?" disabled":""}><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r=".9" fill="currentColor"/></svg>Ajuda</button>
+      <div class="menu-lista" id="menu" hidden role="menu">
+        <button role="menuitem" data-a="ver">Verificar grade<small>Marca as letras erradas (−${Math.round(N.base*.03)} pts)</small></button>
+        <button role="menuitem" data-a="letra">Revelar letra<small>Mostra a casa selecionada (−${Math.round(N.base*.04)} pts)</small></button>
+        <button role="menuitem" data-a="palavra">Revelar palavra<small>Mostra a palavra inteira (−${Math.round(N.base*.04)} por letra)</small></button>
+      </div>
+    </div>
+    <button class="btn" id="voltar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Níveis</button>
+  </div>
+  <div id="fimbox"></div>
+  <div class="jogo">
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <div class="gradebox" id="gbox"><div class="grade${J.fim?" feito":""}" id="grade" role="grid" aria-label="Grade da cruzada"></div></div>
+      <div class="pistabar"${J.fim?" hidden":""}><button id="ant" aria-label="Pista anterior">‹</button><div class="txt" id="pista" aria-live="polite"></div><button id="prox" aria-label="Próxima pista">›</button></div>
+      <div class="teclado" id="tec"${J.fim?" hidden":""}>
+        ${["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].map((l,i)=>`<div>${i===2?`<button class="w" data-k="vira" aria-label="Virar direção">↻</button>`:""}${[...l].map(ch=>`<button data-k="${ch}">${ch}</button>`).join("")}${i===2?`<button class="w" data-k="apaga" aria-label="Apagar">⌫</button>`:""}</div>`).join("")}
+      </div>
+    </div>
+    <aside class="pistas" id="listas">
+      ${["h","v"].map(d=>`<section><h3>${d==="h"?"Horizontais":"Verticais"}</h3><ol>${P.ordem.filter(i=>P.palavras[i].dir===d).map(i=>{const p=P.palavras[i];return `<li id="pl${i}"><button data-i="${i}"><b>${p.num}</b><span>${esc(p.pista)} <span style="color:var(--muted)">(${p.resp.length})</span></span></button></li>`}).join("")}</ol></section>`).join("")}
+    </aside>
+  </div>`;
+  const g=$("grade");
+  g.style.gridTemplateColumns=`repeat(${P.colunas},var(--cs))`;
+  let html="";
+  for(let r=0;r<P.linhas;r++)for(let c=0;c<P.colunas;c++){
+    const x=P.grade[r][c];
+    html+=x?`<div class="cell l" data-r="${r}" data-c="${c}" role="gridcell"${x.num?`><span class="n">${x.num}</span>`:">"}<span class="c"></span></div>`:`<div class="cell"></div>`;
+  }
+  g.innerHTML=html;
+  ajustarTamanho();
+  g.addEventListener("pointerdown",e=>{
+    const el=e.target.closest(".cell.l"); if(!el||J.fim) return;
+    e.preventDefault();
+    clicar(+el.dataset.r,+el.dataset.c);
+  });
+  $("listas").addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(b&&!J.fim){irPara(+b.dataset.i);}});
+  $("ant").onclick=()=>pular(-1); $("prox").onclick=()=>pular(1);
+  $("tec").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.k;if(k==="apaga")apagar();else if(k==="vira")virar();else digitar(k)});
+  $("voltar").onclick=()=>{ if(J&&!J.fim) salvar(); J=null; telaInicio(); };
+  $("ajuda").onclick=e=>{e.stopPropagation();const m=$("menu");m.hidden=!m.hidden;$("ajuda").setAttribute("aria-expanded",String(!m.hidden));if(!m.hidden)m.querySelector("button").focus()};
+  $("menu").onclick=e=>{const b=e.target.closest("button");if(!b)return;fecharMenu();acao(b.dataset.a)};
+  pintar();
+  if(J.fim) mostrarFim(false);
+}
+function fecharMenu(){const m=$("menu");if(m&&!m.hidden){m.hidden=true;$("ajuda").setAttribute("aria-expanded","false")}}
+document.addEventListener("click",e=>{if(!e.target.closest(".menu"))fecharMenu()});
+
+function ajustarTamanho(){
+  const g=$("grade"),box=$("gbox"); if(!g||!box||!J) return;
+  const w=box.clientWidth-24;
+  const cs=Math.max(20,Math.min(44,Math.floor(w/J.P.colunas)));
+  g.style.setProperty("--cs",cs+"px");
+}
+window.addEventListener("resize",ajustarTamanho);
+
+function pintar(){
+  const {P}=J, wi=J.fim?null:palavraAtual(), cur=J.fim?null:J.sel;
+  const ativos=new Set(wi!=null?P.palavras[wi].cels.map(([r,c])=>r+","+c):[]);
+  $("grade").querySelectorAll(".cell.l").forEach(el=>{
+    const r=+el.dataset.r,c=+el.dataset.c,key=r+","+c;
+    el.querySelector(".c").textContent=J.ent[r][c]||"";
+    el.classList.toggle("hl",ativos.has(key));
+    el.classList.toggle("cur",!!cur&&cur.r===r&&cur.c===c);
+    el.classList.toggle("rev",J.rev.has(key));
+    el.classList.toggle("err",J.err.has(key));
+  });
+  if(wi!=null){
+    const p=P.palavras[wi];
+    $("pista").innerHTML=`<small>${p.num} ${p.dir==="h"?"horizontal":"vertical"} · ${p.resp.length} letras</small><span>${esc(p.pista)}</span>`;
+  }
+  const cruzada=cur?palavraEm(cur.r,cur.c,cur.dir==="h"?"v":"h"):null;
+  P.palavras.forEach((p,i)=>{const li=$("pl"+i);if(!li)return;li.classList.toggle("on",i===wi);li.classList.toggle("cruz",i===cruzada);li.classList.toggle("feita",J.fim||completa(i))});
+  const on=$("pl"+wi); if(on&&window.matchMedia("(min-width:861px)").matches){ const ls=$("listas"); if(ls.scrollHeight>ls.clientHeight) on.scrollIntoView({block:"nearest"}); }
+}
+
+function clicar(r,c){
+  const temH=palavraEm(r,c,"h")!=null, temV=palavraEm(r,c,"v")!=null;
+  if(J.sel.r===r&&J.sel.c===c&&temH&&temV) J.sel.dir=J.sel.dir==="h"?"v":"h";
+  else{ J.sel={r,c,dir:(J.sel.dir==="h"?temH:!temV)?"h":"v"}; }
+  pintar();
+}
+function virar(){ const o=J.sel.dir==="h"?"v":"h"; if(palavraEm(J.sel.r,J.sel.c,o)!=null){J.sel.dir=o;pintar()} }
+function irPara(i,preferVazia=true){
+  const p=J.P.palavras[i];
+  const vazia=preferVazia?p.cels.find(([r,c])=>!J.ent[r][c]):null;
+  const [r,c]=vazia||p.cels[0];
+  J.sel={r,c,dir:p.dir}; pintar();
+}
+function pular(d){
+  const o=J.P.ordem, at=o.indexOf(palavraAtual());
+  irPara(o[(at+d+o.length)%o.length]);
+}
+function proximaVazia(desde){
+  const o=J.P.ordem;
+  for(let s=1;s<=o.length;s++){
+    const i=o[(desde+s+o.length)%o.length], p=J.P.palavras[i];
+    const v=p.cels.find(([r,c])=>!J.ent[r][c]);
+    if(v) return {r:v[0],c:v[1],dir:p.dir};
+  }
+  return null;
+}
+function digitar(ch){
+  if(!J||J.fim) return;
+  const {r,c}=J.sel, key=r+","+c;
+  if(!J.rev.has(key)){ J.ent[r][c]=ch; J.err.delete(key); }
+  const wi=palavraAtual(), p=J.P.palavras[wi];
+  const pos=p.cels.findIndex(([a,b])=>a===r&&b===c);
+  let alvo=null;
+  for(let i=pos+1;i<p.cels.length;i++){ if(!J.ent[p.cels[i][0]][p.cels[i][1]]){alvo=p.cels[i];break} }
+  if(alvo) J.sel={r:alvo[0],c:alvo[1],dir:p.dir};
+  else if(!completa(wi)){ const v=p.cels.find(([a,b])=>!J.ent[a][b]); if(v) J.sel={r:v[0],c:v[1],dir:p.dir}; }
+  else{ const pr=proximaVazia(J.P.ordem.indexOf(wi)); if(pr) J.sel=pr; else if(pos+1<p.cels.length) J.sel={r:p.cels[pos+1][0],c:p.cels[pos+1][1],dir:p.dir}; }
+  depoisDeMudar();
+}
+function apagar(){
+  if(!J||J.fim) return;
+  const {r,c}=J.sel, key=r+","+c;
+  if(J.ent[r][c]&&!J.rev.has(key)){ J.ent[r][c]=""; J.err.delete(key); }
+  else{
+    const p=J.P.palavras[palavraAtual()], pos=p.cels.findIndex(([a,b])=>a===r&&b===c);
+    if(pos>0){ const [a,b]=p.cels[pos-1]; J.sel={r:a,c:b,dir:p.dir}; if(!J.rev.has(a+","+b)){J.ent[a][b]="";J.err.delete(a+","+b)} }
+  }
+  J.avisouCheia=false; depoisDeMudar();
+}
+function mover(dr,dc){
+  const dir=dc?"h":"v";
+  if(J.sel.dir!==dir&&palavraEm(J.sel.r,J.sel.c,dir)!=null){J.sel.dir=dir;pintar();return}
+  let r=J.sel.r+dr,c=J.sel.c+dc;
+  while(r>=0&&c>=0&&r<J.P.linhas&&c<J.P.colunas){
+    if(J.P.grade[r][c]){ const temD=palavraEm(r,c,dir)!=null; J.sel={r,c,dir:temD?dir:(dir==="h"?"v":"h")}; pintar(); return; }
+    r+=dr;c+=dc;
+  }
+}
+function depoisDeMudar(){
+  pintar(); salvar();
+  const cheia=J.P.grade.every((row,r)=>row.every((x,c)=>!x||J.ent[r][c]));
+  if(!cheia){J.avisouCheia=false;return}
+  const certa=J.P.grade.every((row,r)=>row.every((x,c)=>!x||J.ent[r][c]===x.ch));
+  if(certa) vencer();
+  else if(!J.avisouCheia){J.avisouCheia=true;aviso("Quase! Tem letra errada na grade. Use Ajuda › Verificar.")}
+}
+function acao(a){
+  if(!J||J.fim) return;
+  if(a==="ver"){
+    J.ver++; let n=0;
+    J.P.grade.forEach((row,r)=>row.forEach((x,c)=>{ if(x&&J.ent[r][c]&&J.ent[r][c]!==x.ch){J.err.add(r+","+c);n++} }));
+    aviso(n?`${n} letra${n>1?"s":""} errada${n>1?"s":""} marcada${n>1?"s":""}.`:"Nenhuma letra errada até aqui.");
+    pintar(); salvar(); return;
+  }
+  const cels=a==="letra"?[[J.sel.r,J.sel.c]]:J.P.palavras[palavraAtual()].cels;
+  cels.forEach(([r,c])=>{const key=r+","+c; if(J.ent[r][c]!==J.P.grade[r][c].ch||!J.rev.has(key)){ if(J.ent[r][c]!==J.P.grade[r][c].ch) J.rev.add(key); J.ent[r][c]=J.P.grade[r][c].ch; J.err.delete(key);} });
+  if(a==="palavra"){ const pr=proximaVazia(J.P.ordem.indexOf(palavraAtual())); if(pr) J.sel=pr; }
+  depoisDeMudar();
+}
+function pontos(){
+  const N=J.N;
+  const p=N.base - J.seg*2 - J.rev.size*N.base*.04 - J.ver*N.base*.03;
+  return Math.round(Math.max(N.base*.1,p));
+}
+function vencer(){
+  J.fim=true; J.pts=pontos(); pararRelogio(); salvar();
+  const h=LS.get(kHist(J.nv),[]); if(!h.includes(J.chave)){h.push(J.chave);LS.set(kHist(J.nv),h.slice(-400))}
+  $("grade").classList.add("feito");
+  // onda de vitória na ordem das casas
+  let d=0; $("grade").querySelectorAll(".cell.l").forEach(el=>{el.style.setProperty("--d",d++);el.classList.add("win")});
+  document.querySelector(".pistabar").hidden=true; $("tec").hidden=true; $("ajuda").disabled=true;
+  pintar(); mostrarFim(true);
+  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome},"*") }catch(e){}
+}
+let cont=null;
+function mostrarFim(agora){
+  const box=$("fimbox"), seq=sequencia(J.nv);
+  box.innerHTML=`<section class="fim" aria-labelledby="fimt">
+    <h2 id="fimt">${agora?"Cruzada resolvida!":"Você já resolveu a de hoje"}</h2>
+    <div class="linha">
+      <div><b>${fmtTempo(J.seg)}</b><span>Tempo</span></div>
+      <div><b>${J.pts}</b><span>Pontos</span></div>
+      <div><b>${J.rev.size}</b><span>Letras reveladas</span></div>
+      <div><b>${seq}</b><span>Sequência</span></div>
+    </div>
+    <p class="glossario">${J.P.ordem.map(i=>{const p=J.P.palavras[i];return `<b>${p.num}${p.dir==="h"?"H":"V"}</b> ${esc(p.palavra)}`}).join(" · ")}</p>
+    <p class="prox">Nova cruzada em <b id="cont">--:--:--</b></p>
+    <div class="acoes">
+      <button class="btn pri" id="compart">Copiar resultado</button>
+      <button class="btn" id="outro">Outro nível</button>
+    </div>
+  </section>`;
+  $("outro").onclick=()=>{J=null;telaInicio()};
+  $("compart").onclick=()=>{
+    const t=`Palavras Cruzadas Nº ${J.numero} · ${J.N.nome}\n✅ ${fmtTempo(J.seg)} · ${J.pts} pts${J.rev.size?` · ${J.rev.size} letra${J.rev.size>1?"s":""} revelada${J.rev.size>1?"s":""}`:" · sem ajuda"}`;
+    copiar(t);
+  };
+  if(cont) clearInterval(cont);
+  const tick=()=>{const el=$("cont");if(!el){clearInterval(cont);return}const a=new Date(),m=new Date(a.getFullYear(),a.getMonth(),a.getDate()+1);el.textContent=fmtTempo((m-a)/1000).padStart(8,"0")};
+  tick(); cont=setInterval(tick,1000);
+  if(agora) box.scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+function copiar(t){
+  const ok=()=>aviso("Resultado copiado!");
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(t).then(ok,()=>alt());
+  else alt();
+  function alt(){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok()}catch(e){aviso("Não deu para copiar.")}ta.remove()}
+}
+let avisoT=null;
+function aviso(t){
+  let el=document.querySelector(".aviso"); if(el) el.remove();
+  el=document.createElement("div"); el.className="aviso"; el.setAttribute("role","status"); el.textContent=t; document.body.appendChild(el);
+  clearTimeout(avisoT); avisoT=setTimeout(()=>el.remove(),2400);
+}
+
+document.addEventListener("keydown",e=>{
+  if(!J||J.fim||e.ctrlKey||e.metaKey||e.altKey) return;
+  if(e.target.closest&&e.target.closest(".menu-lista")) { if(e.key==="Escape"){fecharMenu();$("ajuda").focus()} return; }
+  const k=e.key;
+  if(/^[a-zA-ZçÇ]$/.test(k)){e.preventDefault();digitar(norm(k));}
+  else if(k==="Backspace"||k==="Delete"){e.preventDefault();apagar();}
+  else if(k==="ArrowLeft"){e.preventDefault();mover(0,-1)}
+  else if(k==="ArrowRight"){e.preventDefault();mover(0,1)}
+  else if(k==="ArrowUp"){e.preventDefault();mover(-1,0)}
+  else if(k==="ArrowDown"){e.preventDefault();mover(1,0)}
+  else if(k==="Tab"||k==="Enter"){e.preventDefault();pular(e.shiftKey?-1:1)}
+  else if(k===" "){e.preventDefault();virar()}
+});
+document.addEventListener("visibilitychange",()=>{ if(document.hidden&&J&&!J.fim) salvar(); });
+
+telaInicio();
+})();
+</script>
+</body>
+</html>

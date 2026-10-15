@@ -17,7 +17,7 @@
       <h1>Jogos <span>Interativos</span></h1>
       <p>Escolha um cartucho e jogue aqui mesmo, sem sair da página. No fim de cada partida, salve sua pontuação com seu nome e dispute o placar.</p>
     </div>
-    <div class="count"><b id="n">7</b> jogos na prateleira</div>
+    <div class="count"><b id="n">9</b> jogos na prateleira</div>
   </header>
 
   <ul class="shelf" id="shelf" aria-label="Jogos"></ul>
@@ -363,6 +363,83 @@ const JOGOS=[
         <rect y="168" width="400" height="132" fill="url(#se-fade)"/>
       </svg>
       <div class="mark m" aria-hidden="true">Quiz Sertanejo<br><span>Raiz</span></div>
+    </div>`
+  },
+  {
+    id:"palavras-cruzadas",
+    titulo:"Palavras Cruzadas",
+    arquivo:"jogos/palavras-cruzadas.html",
+    resumo:"Uma cruzada nova por dia, igual para todo mundo. Quanto mais rápido e com menos ajudas, mais pontos.",
+    tags:["Palavras","3 níveis","Do dia"],
+    cor:["#c8372d","#1d1b17"],
+    arte:`<div class="label art-pc">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="pc-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4efe4" stop-opacity="0"/><stop offset="1" stop-color="#f4efe4" stop-opacity=".97"/></linearGradient>
+          <pattern id="pc-txt" width="60" height="9" patternUnits="userSpaceOnUse"><rect width="52" height="3.2" rx="1.6" fill="#1d1b17" opacity=".13"/></pattern>
+        </defs>
+        <rect width="400" height="300" fill="#f4efe4"/>
+        <rect x="14" y="14" width="96" height="190" fill="url(#pc-txt)"/>
+        <rect x="290" y="14" width="96" height="190" fill="url(#pc-txt)"/>
+        <rect x="14" y="10" width="372" height="2" fill="#1d1b17" opacity=".7"/>
+        <g transform="translate(200 104) rotate(-4)">
+          <rect x="-86" y="-86" width="178" height="178" fill="#000" opacity=".12"/>
+          <g fill="#fffdf8" stroke="#1d1b17" stroke-width="2.4">
+            <rect x="-90" y="-90" width="30" height="30"/><rect x="-60" y="-90" width="30" height="30"/><rect x="-30" y="-90" width="30" height="30"/><rect x="0" y="-90" width="30" height="30"/><rect x="30" y="-90" width="30" height="30"/>
+            <rect x="-30" y="-60" width="30" height="30"/><rect x="60" y="-60" width="30" height="30"/><rect x="30" y="-60" width="30" height="30" fill="#fde9a6"/>
+            <rect x="-90" y="-30" width="30" height="30"/><rect x="-60" y="-30" width="30" height="30"/><rect x="-30" y="-30" width="30" height="30"/><rect x="30" y="-30" width="30" height="30" fill="#f6c33c"/>
+            <rect x="-30" y="0" width="30" height="30"/><rect x="30" y="0" width="30" height="30" fill="#fde9a6"/>
+            <rect x="-30" y="30" width="30" height="30"/><rect x="0" y="30" width="30" height="30"/><rect x="30" y="30" width="30" height="30" fill="#fde9a6"/><rect x="60" y="30" width="30" height="30"/>
+          </g>
+          <g font-family="DM Mono,monospace" font-size="7.5" fill="#1d1b17"><text x="-87" y="-82">1</text><text x="-27" y="-82">2</text><text x="33" y="-82">3</text><text x="-87" y="-22">4</text><text x="-27" y="38">5</text></g>
+          <g font-family="Figtree,Arial,sans-serif" font-weight="800" font-size="19" fill="#1d1b17" text-anchor="middle">
+            <text x="-75" y="-68">S</text><text x="-45" y="-68">A</text><text x="-15" y="-68">M</text><text x="15" y="-68">B</text><text x="45" y="-68">A</text>
+            <text x="-15" y="-38">A</text><text x="45" y="-38">R</text>
+            <text x="-75" y="-8">R</text><text x="-45" y="-8">I</text><text x="-15" y="-8">O</text>
+            <text x="-15" y="52">O</text>
+          </g>
+        </g>
+        <g transform="translate(318 168) rotate(38)">
+          <rect x="-5" y="-62" width="10" height="96" fill="#f2b134"/><rect x="-5" y="-62" width="10" height="12" fill="#e98fa2"/><rect x="-5" y="-50" width="10" height="5" fill="#b9b9b9"/>
+          <path d="M-5 34 0 50 5 34z" fill="#f1d2a8"/><path d="M-1.6 45 0 50 1.6 45z" fill="#1d1b17"/>
+        </g>
+        <rect y="168" width="400" height="132" fill="url(#pc-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Palavras<br><span>Cruzadas</span></div>
+    </div>`
+  },
+  {
+    id:"palpite",
+    titulo:"Palpite",
+    arquivo:"jogos/palpite.html",
+    resumo:"Descubra a palavra do dia em seis tentativas. As cores dizem quais letras estão no lugar certo.",
+    tags:["Palavras","3 níveis","Do dia"],
+    cor:["#3a8f5c","#22201b"],
+    arte:`<div class="label art-pal">
+      <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <radialGradient id="pa-bg" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#2f5e45"/><stop offset="1" stop-color="#14261c"/></radialGradient>
+          <linearGradient id="pa-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14261c" stop-opacity="0"/><stop offset="1" stop-color="#14261c" stop-opacity=".92"/></linearGradient>
+        </defs>
+        <rect width="400" height="300" fill="url(#pa-bg)"/>
+        <g font-family="Bowlby One SC,Arial Black,sans-serif" font-size="24" text-anchor="middle">
+          <g transform="translate(83 34)">
+            <rect width="42" height="42" rx="6" fill="#8a8476"/><rect x="48" width="42" height="42" rx="6" fill="#8a8476"/><rect x="96" width="42" height="42" rx="6" fill="#8a8476"/><rect x="144" width="42" height="42" rx="6" fill="#d99a1e"/><rect x="192" width="42" height="42" rx="6" fill="#3a8f5c"/>
+            <g fill="#fff"><text x="21" y="31">T</text><text x="69" y="31">E</text><text x="117" y="31">R</text><text x="165" y="31">N</text><text x="213" y="31">O</text></g>
+          </g>
+          <g transform="translate(83 84)">
+            <rect width="42" height="42" rx="6" fill="#8a8476"/><rect x="48" width="42" height="42" rx="6" fill="#3a8f5c"/><rect x="96" width="42" height="42" rx="6" fill="#3a8f5c"/><rect x="144" width="42" height="42" rx="6" fill="#3a8f5c"/><rect x="192" width="42" height="42" rx="6" fill="#3a8f5c"/>
+            <g fill="#fff"><text x="21" y="31">M</text><text x="69" y="31">U</text><text x="117" y="31">N</text><text x="165" y="31">D</text><text x="213" y="31">O</text></g>
+          </g>
+          <g transform="translate(83 134)">
+            <rect width="42" height="42" rx="6" fill="#3a8f5c"/><rect x="48" width="42" height="42" rx="6" fill="#3a8f5c"/><rect x="96" width="42" height="42" rx="6" fill="#3a8f5c"/><rect x="144" width="42" height="42" rx="6" fill="#3a8f5c"/><rect x="192" width="42" height="42" rx="6" fill="#3a8f5c"/>
+            <g fill="#fff"><text x="21" y="31">F</text><text x="69" y="31">U</text><text x="117" y="31">N</text><text x="165" y="31">D</text><text x="213" y="31">O</text></g>
+          </g>
+          <g transform="translate(83 184)" fill="none" stroke="#fbf8f1" stroke-opacity=".35" stroke-width="2"><rect x="1" y="1" width="40" height="40" rx="6"/><rect x="49" y="1" width="40" height="40" rx="6"/><rect x="97" y="1" width="40" height="40" rx="6"/><rect x="145" y="1" width="40" height="40" rx="6"/><rect x="193" y="1" width="40" height="40" rx="6"/></g>
+        </g>
+        <rect y="168" width="400" height="132" fill="url(#pa-fade)"/>
+      </svg>
+      <div class="mark m" aria-hidden="true">Pal<span>pite</span></div>
     </div>`
   }
 ];

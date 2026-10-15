@@ -136,6 +136,14 @@ a{color:inherit}
 .art-ser .mark{font-family:"Rye","Georgia",serif;color:#ffe9b0;text-shadow:0 2px 0 #2a1208;font-size:clamp(14px,7.2cqw,24px);line-height:1.05}
 .art-ser .mark span{color:#ffb347}
 
+.art-pc{background:#f4efe4}
+.art-pc .mark{font-family:"DM Serif Display",Georgia,"Times New Roman",serif;color:#1d1b17;font-size:clamp(16px,8.4cqw,28px)}
+.art-pc .mark span{color:#c8372d}
+
+.art-pal{background:#14261c}
+.art-pal .mark{font-family:"Bowlby One SC","Arial Black",Impact,sans-serif;color:#fbf8f1;letter-spacing:.03em;text-shadow:0 2px 0 rgba(0,0,0,.45);font-size:clamp(18px,9.4cqw,32px)}
+.art-pal .mark span{color:#e9b84a}
+
 /* ---------- Jogador ---------- */
 .player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}
 .pbar{display:flex;align-items:center;gap:12px;color:var(--bar-ink);
