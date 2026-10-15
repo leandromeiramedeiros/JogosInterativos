@@ -911,3 +911,99 @@ window.INTERLIGADO_TEMAS.fazenda = {
     "ferradura": "Peça de ferro em U pregada no casco do cavalo; dizem que dá sorte."
   }
 };
+
+window.INTERLIGADO_TEMAS.guaratingueta = {
+  nome: "Guaratinguetá",
+  cor: "#2a6f97",
+  niveis: {
+    facil: {
+      ligacoes: [
+        ["Guaratinguetá","Frei Galvão"],["Guaratinguetá","Aparecida"],["Guaratinguetá","rio"],["Guaratinguetá","garça"],
+        ["Frei Galvão","santo"],["Frei Galvão","pílula"],
+        ["pílula","oração"],["oração","igreja"],
+        ["santo","igreja"],["santo","santa"],["igreja","Aparecida"],["Aparecida","santa"],
+        ["rio","peixe"],["rio","garça"],["garça","peixe"],
+        ["peixe","pescador"],["pescador","Aparecida"]
+      ]
+    },
+    medio: {
+      ligacoes: [
+        ["Guaratinguetá","Frei Galvão"],["Guaratinguetá","Rodrigues Alves"],["Guaratinguetá","Paraíba"],
+        ["Guaratinguetá","Via Dutra"],["Guaratinguetá","Santo Antônio"],["Guaratinguetá","sargento"],
+        ["Frei Galvão","pílula"],["Frei Galvão","papa"],["Frei Galvão","santo"],
+        ["papa","santo"],["papa","Aparecida"],["pílula","oração"],["oração","santo"],
+        ["Rodrigues Alves","presidente"],["Rodrigues Alves","Rio de Janeiro"],["presidente","café"],
+        ["café","trem"],["trem","São Paulo"],
+        ["Paraíba","rio"],["rio","pescador"],["rio","Aparecida"],["pescador","Aparecida"],["Aparecida","santa"],["santa","santo"],
+        ["Via Dutra","estrada"],["Via Dutra","São Paulo"],["Via Dutra","Rio de Janeiro"],["estrada","São Paulo"],["estrada","Rio de Janeiro"],
+        ["Santo Antônio","santo"],["Santo Antônio","junho"],["Santo Antônio","casamento"],
+        ["junho","festa"],["festa","casamento"],
+        ["sargento","avião"],["sargento","escola"],["escola","avião"]
+      ]
+    },
+    dificil: {
+      ligacoes: [
+        ["Guaratinguetá","Frei Galvão"],["Guaratinguetá","Rodrigues Alves"],["Guaratinguetá","Paraíba"],["Guaratinguetá","tupi"],
+        ["Guaratinguetá","sargento"],["Guaratinguetá","UNESP"],["Guaratinguetá","Lorena"],["Guaratinguetá","Cunha"],
+        ["Guaratinguetá","Potim"],["Guaratinguetá","Santo Antônio"],
+        ["tupi","garça"],["garça","Paraíba"],["garça","peixe"],["peixe","pescador"],
+        ["Paraíba","pescador"],["Paraíba","Aparecida"],["pescador","Aparecida"],
+        ["Aparecida","Potim"],["Aparecida","santa"],["Aparecida","papa"],
+        ["Frei Galvão","pílula"],["Frei Galvão","papa"],["Frei Galvão","Mosteiro da Luz"],["Frei Galvão","santo"],
+        ["papa","santo"],["santa","santo"],["pílula","oração"],["oração","santo"],
+        ["Mosteiro da Luz","São Paulo"],
+        ["Rodrigues Alves","presidente"],["Rodrigues Alves","Rio de Janeiro"],
+        ["presidente","café"],["café","Minas Gerais"],["café","trem"],["trem","São Paulo"],
+        ["Santo Antônio","santo"],["Santo Antônio","junho"],["Santo Antônio","casamento"],["junho","festa"],["festa","casamento"],
+        ["sargento","avião"],["avião","engenharia"],["UNESP","engenharia"],["UNESP","USP"],
+        ["Lorena","USP"],["Lorena","Via Dutra"],["USP","São Paulo"],
+        ["Via Dutra","São Paulo"],["Via Dutra","Rio de Janeiro"],
+        ["Cunha","Paraty"],["Cunha","Estrada Real"],["Paraty","Estrada Real"],["Paraty","Rio de Janeiro"],
+        ["Estrada Real","ouro"],["ouro","Minas Gerais"],["Minas Gerais","Estrada Real"]
+      ]
+    }
+  },
+  pistas: {
+    "Guaratinguetá": "Cidade do Vale do Paraíba paulista, à beira do rio e da Via Dutra.",
+    "Frei Galvão": "Primeiro santo nascido no Brasil, natural da cidade; canonizado em 2007.",
+    "Aparecida": "Cidade vizinha do Santuário Nacional; foi distrito de Guaratinguetá até 1928.",
+    "rio": "Curso de água doce; o Paraíba do Sul corta a cidade.",
+    "garça": "Ave branca de pernas longas que dá nome à cidade, em tupi.",
+    "santo": "Pessoa reconhecida pela Igreja por sua vida de virtudes e milagres.",
+    "santa": "Imagem de Nossa Senhora encontrada nas águas do rio em 1717.",
+    "pílula": "Papelzinho enrolado com uma oração, distribuído pelo frade da cidade.",
+    "oração": "Prece dirigida a Deus ou aos santos.",
+    "igreja": "Templo católico onde se reza a missa.",
+    "peixe": "Animal de escamas que vive na água e alimenta as aves do rio.",
+    "pescador": "Quem lança a rede no rio; três deles acharam a imagem da padroeira em 1717.",
+    "Rodrigues Alves": "Presidente do Brasil de 1902 a 1906, nascido na cidade.",
+    "presidente": "Chefe de Estado e de governo do país, eleito pelo voto.",
+    "Paraíba": "Rio ___ do Sul, que corta a cidade e dá nome ao Vale.",
+    "Via Dutra": "Rodovia federal BR-116 que liga as duas maiores capitais do país.",
+    "Santo Antônio": "Padroeiro da cidade, festejado em 13 de junho, data do aniversário dela.",
+    "sargento": "Graduação militar formada na escola da Aeronáutica que fica na cidade.",
+    "papa": "Chefe da Igreja Católica; Bento XVI canonizou o frade da cidade em 2007.",
+    "café": "Grão que enriqueceu o Vale do Paraíba no século XIX.",
+    "trem": "Transporte sobre trilhos que levava a produção do Vale para os portos.",
+    "São Paulo": "Capital paulista, numa das pontas da Dutra.",
+    "Rio de Janeiro": "Cidade maravilhosa, na outra ponta da Dutra; foi capital do país.",
+    "estrada": "Caminho asfaltado por onde passam carros e caminhões.",
+    "junho": "Mês das festas juninas e do aniversário da cidade.",
+    "casamento": "Cerimônia de união; o padroeiro da cidade tem fama de casamenteiro.",
+    "festa": "Celebração com música, comida e gente reunida.",
+    "avião": "Aeronave; a escola militar da cidade forma especialistas para cuidar deles.",
+    "escola": "Lugar de ensino; a da Aeronáutica na cidade forma sargentos.",
+    "tupi": "Língua indígena de onde vem o nome da cidade.",
+    "UNESP": "Universidade estadual paulista com campus de engenharia na cidade.",
+    "USP": "Maior universidade paulista, com escola de engenharia na cidade vizinha.",
+    "engenharia": "Curso superior de cálculo e projeto, oferecido no campus da cidade.",
+    "Lorena": "Cidade vizinha, à beira da Dutra, com escola de engenharia da USP.",
+    "Cunha": "Cidade serrana vizinha, conhecida pela cerâmica e pela estrada para Paraty.",
+    "Potim": "Pequena cidade vizinha, emancipada de Guaratinguetá em 1991.",
+    "Mosteiro da Luz": "Convento fundado pelo frade da cidade em São Paulo, hoje Museu de Arte Sacra.",
+    "Paraty": "Cidade colonial do litoral fluminense, fim do caminho do ouro.",
+    "Estrada Real": "Antigo caminho do ouro entre Minas Gerais e o litoral.",
+    "ouro": "Metal precioso levado de Minas pelos caminhos coloniais.",
+    "Minas Gerais": "Estado vizinho do ouro, do queijo e do café com leite."
+  }
+};
