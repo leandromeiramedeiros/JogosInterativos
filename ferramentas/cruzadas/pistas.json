@@ -1,0 +1,1666 @@
+{
+ "ABACAXI": {
+  "grafia": "abacaxi",
+  "medio": "Fruta com coroa e casca espinhosa"
+ },
+ "ABAPORU": {
+  "dificil": "Quadro de Tarsila do Amaral",
+  "grafia": "abaporu"
+ },
+ "ABELHA": {
+  "facil": "Inseto que produz mel",
+  "grafia": "abelha"
+ },
+ "ABOLICAO": {
+  "dificil": "Fim da escravidão no Brasil, em 1888",
+  "grafia": "abolição"
+ },
+ "ACERVO": {
+  "dificil": "Conjunto de obras de um museu ou biblioteca",
+  "grafia": "acervo"
+ },
+ "ACUCAR": {
+  "facil": "Tempero que adoça",
+  "grafia": "açúcar"
+ },
+ "ADVOGADO": {
+  "grafia": "advogado",
+  "medio": "Defende clientes no tribunal"
+ },
+ "AEROPORTO": {
+  "grafia": "aeroporto",
+  "medio": "Onde os aviões pousam"
+ },
+ "AGUA": {
+  "facil": "Líquido essencial à vida",
+  "grafia": "água"
+ },
+ "ALEIJADINHO": {
+  "dificil": "Escultor dos profetas de Congonhas",
+  "grafia": "aleijadinho"
+ },
+ "ALFABETO": {
+  "grafia": "alfabeto",
+  "medio": "Conjunto das letras"
+ },
+ "ALGOZ": {
+  "dificil": "Carrasco",
+  "grafia": "algoz"
+ },
+ "ALQUIMIA": {
+  "dificil": "Busca da pedra filosofal",
+  "grafia": "alquimia"
+ },
+ "ALVISSARAS": {
+  "dificil": "Prêmio por uma boa notícia",
+  "grafia": "alvíssaras"
+ },
+ "AMARELO": {
+  "facil": "Cor da gema do ovo",
+  "grafia": "amarelo"
+ },
+ "AMAZONAS": {
+  "grafia": "amazonas",
+  "medio": "Maior estado do Brasil"
+ },
+ "AMAZONIA": {
+  "grafia": "amazônia",
+  "medio": "Maior floresta tropical do mundo"
+ },
+ "AMIGO": {
+  "facil": "Pessoa querida que não é da família",
+  "grafia": "amigo"
+ },
+ "ANACRONISMO": {
+  "dificil": "Algo fora da sua época",
+  "grafia": "anacronismo"
+ },
+ "ARARA": {
+  "grafia": "arara",
+  "medio": "Ave colorida de bico forte"
+ },
+ "ARAUCARIA": {
+  "dificil": "O pinheiro-do-paraná",
+  "grafia": "araucária"
+ },
+ "ARAUTO": {
+  "dificil": "Mensageiro, anunciador",
+  "grafia": "arauto"
+ },
+ "ARISTOTELES": {
+  "dificil": "Discípulo de Platão e tutor de Alexandre",
+  "grafia": "aristóteles"
+ },
+ "ARQUIPELAGO": {
+  "dificil": "Grupo de ilhas",
+  "grafia": "arquipélago"
+ },
+ "ARQUITETO": {
+  "grafia": "arquiteto",
+  "medio": "Projeta casas e edifícios"
+ },
+ "ARROZ": {
+  "facil": "Grão branco que acompanha o feijão",
+  "grafia": "arroz"
+ },
+ "ARVORE": {
+  "facil": "Planta grande com tronco e galhos",
+  "grafia": "árvore"
+ },
+ "ASTEROIDE": {
+  "dificil": "Corpo rochoso que orbita o Sol",
+  "grafia": "asteroide"
+ },
+ "ASTROLABIO": {
+  "dificil": "Instrumento dos navegadores para medir a altura dos astros",
+  "grafia": "astrolábio"
+ },
+ "ASTRONAUTA": {
+  "grafia": "astronauta",
+  "medio": "Viaja ao espaço"
+ },
+ "AVIAO": {
+  "facil": "Veículo que voa",
+  "grafia": "avião"
+ },
+ "AVIDO": {
+  "dificil": "Cheio de desejo, sedento",
+  "grafia": "ávido"
+ },
+ "AVO": {
+  "facil": "Mãe da mãe",
+  "grafia": "avó"
+ },
+ "AZUL": {
+  "facil": "Cor do céu num dia limpo",
+  "grafia": "azul"
+ },
+ "BALBURDIA": {
+  "dificil": "Confusão, desordem",
+  "grafia": "balbúrdia"
+ },
+ "BALEIA": {
+  "grafia": "baleia",
+  "medio": "Maior animal do planeta"
+ },
+ "BANANA": {
+  "facil": "Fruta amarela e comprida",
+  "grafia": "banana"
+ },
+ "BANDEIRANTE": {
+  "dificil": "Desbravador paulista do interior",
+  "grafia": "bandeirante"
+ },
+ "BARALHO": {
+  "grafia": "baralho",
+  "medio": "Conjunto de cartas"
+ },
+ "BARROCO": {
+  "dificil": "Estilo artístico rebuscado do século XVII",
+  "grafia": "barroco"
+ },
+ "BASQUETE": {
+  "grafia": "basquete",
+  "medio": "Esporte da cesta"
+ },
+ "BEIJO": {
+  "facil": "Carinho feito com os lábios",
+  "grafia": "beijo"
+ },
+ "BELEM": {
+  "grafia": "belém",
+  "medio": "Capital do Pará"
+ },
+ "BERIMBAU": {
+  "grafia": "berimbau",
+  "medio": "Instrumento de uma corda da capoeira"
+ },
+ "BIBLIOTECA": {
+  "grafia": "biblioteca",
+  "medio": "Lugar com muitos livros para emprestar"
+ },
+ "BICICLETA": {
+  "facil": "Tem duas rodas e pedais",
+  "grafia": "bicicleta"
+ },
+ "BOCA": {
+  "facil": "Por onde comemos",
+  "grafia": "boca"
+ },
+ "BOLA": {
+  "facil": "Objeto redondo do futebol",
+  "grafia": "bola"
+ },
+ "BOLO": {
+  "facil": "Doce de aniversário",
+  "grafia": "bolo"
+ },
+ "BOMBEIRO": {
+  "facil": "Apaga incêndios",
+  "grafia": "bombeiro"
+ },
+ "BORBOLETA": {
+  "facil": "Inseto de asas coloridas",
+  "grafia": "borboleta"
+ },
+ "BOSSA": {
+  "dificil": "___ Nova, estilo de João Gilberto",
+  "grafia": "bossa"
+ },
+ "BOTO": {
+  "grafia": "boto",
+  "medio": "Golfinho de rio das lendas amazônicas"
+ },
+ "BRANCO": {
+  "facil": "Cor da neve",
+  "grafia": "branco"
+ },
+ "BRASIL": {
+  "facil": "País do futebol e do samba",
+  "grafia": "brasil"
+ },
+ "BRASILIA": {
+  "grafia": "brasília",
+  "medio": "Capital do Brasil"
+ },
+ "BRIGADEIRO": {
+  "grafia": "brigadeiro",
+  "medio": "Docinho de chocolate de festa infantil"
+ },
+ "BRUXA": {
+  "grafia": "bruxa",
+  "medio": "Voa de vassoura"
+ },
+ "BURITI": {
+  "dificil": "Palmeira das veredas",
+  "grafia": "buriti"
+ },
+ "BUSSOLA": {
+  "grafia": "bússola",
+  "medio": "Instrumento que aponta o norte"
+ },
+ "CAATINGA": {
+  "grafia": "caatinga",
+  "medio": "Bioma do sertão nordestino"
+ },
+ "CABELO": {
+  "facil": "Cresce na cabeça",
+  "grafia": "cabelo"
+ },
+ "CABRAL": {
+  "grafia": "cabral",
+  "medio": "Navegador que chegou ao Brasil em 1500"
+ },
+ "CACHORRO": {
+  "facil": "Melhor amigo do homem, late",
+  "grafia": "cachorro"
+ },
+ "CADEIRA": {
+  "facil": "Móvel para sentar",
+  "grafia": "cadeira"
+ },
+ "CAFE": {
+  "facil": "Bebida escura da manhã",
+  "grafia": "café"
+ },
+ "CAIPIRINHA": {
+  "grafia": "caipirinha",
+  "medio": "Bebida de cachaça, limão e açúcar"
+ },
+ "CAIPORA": {
+  "dificil": "Entidade protetora da caça",
+  "grafia": "caipora"
+ },
+ "CAMA": {
+  "facil": "Móvel para dormir",
+  "grafia": "cama"
+ },
+ "CAMELO": {
+  "grafia": "camelo",
+  "medio": "Animal do deserto com corcovas"
+ },
+ "CAMISA": {
+  "facil": "Roupa com botões e mangas",
+  "grafia": "camisa"
+ },
+ "CANETA": {
+  "facil": "Escreve com tinta",
+  "grafia": "caneta"
+ },
+ "CANGURU": {
+  "grafia": "canguru",
+  "medio": "Animal australiano que leva o filho na bolsa"
+ },
+ "CANUDOS": {
+  "dificil": "Arraial de Antônio Conselheiro",
+  "grafia": "canudos"
+ },
+ "CAPITANIA": {
+  "dificil": "As hereditárias dividiram o Brasil colônia",
+  "grafia": "capitania"
+ },
+ "CAPITU": {
+  "dificil": "Personagem dos olhos de ressaca",
+  "grafia": "capitu"
+ },
+ "CAPIVARA": {
+  "grafia": "capivara",
+  "medio": "Maior roedor do mundo"
+ },
+ "CAPOEIRA": {
+  "grafia": "capoeira",
+  "medio": "Luta e dança afro-brasileira"
+ },
+ "CARANGUEJO": {
+  "grafia": "caranguejo",
+  "medio": "Anda de lado"
+ },
+ "CARAVELA": {
+  "dificil": "Embarcação das Grandes Navegações",
+  "grafia": "caravela"
+ },
+ "CARNAVAL": {
+  "grafia": "carnaval",
+  "medio": "Festa de blocos e escolas de samba"
+ },
+ "CARRO": {
+  "facil": "Veículo de quatro rodas",
+  "grafia": "carro"
+ },
+ "CARTEIRO": {
+  "grafia": "carteiro",
+  "medio": "Entrega cartas"
+ },
+ "CASA": {
+  "facil": "Lugar onde se mora",
+  "grafia": "casa"
+ },
+ "CASTELO": {
+  "grafia": "castelo",
+  "medio": "Morada de reis, com torres"
+ },
+ "CAVALO": {
+  "facil": "Animal que relincha",
+  "grafia": "cavalo"
+ },
+ "CELERE": {
+  "dificil": "Rápido, veloz",
+  "grafia": "célere"
+ },
+ "CEM": {
+  "facil": "Dez vezes dez",
+  "grafia": "cem"
+ },
+ "CERRADO": {
+  "grafia": "cerrado",
+  "medio": "Savana do Brasil central"
+ },
+ "CHAPEU": {
+  "facil": "Usado na cabeça para proteger do sol",
+  "grafia": "chapéu"
+ },
+ "CHAVE": {
+  "facil": "Abre a fechadura",
+  "grafia": "chave"
+ },
+ "CHURRASCO": {
+  "grafia": "churrasco",
+  "medio": "Carne assada na brasa"
+ },
+ "CHUVA": {
+  "facil": "Água que cai das nuvens",
+  "grafia": "chuva"
+ },
+ "CIDADE": {
+  "facil": "Onde mora muita gente",
+  "grafia": "cidade"
+ },
+ "CINCO": {
+  "facil": "Número de dedos de uma mão",
+  "grafia": "cinco"
+ },
+ "CINEMA": {
+  "grafia": "cinema",
+  "medio": "Sala onde se assiste a filmes"
+ },
+ "CIRCULO": {
+  "grafia": "círculo",
+  "medio": "Figura redonda"
+ },
+ "CLARICE": {
+  "dificil": "___ Lispector, autora de A Hora da Estrela",
+  "grafia": "clarice"
+ },
+ "CLOROFILA": {
+  "dificil": "Pigmento verde das plantas",
+  "grafia": "clorofila"
+ },
+ "COBRA": {
+  "facil": "Réptil sem patas",
+  "grafia": "cobra"
+ },
+ "COELHO": {
+  "facil": "Orelhudo que adora cenoura",
+  "grafia": "coelho"
+ },
+ "COMETA": {
+  "grafia": "cometa",
+  "medio": "Astro com cauda luminosa"
+ },
+ "COMPUTADOR": {
+  "grafia": "computador",
+  "medio": "Máquina com teclado e tela"
+ },
+ "CONGADA": {
+  "dificil": "Festa afro-brasileira de coroação dos reis do Congo",
+  "grafia": "congada"
+ },
+ "CONTINENTE": {
+  "grafia": "continente",
+  "medio": "A África é um"
+ },
+ "CONTRALTO": {
+  "dificil": "Voz feminina mais grave",
+  "grafia": "contralto"
+ },
+ "CORACAO": {
+  "facil": "Bombeia o sangue",
+  "grafia": "coração"
+ },
+ "CORAGEM": {
+  "grafia": "coragem",
+  "medio": "O contrário de medo"
+ },
+ "CORCOVADO": {
+  "grafia": "corcovado",
+  "medio": "Morro do Cristo Redentor"
+ },
+ "CORDEL": {
+  "dificil": "Literatura popular em folhetos pendurados",
+  "grafia": "cordel"
+ },
+ "CORUJA": {
+  "facil": "Ave noturna, símbolo da sabedoria",
+  "grafia": "coruja"
+ },
+ "COXINHA": {
+  "grafia": "coxinha",
+  "medio": "Salgado em forma de gota, recheado de frango"
+ },
+ "COZINHEIRO": {
+  "grafia": "cozinheiro",
+  "medio": "Prepara a comida"
+ },
+ "CRESCENDO": {
+  "dificil": "Aumento gradual de volume na música",
+  "grafia": "crescendo"
+ },
+ "CRUZADAS": {
+  "dificil": "Expedições cristãs medievais à Terra Santa",
+  "grafia": "cruzadas"
+ },
+ "CUPUACU": {
+  "dificil": "Fruta amazônica parente do cacau",
+  "grafia": "cupuaçu"
+ },
+ "CURITIBA": {
+  "grafia": "curitiba",
+  "medio": "Capital do Paraná"
+ },
+ "CURUPIRA": {
+  "grafia": "curupira",
+  "medio": "Protetor das matas de pés virados para trás"
+ },
+ "DANCA": {
+  "facil": "Mexer o corpo no ritmo",
+  "grafia": "dança"
+ },
+ "DENTE": {
+  "facil": "Mastiga os alimentos",
+  "grafia": "dente"
+ },
+ "DENTISTA": {
+  "grafia": "dentista",
+  "medio": "Cuida dos dentes"
+ },
+ "DESERTO": {
+  "grafia": "deserto",
+  "medio": "Região muito seca, como o Saara"
+ },
+ "DESIDIA": {
+  "dificil": "Preguiça, desleixo",
+  "grafia": "desídia"
+ },
+ "DEZ": {
+  "facil": "Número de dedos das duas mãos",
+  "grafia": "dez"
+ },
+ "DIA": {
+  "facil": "O contrário de noite",
+  "grafia": "dia"
+ },
+ "DICIONARIO": {
+  "grafia": "dicionário",
+  "medio": "Livro com o significado das palavras"
+ },
+ "DOMINGO": {
+  "facil": "Dia depois do sábado",
+  "grafia": "domingo"
+ },
+ "DOMINO": {
+  "grafia": "dominó",
+  "medio": "Jogo de peças com pontinhos"
+ },
+ "DRAGAO": {
+  "grafia": "dragão",
+  "medio": "Monstro lendário que cospe fogo"
+ },
+ "DUZIA": {
+  "grafia": "dúzia",
+  "medio": "Doze unidades"
+ },
+ "ECLIPSE": {
+  "grafia": "eclipse",
+  "medio": "Quando a Lua encobre o Sol"
+ },
+ "EFEMERO": {
+  "dificil": "Que dura pouco",
+  "grafia": "efêmero"
+ },
+ "EGIDE": {
+  "dificil": "Proteção, amparo",
+  "grafia": "égide"
+ },
+ "ELEFANTE": {
+  "facil": "Animal com tromba",
+  "grafia": "elefante"
+ },
+ "ELETRON": {
+  "dificil": "Partícula de carga negativa",
+  "grafia": "elétron"
+ },
+ "ENGENHEIRO": {
+  "grafia": "engenheiro",
+  "medio": "Profissional que projeta pontes e prédios"
+ },
+ "ENZIMA": {
+  "dificil": "Proteína que acelera reações no corpo",
+  "grafia": "enzima"
+ },
+ "EPOPEIA": {
+  "dificil": "Poema longo de feitos heroicos, como Os Lusíadas",
+  "grafia": "epopeia"
+ },
+ "EQUINOCIO": {
+  "dificil": "Dia e noite com a mesma duração",
+  "grafia": "equinócio"
+ },
+ "ESCADA": {
+  "grafia": "escada",
+  "medio": "Tem degraus"
+ },
+ "ESCOLA": {
+  "facil": "Lugar onde se estuda",
+  "grafia": "escola"
+ },
+ "ESCULTURA": {
+  "grafia": "escultura",
+  "medio": "Obra de arte em pedra, bronze ou madeira"
+ },
+ "ESFINGE": {
+  "dificil": "Propunha enigmas na entrada de Tebas",
+  "grafia": "esfinge"
+ },
+ "ESPELHO": {
+  "grafia": "espelho",
+  "medio": "Reflete a imagem"
+ },
+ "ESPERANCA": {
+  "grafia": "esperança",
+  "medio": "Sentimento de que algo bom vai acontecer"
+ },
+ "ESTIRPE": {
+  "dificil": "Linhagem, ascendência",
+  "grafia": "estirpe"
+ },
+ "ESTRELA": {
+  "facil": "Brilha no céu à noite",
+  "grafia": "estrela"
+ },
+ "ESTUARIO": {
+  "dificil": "Foz de rio em forma de funil",
+  "grafia": "estuário"
+ },
+ "EXIMIO": {
+  "dificil": "Excelente, muito hábil",
+  "grafia": "exímio"
+ },
+ "FALACIA": {
+  "dificil": "Argumento enganoso",
+  "grafia": "falácia"
+ },
+ "FANTASMA": {
+  "grafia": "fantasma",
+  "medio": "Alma penada que assusta"
+ },
+ "FARAO": {
+  "grafia": "faraó",
+  "medio": "Rei do antigo Egito"
+ },
+ "FARMACIA": {
+  "grafia": "farmácia",
+  "medio": "Onde se compram remédios"
+ },
+ "FEIJAO": {
+  "facil": "Grão da feijoada",
+  "grafia": "feijão"
+ },
+ "FEIJOADA": {
+  "grafia": "feijoada",
+  "medio": "Prato de feijão-preto com carnes de porco"
+ },
+ "FELIZ": {
+  "facil": "Contente, alegre",
+  "grafia": "feliz"
+ },
+ "FESTA": {
+  "facil": "Celebração com música e convidados",
+  "grafia": "festa"
+ },
+ "FEUDALISMO": {
+  "dificil": "Sistema medieval de senhores e servos",
+  "grafia": "feudalismo"
+ },
+ "FEVEREIRO": {
+  "grafia": "fevereiro",
+  "medio": "Mês mais curto do ano"
+ },
+ "FILOSOFIA": {
+  "dificil": "Amor à sabedoria, em grego",
+  "grafia": "filosofia"
+ },
+ "FLOR": {
+  "facil": "Parte colorida e perfumada da planta",
+  "grafia": "flor"
+ },
+ "FOGAO": {
+  "grafia": "fogão",
+  "medio": "Onde se cozinha"
+ },
+ "FOGO": {
+  "facil": "Produz chamas e calor",
+  "grafia": "fogo"
+ },
+ "FORMIGA": {
+  "facil": "Inseto que vive em formigueiro",
+  "grafia": "formiga"
+ },
+ "FORRO": {
+  "grafia": "forró",
+  "medio": "Ritmo de sanfona, zabumba e triângulo"
+ },
+ "FOTOSSINTESE": {
+  "dificil": "Processo em que a planta usa a luz para se nutrir",
+  "grafia": "fotossíntese"
+ },
+ "FREVO": {
+  "grafia": "frevo",
+  "medio": "Dança pernambucana com sombrinha"
+ },
+ "FRIO": {
+  "facil": "O contrário de quente",
+  "grafia": "frio"
+ },
+ "FURACAO": {
+  "grafia": "furacão",
+  "medio": "Tempestade de ventos fortíssimos"
+ },
+ "FUTEBOL": {
+  "facil": "Esporte mais popular do Brasil",
+  "grafia": "futebol"
+ },
+ "GALAXIA": {
+  "grafia": "galáxia",
+  "medio": "A Via Láctea é uma"
+ },
+ "GALHOFA": {
+  "dificil": "Zombaria, brincadeira",
+  "grafia": "galhofa"
+ },
+ "GALINHA": {
+  "facil": "Ave que bota ovos",
+  "grafia": "galinha"
+ },
+ "GATO": {
+  "facil": "Animal doméstico que mia",
+  "grafia": "gato"
+ },
+ "GELADEIRA": {
+  "grafia": "geladeira",
+  "medio": "Mantém os alimentos frios"
+ },
+ "GIRAFA": {
+  "facil": "Animal de pescoço muito comprido",
+  "grafia": "girafa"
+ },
+ "GOL": {
+  "facil": "O que todo atacante quer fazer",
+  "grafia": "gol"
+ },
+ "GRANDE": {
+  "facil": "O contrário de pequeno",
+  "grafia": "grande"
+ },
+ "GUIMARAES": {
+  "dificil": "___ Rosa, autor de Grande Sertão: Veredas",
+  "grafia": "guimarães"
+ },
+ "HIATO": {
+  "dificil": "Lacuna; encontro de vogais em sílabas separadas",
+  "grafia": "hiato"
+ },
+ "HIPERBOLE": {
+  "dificil": "Figura de linguagem do exagero",
+  "grafia": "hipérbole"
+ },
+ "HIPOTENUSA": {
+  "dificil": "Lado oposto ao ângulo reto",
+  "grafia": "hipotenusa"
+ },
+ "HOSPITAL": {
+  "grafia": "hospital",
+  "medio": "Onde se tratam os doentes"
+ },
+ "IARA": {
+  "grafia": "iara",
+  "medio": "Sereia dos rios brasileiros"
+ },
+ "ICARO": {
+  "dificil": "Voou perto demais do Sol",
+  "grafia": "ícaro"
+ },
+ "IDILIO": {
+  "dificil": "Amor terno e poético",
+  "grafia": "idílio"
+ },
+ "IGNOBIL": {
+  "dificil": "Desprezível, vil",
+  "grafia": "ignóbil"
+ },
+ "IGUACU": {
+  "grafia": "iguaçu",
+  "medio": "Cataratas na fronteira com a Argentina"
+ },
+ "ILHA": {
+  "facil": "Terra cercada de água",
+  "grafia": "ilha"
+ },
+ "ILUMINISMO": {
+  "dificil": "Movimento do século das luzes",
+  "grafia": "iluminismo"
+ },
+ "IMA": {
+  "grafia": "ímã",
+  "medio": "Atrai o ferro"
+ },
+ "IMPETO": {
+  "dificil": "Impulso súbito",
+  "grafia": "ímpeto"
+ },
+ "INCONFIDENCIA": {
+  "dificil": "Movimento de Tiradentes",
+  "grafia": "inconfidência"
+ },
+ "INOCUO": {
+  "dificil": "Que não faz mal",
+  "grafia": "inócuo"
+ },
+ "INTERNET": {
+  "grafia": "internet",
+  "medio": "Rede mundial de computadores"
+ },
+ "INVERNO": {
+  "facil": "Estação mais fria do ano",
+  "grafia": "inverno"
+ },
+ "IPE": {
+  "dificil": "Árvore de floração amarela, roxa ou branca",
+  "grafia": "ipê"
+ },
+ "IRACEMA": {
+  "dificil": "A virgem dos lábios de mel",
+  "grafia": "iracema"
+ },
+ "IRMAO": {
+  "facil": "Filho dos mesmos pais",
+  "grafia": "irmão"
+ },
+ "ISOTOPO": {
+  "dificil": "Átomo do mesmo elemento com massa diferente",
+  "grafia": "isótopo"
+ },
+ "ISTMO": {
+  "dificil": "Faixa estreita de terra que liga duas porções maiores",
+  "grafia": "istmo"
+ },
+ "JABUTICABA": {
+  "grafia": "jabuticaba",
+  "medio": "Fruta que nasce grudada no tronco"
+ },
+ "JACARE": {
+  "grafia": "jacaré",
+  "medio": "Réptil dos rios brasileiros"
+ },
+ "JANEIRO": {
+  "facil": "Primeiro mês do ano",
+  "grafia": "janeiro"
+ },
+ "JANELA": {
+  "facil": "Abertura na parede para entrar luz e ar",
+  "grafia": "janela"
+ },
+ "JANGADA": {
+  "dificil": "Embarcação de troncos dos pescadores do Nordeste",
+  "grafia": "jangada"
+ },
+ "JEQUITIBA": {
+  "dificil": "Árvore gigante da Mata Atlântica",
+  "grafia": "jequitibá"
+ },
+ "JORNALISTA": {
+  "grafia": "jornalista",
+  "medio": "Escreve notícias"
+ },
+ "JUBILO": {
+  "dificil": "Grande alegria",
+  "grafia": "júbilo"
+ },
+ "JUPITER": {
+  "dificil": "Maior planeta do Sistema Solar",
+  "grafia": "júpiter"
+ },
+ "LACONICO": {
+  "dificil": "Que fala com poucas palavras",
+  "grafia": "lacônico"
+ },
+ "LANTERNA": {
+  "grafia": "lanterna",
+  "medio": "Luz portátil a pilha"
+ },
+ "LAPIS": {
+  "facil": "Escreve e pode ser apagado",
+  "grafia": "lápis"
+ },
+ "LARANJA": {
+  "facil": "Fruta cítrica que também é nome de cor",
+  "grafia": "laranja"
+ },
+ "LATITUDE": {
+  "dificil": "Distância em graus até a linha do Equador",
+  "grafia": "latitude"
+ },
+ "LEAO": {
+  "facil": "O rei da selva",
+  "grafia": "leão"
+ },
+ "LEITE": {
+  "facil": "Bebida branca que vem da vaca",
+  "grafia": "leite"
+ },
+ "LIVRO": {
+  "facil": "Tem capa, páginas e histórias",
+  "grafia": "livro"
+ },
+ "LOGARITMO": {
+  "dificil": "Operação inversa da potenciação",
+  "grafia": "logaritmo"
+ },
+ "LUA": {
+  "facil": "Satélite natural da Terra",
+  "grafia": "lua"
+ },
+ "LUGUBRE": {
+  "dificil": "Fúnebre, sombrio",
+  "grafia": "lúgubre"
+ },
+ "MACA": {
+  "facil": "Fruta vermelha da Branca de Neve",
+  "grafia": "maçã"
+ },
+ "MACACO": {
+  "facil": "Animal que adora banana",
+  "grafia": "macaco"
+ },
+ "MACHADO": {
+  "dificil": "___ de Assis, autor de Dom Casmurro",
+  "grafia": "machado"
+ },
+ "MACUNAIMA": {
+  "dificil": "O herói sem nenhum caráter",
+  "grafia": "macunaíma"
+ },
+ "MAE": {
+  "facil": "Quem nos deu a vida",
+  "grafia": "mãe"
+ },
+ "MAESTRO": {
+  "grafia": "maestro",
+  "medio": "Rege a orquestra"
+ },
+ "MAGICO": {
+  "grafia": "mágico",
+  "medio": "Tira coelho da cartola"
+ },
+ "MANAUS": {
+  "grafia": "manaus",
+  "medio": "Capital do Amazonas"
+ },
+ "MANDIOCA": {
+  "grafia": "mandioca",
+  "medio": "Raiz também chamada de aipim ou macaxeira"
+ },
+ "MAO": {
+  "facil": "Tem cinco dedos",
+  "grafia": "mão"
+ },
+ "MAPA": {
+  "grafia": "mapa",
+  "medio": "Representação de um lugar no papel"
+ },
+ "MAR": {
+  "facil": "Grande extensão de água salgada",
+  "grafia": "mar"
+ },
+ "MARACATU": {
+  "dificil": "Cortejo pernambucano com rei e rainha",
+  "grafia": "maracatu"
+ },
+ "MARATONA": {
+  "grafia": "maratona",
+  "medio": "Corrida de 42 quilômetros"
+ },
+ "MARTELO": {
+  "grafia": "martelo",
+  "medio": "Ferramenta de bater prego"
+ },
+ "MEDALHA": {
+  "grafia": "medalha",
+  "medio": "Prêmio de ouro, prata ou bronze"
+ },
+ "MEDICO": {
+  "facil": "Profissional que cuida da saúde",
+  "grafia": "médico"
+ },
+ "MEDUSA": {
+  "dificil": "Górgona que transformava em pedra",
+  "grafia": "medusa"
+ },
+ "MEL": {
+  "facil": "Alimento doce feito pelas abelhas",
+  "grafia": "mel"
+ },
+ "MERCURIO": {
+  "dificil": "Metal líquido; planeta mais próximo do Sol",
+  "grafia": "mercúrio"
+ },
+ "MERIDIANO": {
+  "dificil": "Linha imaginária de polo a polo",
+  "grafia": "meridiano"
+ },
+ "MESA": {
+  "facil": "Móvel onde se fazem as refeições",
+  "grafia": "mesa"
+ },
+ "METADE": {
+  "grafia": "metade",
+  "medio": "Cada uma das duas partes iguais"
+ },
+ "METAFORA": {
+  "dificil": "Figura de linguagem de comparação implícita",
+  "grafia": "metáfora"
+ },
+ "MINOTAURO": {
+  "dificil": "Metade homem, metade touro",
+  "grafia": "minotauro"
+ },
+ "MITIGAR": {
+  "dificil": "Aliviar, suavizar",
+  "grafia": "mitigar"
+ },
+ "MITOCONDRIA": {
+  "dificil": "Organela que produz energia na célula",
+  "grafia": "mitocôndria"
+ },
+ "MONCAO": {
+  "dificil": "Vento sazonal da Ásia",
+  "grafia": "monção"
+ },
+ "MONTANHA": {
+  "facil": "Grande elevação de terra",
+  "grafia": "montanha"
+ },
+ "MOQUECA": {
+  "dificil": "Cozido de peixe com dendê",
+  "grafia": "moqueca"
+ },
+ "MUSEU": {
+  "grafia": "museu",
+  "medio": "Guarda obras de arte e objetos históricos"
+ },
+ "MUSICA": {
+  "facil": "Arte dos sons",
+  "grafia": "música"
+ },
+ "NARCISO": {
+  "dificil": "Apaixonou-se pelo próprio reflexo",
+  "grafia": "narciso"
+ },
+ "NARIZ": {
+  "facil": "Órgão do olfato",
+  "grafia": "nariz"
+ },
+ "NATACAO": {
+  "grafia": "natação",
+  "medio": "Esporte na piscina"
+ },
+ "NATAL": {
+  "facil": "Festa de 25 de dezembro",
+  "grafia": "natal"
+ },
+ "NAVIO": {
+  "facil": "Grande embarcação",
+  "grafia": "navio"
+ },
+ "NEBULOSA": {
+  "dificil": "Nuvem de gás e poeira no espaço",
+  "grafia": "nebulosa"
+ },
+ "NEFASTO": {
+  "dificil": "Que traz desgraça",
+  "grafia": "nefasto"
+ },
+ "NEUTRON": {
+  "dificil": "Partícula do núcleo sem carga",
+  "grafia": "nêutron"
+ },
+ "NEVE": {
+  "facil": "Gelo que cai do céu em flocos",
+  "grafia": "neve"
+ },
+ "NIEMEYER": {
+  "dificil": "Arquiteto de Brasília",
+  "grafia": "niemeyer"
+ },
+ "NOITE": {
+  "facil": "Quando o céu fica escuro",
+  "grafia": "noite"
+ },
+ "NUVEM": {
+  "facil": "Fica no céu e pode trazer chuva",
+  "grafia": "nuvem"
+ },
+ "OBICE": {
+  "dificil": "Obstáculo, impedimento",
+  "grafia": "óbice"
+ },
+ "OBSOLETO": {
+  "dificil": "Que caiu em desuso",
+  "grafia": "obsoleto"
+ },
+ "OCEANO": {
+  "grafia": "oceano",
+  "medio": "O Atlântico é um"
+ },
+ "OCULOS": {
+  "facil": "Ajudam a enxergar melhor",
+  "grafia": "óculos"
+ },
+ "ODISSEIA": {
+  "dificil": "Poema das viagens de Ulisses",
+  "grafia": "odisseia"
+ },
+ "OLHO": {
+  "facil": "Órgão da visão",
+  "grafia": "olho"
+ },
+ "OLIMPIADA": {
+  "grafia": "olimpíada",
+  "medio": "Jogos que acontecem a cada quatro anos"
+ },
+ "OLIMPO": {
+  "dificil": "Morada dos deuses gregos",
+  "grafia": "olimpo"
+ },
+ "ONCA": {
+  "grafia": "onça",
+  "medio": "Maior felino das Américas"
+ },
+ "ONOMATOPEIA": {
+  "dificil": "Palavra que imita um som, como tique-taque",
+  "grafia": "onomatopeia"
+ },
+ "ORQUESTRA": {
+  "grafia": "orquestra",
+  "medio": "Conjunto de músicos regido por um maestro"
+ },
+ "OUSADIA": {
+  "dificil": "Atrevimento, audácia",
+  "grafia": "ousadia"
+ },
+ "OUTONO": {
+  "grafia": "outono",
+  "medio": "Estação em que as folhas caem"
+ },
+ "OUTORGA": {
+  "dificil": "Concessão, permissão dada",
+  "grafia": "outorga"
+ },
+ "OVO": {
+  "facil": "A galinha bota",
+  "grafia": "ovo"
+ },
+ "OXIGENIO": {
+  "dificil": "Elemento de símbolo O",
+  "grafia": "oxigênio"
+ },
+ "PACIENCIA": {
+  "grafia": "paciência",
+  "medio": "Virtude de quem sabe esperar"
+ },
+ "PACOCA": {
+  "grafia": "paçoca",
+  "medio": "Doce de amendoim"
+ },
+ "PADEIRO": {
+  "facil": "Faz o pão",
+  "grafia": "padeiro"
+ },
+ "PAI": {
+  "facil": "Marido da mãe",
+  "grafia": "pai"
+ },
+ "PALHACO": {
+  "grafia": "palhaço",
+  "medio": "Artista de nariz vermelho do circo"
+ },
+ "PALINDROMO": {
+  "dificil": "Palavra que se lê igual de trás para frente",
+  "grafia": "palíndromo"
+ },
+ "PALMARES": {
+  "dificil": "Quilombo de Zumbi",
+  "grafia": "palmares"
+ },
+ "PAMPA": {
+  "dificil": "Planície gaúcha",
+  "grafia": "pampa"
+ },
+ "PANTANAL": {
+  "grafia": "pantanal",
+  "medio": "Planície alagada de Mato Grosso"
+ },
+ "PAO": {
+  "facil": "Alimento assado na padaria",
+  "grafia": "pão"
+ },
+ "PAPEL": {
+  "facil": "Folha onde se escreve",
+  "grafia": "papel"
+ },
+ "PARAFUSO": {
+  "grafia": "parafuso",
+  "medio": "Tem rosca e se aperta com chave de fenda"
+ },
+ "PARALELEPIPEDO": {
+  "dificil": "Sólido de seis faces; pedra do calçamento",
+  "grafia": "paralelepípedo"
+ },
+ "PARCIMONIA": {
+  "dificil": "Economia, moderação",
+  "grafia": "parcimônia"
+ },
+ "PARTITURA": {
+  "dificil": "Música escrita em notas",
+  "grafia": "partitura"
+ },
+ "PATO": {
+  "facil": "Ave que faz quá-quá",
+  "grafia": "pato"
+ },
+ "PEIXE": {
+  "facil": "Vive na água e respira por guelras",
+  "grafia": "peixe"
+ },
+ "PELE": {
+  "grafia": "pelé",
+  "medio": "O Rei do Futebol"
+ },
+ "PEQUI": {
+  "dificil": "Fruto do cerrado com espinhos no caroço",
+  "grafia": "pequi"
+ },
+ "PERSPICAZ": {
+  "dificil": "Que percebe as coisas com agudeza",
+  "grafia": "perspicaz"
+ },
+ "PIANO": {
+  "facil": "Instrumento de teclas brancas e pretas",
+  "grafia": "piano"
+ },
+ "PINGUIM": {
+  "grafia": "pinguim",
+  "medio": "Ave que não voa e vive no frio"
+ },
+ "PINTURA": {
+  "grafia": "pintura",
+  "medio": "Arte de pincel e tinta"
+ },
+ "PIPOCA": {
+  "grafia": "pipoca",
+  "medio": "Milho estourado do cinema"
+ },
+ "PIRAMIDE": {
+  "grafia": "pirâmide",
+  "medio": "Construção dos faraós"
+ },
+ "PIRATA": {
+  "grafia": "pirata",
+  "medio": "Navegador fora da lei, de tapa-olho"
+ },
+ "PIZZA": {
+  "facil": "Prato italiano redondo com queijo",
+  "grafia": "pizza"
+ },
+ "PLANALTO": {
+  "dificil": "Terreno elevado e plano",
+  "grafia": "planalto"
+ },
+ "PLANETA": {
+  "grafia": "planeta",
+  "medio": "Marte é um"
+ },
+ "PLATAO": {
+  "dificil": "Autor de A República",
+  "grafia": "platão"
+ },
+ "POESIA": {
+  "grafia": "poesia",
+  "medio": "Arte dos versos"
+ },
+ "POLVO": {
+  "grafia": "polvo",
+  "medio": "Tem oito tentáculos"
+ },
+ "PORTA": {
+  "facil": "Abre e fecha para entrar no quarto",
+  "grafia": "porta"
+ },
+ "PORTINARI": {
+  "dificil": "Pintor de Os Retirantes",
+  "grafia": "portinari"
+ },
+ "PRAIA": {
+  "facil": "Tem areia e mar",
+  "grafia": "praia"
+ },
+ "PREGUICA": {
+  "grafia": "preguiça",
+  "medio": "Animal lento que vive nas árvores"
+ },
+ "PRESENTE": {
+  "facil": "Ganha-se no aniversário",
+  "grafia": "presente"
+ },
+ "PRETERIR": {
+  "dificil": "Deixar de lado, desprezar",
+  "grafia": "preterir"
+ },
+ "PRETO": {
+  "facil": "Cor do carvão",
+  "grafia": "preto"
+ },
+ "PRIMAVERA": {
+  "grafia": "primavera",
+  "medio": "Estação das flores"
+ },
+ "PROFESSOR": {
+  "facil": "Profissional que ensina",
+  "grafia": "professor"
+ },
+ "PROLIXO": {
+  "dificil": "Que fala demais, sem necessidade",
+  "grafia": "prolixo"
+ },
+ "PROMETEU": {
+  "dificil": "Roubou o fogo dos deuses",
+  "grafia": "prometeu"
+ },
+ "QUADRADO": {
+  "grafia": "quadrado",
+  "medio": "Figura de quatro lados iguais"
+ },
+ "QUEIJO": {
+  "facil": "Feito de leite, o rato adora",
+  "grafia": "queijo"
+ },
+ "QUERMESSE": {
+  "dificil": "Festa de igreja com barracas",
+  "grafia": "quermesse"
+ },
+ "QUILOMBO": {
+  "dificil": "Comunidade de escravizados fugidos",
+  "grafia": "quilombo"
+ },
+ "QUIMERA": {
+  "dificil": "Sonho impossível; monstro mitológico",
+  "grafia": "quimera"
+ },
+ "RATO": {
+  "facil": "Roedor perseguido pelo gato",
+  "grafia": "rato"
+ },
+ "RECIFE": {
+  "grafia": "recife",
+  "medio": "Capital de Pernambuco"
+ },
+ "RECONDITO": {
+  "dificil": "Escondido, oculto",
+  "grafia": "recôndito"
+ },
+ "REGENCIA": {
+  "dificil": "Período entre o Primeiro e o Segundo Reinado",
+  "grafia": "regência"
+ },
+ "RELOGIO": {
+  "facil": "Mostra as horas",
+  "grafia": "relógio"
+ },
+ "RENASCIMENTO": {
+  "dificil": "Período de Leonardo e Michelangelo",
+  "grafia": "renascimento"
+ },
+ "REPENTE": {
+  "dificil": "Desafio de versos improvisados",
+  "grafia": "repente"
+ },
+ "REPUBLICA": {
+  "dificil": "Proclamada no Brasil em 1889",
+  "grafia": "república"
+ },
+ "RIO": {
+  "facil": "Curso de água doce",
+  "grafia": "rio"
+ },
+ "RODOVIARIA": {
+  "grafia": "rodoviária",
+  "medio": "Estação de ônibus"
+ },
+ "ROMANCE": {
+  "grafia": "romance",
+  "medio": "Livro longo de ficção"
+ },
+ "ROSA": {
+  "facil": "Flor com espinhos que também é nome de cor",
+  "grafia": "rosa"
+ },
+ "SACI": {
+  "grafia": "saci",
+  "medio": "Menino de uma perna só e gorro vermelho"
+ },
+ "SAGAZ": {
+  "dificil": "Esperto, astuto",
+  "grafia": "sagaz"
+ },
+ "SAL": {
+  "facil": "Tempero que salga",
+  "grafia": "sal"
+ },
+ "SALVADOR": {
+  "grafia": "salvador",
+  "medio": "Primeira capital do Brasil"
+ },
+ "SAMBA": {
+  "grafia": "samba",
+  "medio": "Ritmo nascido no Rio de Janeiro"
+ },
+ "SANFONA": {
+  "grafia": "sanfona",
+  "medio": "Acordeão, no Nordeste"
+ },
+ "SAPATO": {
+  "facil": "Calçado",
+  "grafia": "sapato"
+ },
+ "SAPO": {
+  "facil": "Anfíbio que coaxa",
+  "grafia": "sapo"
+ },
+ "SATURNO": {
+  "dificil": "Planeta dos anéis",
+  "grafia": "saturno"
+ },
+ "SAUDADE": {
+  "grafia": "saudade",
+  "medio": "Palavra que fala da falta de alguém"
+ },
+ "SECULO": {
+  "grafia": "século",
+  "medio": "Cem anos"
+ },
+ "SEMAFORO": {
+  "grafia": "semáforo",
+  "medio": "Sinal de trânsito"
+ },
+ "SEMANA": {
+  "grafia": "semana",
+  "medio": "Sete dias"
+ },
+ "SENHA": {
+  "grafia": "senha",
+  "medio": "Código secreto para entrar"
+ },
+ "SERINGUEIRO": {
+  "dificil": "Extrai o látex da árvore",
+  "grafia": "seringueiro"
+ },
+ "SERTOES": {
+  "dificil": "Os ___, livro de Euclides da Cunha",
+  "grafia": "sertões"
+ },
+ "SESMARIA": {
+  "dificil": "Lote de terra doado no Brasil colonial",
+  "grafia": "sesmaria"
+ },
+ "SINFONIA": {
+  "dificil": "Obra para orquestra em vários movimentos",
+  "grafia": "sinfonia"
+ },
+ "SOL": {
+  "facil": "Estrela que ilumina a Terra",
+  "grafia": "sol"
+ },
+ "SOLICITO": {
+  "dificil": "Prestativo",
+  "grafia": "solícito"
+ },
+ "SOLSTICIO": {
+  "dificil": "Dia mais longo ou mais curto do ano",
+  "grafia": "solstício"
+ },
+ "SONETO": {
+  "dificil": "Poema de catorze versos",
+  "grafia": "soneto"
+ },
+ "SONO": {
+  "facil": "Vontade de dormir",
+  "grafia": "sono"
+ },
+ "SOPRANO": {
+  "dificil": "Voz feminina mais aguda",
+  "grafia": "soprano"
+ },
+ "SORRISO": {
+  "facil": "Expressão de alegria no rosto",
+  "grafia": "sorriso"
+ },
+ "SORVETE": {
+  "facil": "Doce gelado de casquinha",
+  "grafia": "sorvete"
+ },
+ "SUCO": {
+  "facil": "Bebida feita de fruta",
+  "grafia": "suco"
+ },
+ "TACACA": {
+  "dificil": "Caldo paraense com tucupi e jambu",
+  "grafia": "tacacá"
+ },
+ "TACITURNO": {
+  "dificil": "Calado, tristonho",
+  "grafia": "taciturno"
+ },
+ "TAMBOR": {
+  "facil": "Instrumento de percussão",
+  "grafia": "tambor"
+ },
+ "TARSILA": {
+  "dificil": "Pintora do Abaporu",
+  "grafia": "tarsila"
+ },
+ "TARTARUGA": {
+  "grafia": "tartaruga",
+  "medio": "Réptil com casco"
+ },
+ "TATU": {
+  "grafia": "tatu",
+  "medio": "Animal de carapaça que cava buracos"
+ },
+ "TEATRO": {
+  "grafia": "teatro",
+  "medio": "Lugar onde se assiste a peças"
+ },
+ "TECLADO": {
+  "grafia": "teclado",
+  "medio": "Conjunto de teclas"
+ },
+ "TELEFONE": {
+  "facil": "Aparelho para falar à distância",
+  "grafia": "telefone"
+ },
+ "TELEVISAO": {
+  "grafia": "televisão",
+  "medio": "Aparelho de assistir novela"
+ },
+ "TENOR": {
+  "dificil": "Voz masculina aguda",
+  "grafia": "tenor"
+ },
+ "TENUE": {
+  "dificil": "Fino, frágil, delicado",
+  "grafia": "tênue"
+ },
+ "TERRA": {
+  "facil": "Planeta onde vivemos",
+  "grafia": "terra"
+ },
+ "TERREMOTO": {
+  "grafia": "terremoto",
+  "medio": "Tremor de terra"
+ },
+ "TESOURA": {
+  "facil": "Corta papel",
+  "grafia": "tesoura"
+ },
+ "TESOURO": {
+  "grafia": "tesouro",
+  "medio": "Riqueza escondida que o pirata procura"
+ },
+ "TIGRE": {
+  "facil": "Felino listrado",
+  "grafia": "tigre"
+ },
+ "TIRADENTES": {
+  "grafia": "tiradentes",
+  "medio": "Mártir da Inconfidência Mineira"
+ },
+ "TRAVESSEIRO": {
+  "grafia": "travesseiro",
+  "medio": "Apoia a cabeça na cama"
+ },
+ "TREM": {
+  "facil": "Anda sobre trilhos",
+  "grafia": "trem"
+ },
+ "TRES": {
+  "facil": "Número que vem depois do dois",
+  "grafia": "três"
+ },
+ "TRIANGULO": {
+  "grafia": "triângulo",
+  "medio": "Figura de três lados"
+ },
+ "TRISTE": {
+  "facil": "O contrário de alegre",
+  "grafia": "triste"
+ },
+ "TROFEU": {
+  "grafia": "troféu",
+  "medio": "Taça dada ao campeão"
+ },
+ "TROPICALIA": {
+  "dificil": "Movimento musical de Caetano e Gil",
+  "grafia": "tropicália"
+ },
+ "TUBARAO": {
+  "grafia": "tubarão",
+  "medio": "Peixe de dentes afiados"
+ },
+ "TUCANO": {
+  "grafia": "tucano",
+  "medio": "Ave de bico enorme e colorido"
+ },
+ "TUCUPI": {
+  "dificil": "Caldo amarelo extraído da mandioca-brava",
+  "grafia": "tucupi"
+ },
+ "TUPA": {
+  "dificil": "Divindade do trovão para os tupis",
+  "grafia": "tupã"
+ },
+ "UFANISMO": {
+  "dificil": "Orgulho exagerado da pátria",
+  "grafia": "ufanismo"
+ },
+ "URSO": {
+  "facil": "Animal grande e peludo que hiberna",
+  "grafia": "urso"
+ },
+ "UVA": {
+  "facil": "Fruta que dá o vinho",
+  "grafia": "uva"
+ },
+ "VACA": {
+  "facil": "Animal que muge",
+  "grafia": "vaca"
+ },
+ "VAMPIRO": {
+  "grafia": "vampiro",
+  "medio": "Criatura que bebe sangue"
+ },
+ "VASSALO": {
+  "dificil": "Servia a um suserano",
+  "grafia": "vassalo"
+ },
+ "VATAPA": {
+  "dificil": "Creme baiano de pão, camarão e dendê",
+  "grafia": "vatapá"
+ },
+ "VENTO": {
+  "facil": "Ar em movimento",
+  "grafia": "vento"
+ },
+ "VERAO": {
+  "facil": "Estação mais quente do ano",
+  "grafia": "verão"
+ },
+ "VERDE": {
+  "facil": "Cor da grama",
+  "grafia": "verde"
+ },
+ "VEREDA": {
+  "dificil": "Caminho estreito; está no título de Guimarães Rosa",
+  "grafia": "vereda"
+ },
+ "VERMELHO": {
+  "facil": "Cor do tomate maduro",
+  "grafia": "vermelho"
+ },
+ "VERNACULO": {
+  "dificil": "A língua própria de um país",
+  "grafia": "vernáculo"
+ },
+ "VIOLAO": {
+  "facil": "Instrumento de seis cordas",
+  "grafia": "violão"
+ },
+ "VOLEI": {
+  "grafia": "vôlei",
+  "medio": "Esporte de rede com seis jogadores por time"
+ },
+ "VULCAO": {
+  "grafia": "vulcão",
+  "medio": "Montanha que expele lava"
+ },
+ "XADREZ": {
+  "grafia": "xadrez",
+  "medio": "Jogo de tabuleiro com rei, rainha e peões"
+ },
+ "XENOFOBIA": {
+  "dificil": "Aversão a estrangeiros",
+  "grafia": "xenofobia"
+ },
+ "ZENITE": {
+  "dificil": "Ponto do céu bem acima do observador",
+  "grafia": "zênite"
+ }
+}
