@@ -416,8 +416,11 @@ function pararRelogio(){ if(relogio){clearInterval(relogio);relogio=null} }
 const palavraEm=(r,c,dir)=>{const x=J.P.grade[r]&&J.P.grade[r][c];return x&&x.w[dir]!=null?x.w[dir]:null};
 function palavraAtual(){ return palavraEm(J.sel.r,J.sel.c,J.sel.dir) }
 function completa(i){ return J.P.palavras[i].cels.every(([r,c])=>J.ent[r][c]) }
+function acertada(i){ return J.P.palavras[i].cels.every(([r,c])=>J.ent[r][c]===J.P.grade[r][c].ch) }
 
 const ICONE_OLHO='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7S18.5 19 12 19 1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+/* Último dia da faixa: Médio e Difícil vão até a última grade pronta em grades.js; o Fácil, que é gerado na hora, mostra uma semana. */
+function ultimoDia(){ const g=window.PC_GRADES&&PC_GRADES[J.nv]; return Math.max(HOJE.numero, g&&g.length?g.length:7); }
 function statusDia(n){
   if(n>HOJE.numero) return "i";
   const fim=n===J.numero?J.fim:!!(LS.get(kEstado(J.nv,diaInfo(n).chave),null)||{}).fim;
@@ -427,7 +430,7 @@ const NOME_STATUS={i:"Indisponível",j:"Jogado",h:"Hoje",d:"Disponível"};
 const diaSemana=ms=>new Date(ms).toLocaleDateString("pt-BR",{weekday:"long",timeZone:"UTC"}).replace(/(^|-)(.)/g,(m,a,b)=>a+b.toUpperCase());
 function desenharDias(){
   const box=$("dias"); if(!box) return;
-  const nd=nDias(), max=HOJE.numero+3, min=HOJE.numero-33;  // janela de 37 dias, como no O Globo
+  const nd=nDias(), min=1, max=ultimoDia();  // do Nº 1 até o último dia com cruzada pronta
   if(J.janela==null) J.janela=J.numero-Math.floor(nd/2);
   J.janela=Math.max(min,Math.min(J.janela,max-nd+1));
   let h=`<button class="seta" id="dprev" aria-label="Dias anteriores"${J.janela<=min?' aria-disabled="true"':""}>‹</button><div class="dlist" style="grid-template-columns:repeat(${nd},minmax(0,1fr))">`;
@@ -443,7 +446,7 @@ function desenharDias(){
   box.querySelectorAll(".dia").forEach(b=>b.onclick=()=>trocarDia(+b.dataset.n));
 }
 function trocarDia(n){
-  if(!J||n===J.numero||n<HOJE.numero-33||n>HOJE.numero) return;
+  if(!J||n===J.numero||n<1||n>HOJE.numero) return;
   if(!J.fim) salvar();
   pararRelogio(); abrir(J.nv,diaInfo(n),J.janela);
 }
@@ -544,7 +547,7 @@ function pintar(){
     $("pista").innerHTML=`<span><b>${p.dir==="h"?"H":"V"}${p.num}.</b>${esc(p.pista)}${P.densa?"":`<small>(${p.resp.length})</small>`}</span>`;
   }
   const cruzada=cur?palavraEm(cur.r,cur.c,cur.dir==="h"?"v":"h"):null;
-  P.palavras.forEach((p,i)=>{const li=$("pl"+i);if(!li)return;li.classList.toggle("on",i===wi);li.classList.toggle("cruz",i===cruzada);li.classList.toggle("feita",J.fim||completa(i))});
+  P.palavras.forEach((p,i)=>{const li=$("pl"+i);if(!li)return;li.classList.toggle("on",i===wi);li.classList.toggle("cruz",i===cruzada);li.classList.toggle("feita",J.fim||acertada(i))});
   if(wi!=null){ rolarPista($("pl"+wi)); if(cruzada!=null) rolarPista($("pl"+cruzada)); }
   pintarFerr();
 }
