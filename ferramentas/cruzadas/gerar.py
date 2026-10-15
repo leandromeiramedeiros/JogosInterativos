@@ -165,6 +165,7 @@ class Preenchedor:
         self.rng = rng
         self.slots = slots_do_molde(molde)
         self.limite = limite_nos
+        self.lcv = True
         self.ramos = ramos
         self.nos = 0
         self.letras = {}
@@ -251,11 +252,36 @@ class Preenchedor:
         s = self.slots[i]
         L = len(s)
         ws = self.idx.palavras[L]
-        tentativas = 0
+        # candidatos: os melhores pela ordem do índice, reordenados pela folga que deixam nos cruzamentos
+        cand = []
         m = mm
-        while m and tentativas < self.ramos:
+        while m and len(cand) < self.ramos * 3:
             x = m & -m
             m ^= x
+            cand.append(x)
+        if len(cand) > 1 and self.lcv:
+            pontos = []
+            cruz = []
+            for p, cel in enumerate(s):
+                if cel in self.letras:
+                    continue
+                for j in self.cruza[cel]:
+                    if j != i and self.escolhida[j] is None:
+                        pj = self.slots[j].index(cel)
+                        cruz.append((p, masks[j], self.idx.pos[len(self.slots[j])][pj]))
+            for pos_, x in enumerate(cand):
+                w = ws[x.bit_length() - 1]
+                tot = 0.0
+                for p, mj, tab in cruz:
+                    c = (mj & tab.get(w[p], 0)).bit_count()
+                    tot += math.log(c + 0.5)
+                pontos.append((-(tot - 0.04 * pos_), pos_))
+            pontos.sort()
+            cand = [cand[q] for _, q in pontos]
+        tentativas = 0
+        for x in cand:
+            if tentativas >= self.ramos:
+                break
             k = x.bit_length() - 1
             w = ws[k]
             tentativas += 1
@@ -311,27 +337,50 @@ def palavras_da_grade(linhas):
     return {t for (_, _, _, _, t) in ents}
 
 
+def ordenar_sem_vizinhas(grades, moldes_usados, rng):
+    """Reordena para que dias seguidos não tenham o mesmo molde nem muitas palavras em comum."""
+    pal = [palavras_da_grade(g) for g in grades]
+    molde = [tuple("#" if c == "#" else "." for c in "".join(g)) for g in grades]
+    restantes = list(range(len(grades)))
+    rng.shuffle(restantes)
+    ordem = [restantes.pop(0)]
+    while restantes:
+        ult = ordem[-1]
+        melhor = min(restantes, key=lambda k: ((molde[k] == molde[ult]) * 100 + len(pal[k] & pal[ult])
+                                               + (len(ordem) > 1 and molde[k] == molde[ordem[-2]]) * 20))
+        restantes.remove(melhor)
+        ordem.append(melhor)
+    return [grades[k] for k in ordem]
+
+
 def gerar_nivel(nivel, qtd, vocab, pistas, rng, bonus_reuso, verbose=True):
     n = TAMANHO[nivel]
     t0 = time.time()
     itens = lista_nivel(nivel, vocab, pistas, rng, None)
     usos = {}
-    grades, conjuntos, usados_molde = [], [], {}
-    banco = moldes_para(n, rng, 40)
+    grades, conjuntos = [], []
+    banco = {tuple(m): [0, 0, 0] for m in moldes_para(n, rng, 70)}   # molde -> [tentativas, sucessos, usos]
     tentativas = 0
+    limite = 600 if n == 9 else 800
     while len(grades) < qtd:
         tentativas += 1
-        # molde menos usado primeiro
-        molde = min(banco, key=lambda m: (usados_molde.get(tuple(m), 0), rng.random()))
+        vivos = [m for m, (t, ok, u) in banco.items() if not (t >= 5 and ok == 0)]
+        if len(vivos) < 8:
+            for m in moldes_para(n, rng, 40):
+                banco.setdefault(tuple(m), [0, 0, 0])
+            vivos = [m for m, (t, ok, u) in banco.items() if not (t >= 5 and ok == 0)]
+        molde = max(vivos, key=lambda m: (banco[m][1] + 0.6) / (banco[m][0] + 1.5) / (1 + 1.5 * banco[m][2])
+                    * rng.uniform(0.6, 1.4))
+        banco[molde][0] += 1
         idx = Indice(itens, usos, rng, sigma=0.9, bonus_reuso=bonus_reuso, limite_uso=LIMITE_USO[nivel])
-        g, nos = preencher(molde, idx, rng, limite=1500 if n == 9 else 3000, ramos=30)
+        g, nos = preencher(list(molde), idx, rng, limite=limite, ramos=30)
         if g is None:
-            usados_molde[tuple(molde)] = usados_molde.get(tuple(molde), 0) + 0.34
             continue
         pal = palavras_da_grade(g)
         if parecidas(pal, conjuntos):
             continue
-        usados_molde[tuple(molde)] = usados_molde.get(tuple(molde), 0) + 1
+        banco[molde][1] += 1
+        banco[molde][2] += 1
         grades.append(g)
         conjuntos.append(pal)
         for w in pal:
@@ -340,7 +389,7 @@ def gerar_nivel(nivel, qtd, vocab, pistas, rng, bonus_reuso, verbose=True):
             novas = sum(1 for w in pal if usos[w] == 1)
             print(f"  {nivel} {len(grades):2d}/{qtd}  tentativas={tentativas} nos={nos} palavras={len(pal)} novas={novas} t={time.time()-t0:.0f}s",
                   file=sys.stderr, flush=True)
-    return grades
+    return ordenar_sem_vizinhas(grades, None, rng)
 
 
 def faltando(grades, pistas, vocab):
@@ -389,8 +438,10 @@ def main():
     if not a.so_faltando:
         rng = random.Random(a.semente)
         for nivel in ([a.nivel] if a.nivel else ["medio", "dificil"]):
-            existentes[nivel] = gerar_nivel(nivel, a.qtd, vocab, pistas, rng, a.reuso)
-        gravar_json(GRADES_JSON, existentes, indent=1)
+            novas = gerar_nivel(nivel, a.qtd, vocab, pistas, rng, a.reuso)
+            existentes = ler_json(GRADES_JSON, {"medio": [], "dificil": []})  # outro processo pode ter gravado
+            existentes[nivel] = novas
+            gravar_json(GRADES_JSON, existentes, indent=1)
     lista = faltando(existentes, pistas, vocab)
     tam = gravar_faltando(lista)
     print("grades:", {k: len(v) for k, v in existentes.items()}, "| faltam pistas:", len(lista), "lotes:", tam, file=sys.stderr)

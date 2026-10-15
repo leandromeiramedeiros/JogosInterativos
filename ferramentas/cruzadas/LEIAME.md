@@ -34,7 +34,7 @@ Para trocar uma pista já existente, edite-a em `pistas.json` (ou repita a palav
 
 ## Gerar mais grades ou outras
 ```
-python3 ferramentas/cruzadas/gerar.py                       # refaz TUDO (31 + 31) com a semente 2026
+python3 ferramentas/cruzadas/gerar.py                       # refaz TUDO (7 + 7 por padrão; use --qtd 31 para mais) com a semente 2026
 python3 ferramentas/cruzadas/gerar.py --semente 7           # outras grades
 python3 ferramentas/cruzadas/gerar.py --nivel medio --qtd 31 --reuso 2   # só um nível; --reuso maior = mais palavras repetidas entre grades (menos pistas a escrever)
 python3 ferramentas/cruzadas/gerar.py --so-faltando         # só recalcula faltando*.json

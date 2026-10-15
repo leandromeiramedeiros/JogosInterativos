@@ -14,7 +14,7 @@ PISTAS_JSON = os.path.join(AQUI, "pistas.json")
 VOCAB_JSON = os.path.join(AQUI, "vocab.json")
 
 TAMANHO = {"medio": 9, "dificil": 11}
-QTD_GRADES = 31
+QTD_GRADES = 7   # primeiro lote; para 31, mude aqui e rode gerar.py --qtd 31
 # Se o nível não tem pista própria, usa a do nível indicado (nessa ordem).
 CADEIA = {"medio": ["medio", "facil"], "dificil": ["dificil", "medio"]}
 

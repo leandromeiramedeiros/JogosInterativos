@@ -1,0 +1,314 @@
+{
+ "ABUSE": {
+  "grafia": "abuse",
+  "dificil": "Exagere, aproveite demais"
+ },
+ "ACESA": {
+  "grafia": "acesa",
+  "dificil": "Ligada, como uma lâmpada"
+ },
+ "ADAPTA": {
+  "grafia": "adapta",
+  "dificil": "Ajusta, acomoda, faz caber"
+ },
+ "AGIU": {
+  "grafia": "agiu",
+  "medio": "Tomou providências"
+ },
+ "ALEM": {
+  "grafia": "além",
+  "medio": "Do outro lado; para lá de"
+ },
+ "ALIAR": {
+  "grafia": "aliar",
+  "dificil": "Unir forças, fazer pacto com"
+ },
+ "ALTERA": {
+  "grafia": "altera",
+  "dificil": "Muda, modifica, transforma"
+ },
+ "AMAM": {
+  "grafia": "amam",
+  "medio": "Eles ___ os filhos",
+  "dificil": "Querem muito bem, eles, sem condição"
+ },
+ "AMEI": {
+  "grafia": "amei",
+  "medio": "Eu ___ o filme que você indicou",
+  "dificil": "Me apaixonei por alguém, no passado"
+ },
+ "ANO": {
+  "grafia": "ano",
+  "medio": "Período de doze meses",
+  "dificil": "Volta da Terra em torno do Sol"
+ },
+ "AREIA": {
+  "grafia": "areia",
+  "medio": "Grãos que formam a praia"
+ },
+ "ARMAR": {
+  "grafia": "armar",
+  "dificil": "Preparar uma cilada para alguém"
+ },
+ "ARRASA": {
+  "grafia": "arrasa",
+  "dificil": "Detona na pista, faz sucesso (gíria)"
+ },
+ "ASSIM": {
+  "grafia": "assim",
+  "dificil": "Desse jeito, deste modo"
+ },
+ "ATO": {
+  "grafia": "ato",
+  "medio": "Ação, gesto, feito",
+  "dificil": "Parte de uma peça de teatro"
+ },
+ "AZAR": {
+  "grafia": "azar",
+  "medio": "Má sorte, falta de sorte"
+ },
+ "BECA": {
+  "grafia": "beca",
+  "dificil": "Traje de formatura"
+ },
+ "BOM": {
+  "grafia": "bom",
+  "dificil": "Oposto de mau; 'Tudo ___?'"
+ },
+ "CAMA": {
+  "grafia": "cama",
+  "dificil": "Móvel onde se dorme, com colchão"
+ },
+ "CAO": {
+  "grafia": "cão",
+  "dificil": "Melhor amigo do homem (ditado)"
+ },
+ "CARRUAGENS": {
+  "grafia": "carruagens",
+  "dificil": "Veículos antigos puxados por cavalos"
+ },
+ "CEM": {
+  "grafia": "cem",
+  "dificil": "Dez dezenas, ou uma centena"
+ },
+ "CIRROSE": {
+  "grafia": "cirrose",
+  "dificil": "Doença do fígado, ligada ao álcool"
+ },
+ "COMANDAR": {
+  "grafia": "comandar",
+  "dificil": "Dar ordens, liderar a tropa"
+ },
+ "CORCA": {
+  "grafia": "corça",
+  "dificil": "Mãe de Bambi, no desenho da Disney"
+ },
+ "CRIANCAS": {
+  "grafia": "crianças",
+  "medio": "Meninos e meninas, pequenos"
+ },
+ "CURA": {
+  "grafia": "cura",
+  "medio": "Restabelecimento da saúde"
+ },
+ "DEZ": {
+  "grafia": "dez",
+  "dificil": "Número de dedos de ambas as mãos"
+ },
+ "DOR": {
+  "grafia": "dor",
+  "medio": "Sofrimento físico ou emocional",
+  "dificil": "Mágoa que aperta o peito (fig.)"
+ },
+ "ERAM": {
+  "grafia": "eram",
+  "medio": "Eles ___ alunos, no passado",
+  "dificil": "Outrora, eles ___ numerosos"
+ },
+ "ESCOVA": {
+  "grafia": "escova",
+  "medio": "Utensílio para cabelo ou dentes"
+ },
+ "EVA": {
+  "grafia": "eva",
+  "medio": "Primeira mulher, na Bíblia",
+  "dificil": "Mulher de Adão, no Gênesis"
+ },
+ "FEBRE": {
+  "grafia": "febre",
+  "dificil": "Calor no corpo, sinal de doença"
+ },
+ "FIM": {
+  "grafia": "fim",
+  "medio": "Término; conclusão",
+  "dificil": "'The End', traduzido"
+ },
+ "IDOSOS": {
+  "grafia": "idosos",
+  "dificil": "Vovós e vovôs, em geral"
+ },
+ "INESPERADA": {
+  "grafia": "inesperada",
+  "dificil": "Surpreendente, imprevista"
+ },
+ "IRAO": {
+  "grafia": "irão",
+  "medio": "Eles ___ viajar amanhã",
+  "dificil": "Eles ___ à praia mais tarde"
+ },
+ "LAMA": {
+  "grafia": "lama",
+  "medio": "Lodo; terra molhada e suja"
+ },
+ "LAVA": {
+  "grafia": "lava",
+  "medio": "Rocha derretida de vulcão"
+ },
+ "LEVO": {
+  "grafia": "levo",
+  "medio": "Eu ___ o filho à escola"
+ },
+ "LUTAR": {
+  "grafia": "lutar",
+  "dificil": "Batalhar, brigar, combater"
+ },
+ "MAGICA": {
+  "grafia": "mágica",
+  "medio": "Que encanta, fantástica"
+ },
+ "MAL": {
+  "grafia": "mal",
+  "medio": "Contrário de bem",
+  "dificil": "Antônimo de bem; 'Bem ou ___'"
+ },
+ "MAS": {
+  "grafia": "mas",
+  "medio": "Porém, contudo, todavia",
+  "dificil": "'Eu te amo, ___ vou embora'"
+ },
+ "MIMO": {
+  "grafia": "mimo",
+  "dificil": "Agrado que se dá, presente"
+ },
+ "MODO": {
+  "grafia": "modo",
+  "medio": "Maneira de fazer algo, forma"
+ },
+ "MORAM": {
+  "grafia": "moram",
+  "dificil": "Eles ___ na mesma rua, lá no bairro"
+ },
+ "NETA": {
+  "grafia": "neta",
+  "medio": "Filha do filho, para os avós"
+ },
+ "OASIS": {
+  "grafia": "oásis",
+  "dificil": "Refúgio verde no meio da areia"
+ },
+ "OLA": {
+  "grafia": "olá",
+  "medio": "Cumprimento informal de chegada",
+  "dificil": "Cumprimento, equivalente ao inglês 'hello'"
+ },
+ "ORACAO": {
+  "grafia": "oração",
+  "dificil": "Reza; frase com sujeito e verbo"
+ },
+ "OTIMA": {
+  "grafia": "ótima",
+  "dificil": "Muito boa, de primeira linha"
+ },
+ "OVO": {
+  "grafia": "ovo",
+  "dificil": "Gema, clara e casca de galinha"
+ },
+ "PAPO": {
+  "grafia": "papo",
+  "dificil": "Lero-lero; conversa fiada"
+ },
+ "PARAR": {
+  "grafia": "parar",
+  "dificil": "Cessar o movimento, interromper"
+ },
+ "PATOS": {
+  "grafia": "patos",
+  "dificil": "Aves aquáticas de bico largo"
+ },
+ "POR": {
+  "grafia": "por",
+  "medio": "Preposição: 'Passar ___ aí'",
+  "dificil": "'Tudo ___ um fio', expressão de tensão"
+ },
+ "RAIO": {
+  "grafia": "raio",
+  "dificil": "Faísca do céu, na tempestade"
+ },
+ "REMEDIOS": {
+  "grafia": "remédios",
+  "medio": "Medicamentos para tratar doenças"
+ },
+ "REZADO": {
+  "grafia": "rezado",
+  "dificil": "Orado, dito em oração"
+ },
+ "RUA": {
+  "grafia": "rua",
+  "medio": "Via pública da cidade",
+  "dificil": "Logradouro; 'Vire à esquerda na ___'"
+ },
+ "SACIAR": {
+  "grafia": "saciar",
+  "dificil": "Matar a fome, satisfazer a vontade"
+ },
+ "SAL": {
+  "grafia": "sal",
+  "dificil": "Cloreto de sódio, tempero de cozinha"
+ },
+ "SER": {
+  "grafia": "ser",
+  "medio": "Verbo de essência e existência",
+  "dificil": "Ente vivo, criatura, indivíduo"
+ },
+ "SOA": {
+  "grafia": "soa",
+  "medio": "Isso ___ bem, parece bom",
+  "dificil": "Ecoa, faz eco (3ª do singular)"
+ },
+ "SOLO": {
+  "grafia": "solo",
+  "dificil": "Chão de plantio; 'Tocar ___' em palco"
+ },
+ "SUMIR": {
+  "grafia": "sumir",
+  "medio": "Desaparecer, sair de cena"
+ },
+ "TIA": {
+  "grafia": "tia",
+  "medio": "Irmã da mãe ou do pai"
+ },
+ "TITO": {
+  "grafia": "tito",
+  "medio": "Imperador romano, filho de Vespasiano"
+ },
+ "TOM": {
+  "grafia": "tom",
+  "medio": "Altura de um som ou ___ de voz"
+ },
+ "TRIBO": {
+  "grafia": "tribo",
+  "dificil": "Clã ou grupo de indígenas"
+ },
+ "URNA": {
+  "grafia": "urna",
+  "dificil": "Caixa de votação, ou vaso funerário"
+ },
+ "VENDI": {
+  "grafia": "vendi",
+  "dificil": "Eu ___ o carro, mas não a casa"
+ },
+ "VIREM": {
+  "grafia": "virem",
+  "medio": "Quando eles ___ para cá"
+ }
+}

@@ -1,0 +1,335 @@
+{
+ "ABADE": {
+  "grafia": "abade",
+  "dificil": "Superior de um mosteiro"
+ },
+ "ACAO": {
+  "grafia": "ação",
+  "medio": "Ato, atitude; feito de alguém"
+ },
+ "ACO": {
+  "grafia": "aço",
+  "medio": "Liga de ferro com carbono",
+  "dificil": "Material de espadas e arranha-céus"
+ },
+ "AJAM": {
+  "grafia": "ajam",
+  "dificil": "Que eles atuem (subj. de agir)"
+ },
+ "ALIA": {
+  "grafia": "alia",
+  "dificil": "Une-se a outro; forma parceria com"
+ },
+ "ALMAS": {
+  "grafia": "almas",
+  "medio": "Espíritos dos que já morreram"
+ },
+ "ALTOS": {
+  "grafia": "altos",
+  "dificil": "Elevados; que ficam longe do chão"
+ },
+ "AMAR": {
+  "grafia": "amar",
+  "medio": "Gostar muito de alguém"
+ },
+ "AMAVA": {
+  "grafia": "amava",
+  "dificil": "Gostava muito de, antigamente"
+ },
+ "AMOR": {
+  "grafia": "amor",
+  "dificil": "Sentimento de Romeu e Julieta"
+ },
+ "ANEL": {
+  "grafia": "anel",
+  "dificil": "Jóia que costuma ser de noivado"
+ },
+ "AORTA": {
+  "grafia": "aorta",
+  "dificil": "Maior artéria do corpo humano"
+ },
+ "ARAS": {
+  "grafia": "aras",
+  "dificil": "Altares de sacrifício, na Antiguidade"
+ },
+ "AROS": {
+  "grafia": "aros",
+  "dificil": "Argolas de brinco ou de cortina"
+ },
+ "ARES": {
+  "grafia": "ares",
+  "medio": "Aparências: '___ de superioridade'"
+ },
+ "ASAS": {
+  "grafia": "asas",
+  "medio": "Membros de voo de aves e aviões",
+  "dificil": "Sem elas, aves e aviões não voam"
+ },
+ "ATOR": {
+  "grafia": "ator",
+  "medio": "Quem interpreta papéis em filmes"
+ },
+ "AURA": {
+  "grafia": "aura",
+  "medio": "Halo luminoso ao redor de algo"
+ },
+ "BALAO": {
+  "grafia": "balão",
+  "medio": "Bexiga cheia de gás, que sobe"
+ },
+ "BEM": {
+  "grafia": "bem",
+  "dificil": "Como vai? '___, obrigado!'"
+ },
+ "CAIPIRA": {
+  "grafia": "caipira",
+  "medio": "Matuto da roça, do interior"
+ },
+ "CAMISETA": {
+  "grafia": "camiseta",
+  "medio": "Peça de malha com mangas curtas"
+ },
+ "CARA": {
+  "grafia": "cara",
+  "dificil": "'___ ou coroa', no sorteio com moeda"
+ },
+ "CASAL": {
+  "grafia": "casal",
+  "dificil": "Dupla de namorados ou de pombos"
+ },
+ "CERA": {
+  "grafia": "cera",
+  "medio": "Material de velas, feito por abelhas"
+ },
+ "COLAR": {
+  "grafia": "colar",
+  "medio": "Grudar, prender com adesivo"
+ },
+ "CORAIS": {
+  "grafia": "corais",
+  "dificil": "Animais marinhos que formam recifes"
+ },
+ "COROA": {
+  "grafia": "coroa",
+  "medio": "Adorno que os reis usam na cabeça",
+  "dificil": "Lado da moeda que não é a cara"
+ },
+ "DEVEM": {
+  "grafia": "devem",
+  "dificil": "Têm obrigação de; precisam"
+ },
+ "DIVIDI": {
+  "grafia": "dividi",
+  "dificil": "Reparti, eu, no passado"
+ },
+ "EMPURRA": {
+  "grafia": "empurra",
+  "medio": "Dá impulso, afasta com força"
+ },
+ "EPICO": {
+  "grafia": "épico",
+  "dificil": "Grandioso, como as obras de Homero"
+ },
+ "ERAS": {
+  "grafia": "eras",
+  "medio": "Tu ___ feliz, antigamente"
+ },
+ "ERVA": {
+  "grafia": "erva",
+  "dificil": "Base do chimarrão: ___-mate"
+ },
+ "ESSAS": {
+  "grafia": "essas",
+  "dificil": "'___ coisas', aponta quem está perto"
+ },
+ "EXITO": {
+  "grafia": "êxito",
+  "medio": "Sucesso; vitória retumbante"
+ },
+ "FAS": {
+  "grafia": "fãs",
+  "medio": "Admiradores fervorosos de ídolos",
+  "dificil": "Os que gritam e choram nos shows"
+ },
+ "GAMA": {
+  "grafia": "gama",
+  "medio": "Letra grega; escala musical"
+ },
+ "GATO": {
+  "grafia": "gato",
+  "dificil": "Bichano que tem fama de nove vidas"
+ },
+ "IGOR": {
+  "grafia": "igor",
+  "medio": "Ajudante corcunda de Frankenstein"
+ },
+ "IOGA": {
+  "grafia": "ioga",
+  "dificil": "Prática indiana de posturas e meditação"
+ },
+ "IVO": {
+  "grafia": "ivo",
+  "medio": "___ Pitanguy, o cirurgião plástico",
+  "dificil": "Primeiro nome do cirurgião Pitanguy"
+ },
+ "LARA": {
+  "grafia": "lara",
+  "medio": "___ Croft, heroína de videogame"
+ },
+ "LEMA": {
+  "grafia": "lema",
+  "medio": "Slogan, frase que resume princípios"
+ },
+ "LOTE": {
+  "grafia": "lote",
+  "medio": "Porção de terreno, parcela"
+ },
+ "MACOS": {
+  "grafia": "maços",
+  "dificil": "Pacotes de cigarros; feixes de notas"
+ },
+ "MAIO": {
+  "grafia": "maio",
+  "medio": "Mês do Dia das Mães no Brasil"
+ },
+ "MANDADA": {
+  "grafia": "mandada",
+  "dificil": "Ordenada e enviada, no feminino"
+ },
+ "MAR": {
+  "grafia": "mar",
+  "dificil": "Massa de água que banha o litoral"
+ },
+ "MATA": {
+  "grafia": "mata",
+  "medio": "Floresta fechada, de árvores"
+ },
+ "MES": {
+  "grafia": "mês",
+  "medio": "Período de cerca de 30 dias",
+  "dificil": "Dezembro ou fevereiro, por exemplo"
+ },
+ "MOITA": {
+  "grafia": "moita",
+  "dificil": "Arbusto denso onde alguém se esconde"
+ },
+ "MORRERAO": {
+  "grafia": "morrerão",
+  "medio": "Irão falecer; deixarão de viver"
+ },
+ "NOEL": {
+  "grafia": "noel",
+  "dificil": "___ Rosa, o sambista de Vila Isabel"
+ },
+ "ODIO": {
+  "grafia": "ódio",
+  "dificil": "Antônimo de amor, sentimento de raiva"
+ },
+ "OPA": {
+  "grafia": "opa",
+  "medio": "Interjeição de surpresa ou susto",
+  "dificil": "Grito de quem quase cai da escada"
+ },
+ "ORAR": {
+  "grafia": "orar",
+  "medio": "Rezar, fazer prece a Deus"
+ },
+ "OUVES": {
+  "grafia": "ouves",
+  "dificil": "Tu ___ o que eu digo?"
+ },
+ "PAI": {
+  "grafia": "pai",
+  "dificil": "Dia dos ___, em agosto no Brasil"
+ },
+ "PARA": {
+  "grafia": "para",
+  "medio": "Rumo a; em direção a"
+ },
+ "PARO": {
+  "grafia": "paro",
+  "medio": "Eu ___ no sinal vermelho"
+ },
+ "PES": {
+  "grafia": "pés",
+  "medio": "Partes do corpo que pisam o chão",
+  "dificil": "Onde se calça o sapato, em plural"
+ },
+ "RACA": {
+  "grafia": "raça",
+  "dificil": "Linhagem de cavalos ou cães puros"
+ },
+ "RAMON": {
+  "grafia": "ramon",
+  "dificil": "___ Valdés, o Seu Madruga do 'Chaves'"
+ },
+ "RESPIRAR": {
+  "grafia": "respirar",
+  "medio": "Puxar e soltar ar pelos pulmões"
+ },
+ "RIOS": {
+  "grafia": "rios",
+  "dificil": "Cursos d'água que deságuam no mar"
+ },
+ "SAARA": {
+  "grafia": "saara",
+  "dificil": "Deserto africano famoso por areia e camelos"
+ },
+ "SABERAO": {
+  "grafia": "saberão",
+  "medio": "Irão conhecer; ficarão a par de"
+ },
+ "SAIA": {
+  "grafia": "saia",
+  "dificil": "Peça de roupa com pregas, sem calça"
+ },
+ "SEGURADORA": {
+  "grafia": "seguradora",
+  "dificil": "Empresa que indeniza prejuízos mediante taxa"
+ },
+ "SETE": {
+  "grafia": "sete",
+  "dificil": "Quantidade de anões da Branca de Neve"
+ },
+ "SIM": {
+  "grafia": "sim",
+  "medio": "Resposta afirmativa, oposto de não",
+  "dificil": "Resposta de quem topa, de quem concorda"
+ },
+ "SOL": {
+  "grafia": "sol",
+  "dificil": "Astro-rei que ilumina nossos dias"
+ },
+ "SOPRAR": {
+  "grafia": "soprar",
+  "dificil": "Apagar a vela com ar da boca"
+ },
+ "TEMER": {
+  "grafia": "temer",
+  "dificil": "Ter pavor de; sentir receio"
+ },
+ "TIRARAO": {
+  "grafia": "tirarão",
+  "dificil": "Irão retirar, arrancar (futuro)"
+ },
+ "TOCARIA": {
+  "grafia": "tocaria",
+  "dificil": "Ele ___ violão, se soubesse"
+ },
+ "TOMO": {
+  "grafia": "tomo",
+  "medio": "Volume de uma obra extensa"
+ },
+ "UMA": {
+  "grafia": "uma",
+  "medio": "Artigo feminino: ___ vez por dia"
+ },
+ "VASO": {
+  "grafia": "vaso",
+  "medio": "Recipiente para plantas ou flores"
+ },
+ "VEZ": {
+  "grafia": "vez",
+  "dificil": "Ocasião; 'de ___ em quando'"
+ }
+}

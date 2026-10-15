@@ -73,21 +73,39 @@ def base_molde(n, rng):
 
 
 def gerar_molde(n, minimo_pretas, maximo_pretas, rng, maxrun=None):
-    """Máscara n×n (True = preta) com simetria de 180°; None se não deu certo."""
-    for _ in range(60):
-        base = base_molde(n, rng)
-        mt = [[False] * n for _ in range(n)]
+    """Máscara n×n (True = preta) com simetria de rotação de 180°; None se não deu certo.
+    Famílias: losango (cantos em degrau + centro), degraus nos cantos, blocos nas bordas, espalhada."""
+    for _ in range(80):
+        familia = rng.choice(["losango", "degraus", "bordas", "espalhada", "espalhada", "centro"])
+        mm = [[False] * n for _ in range(n)]
+        if familia == "losango":
+            base = base_molde(n, rng)
+        elif familia == "degraus":
+            base = {p for p in base_molde(n, rng) if abs(p[0] - n // 2) + abs(p[1] - n // 2) > 3}
+        elif familia == "centro":
+            base = {p for p in base_molde(n, rng) if abs(p[0] - n // 2) + abs(p[1] - n // 2) <= 3}
+        elif familia == "bordas":
+            base = set()
+            for _k in range(rng.randint(2, 3)):
+                lado = rng.randrange(4)
+                ini = rng.randint(2, n - 5)
+                for j in range(ini, ini + rng.randint(1, 2)):
+                    base |= {[(0, j), (j, 0), (n - 1, j), (j, n - 1)][lado]}
+        else:
+            base = set()
         for r, c in base:
-            mt[r][c] = True
-        if sum(map(sum, mt)) > maximo_pretas:
+            mm[r][c] = mm[n - 1 - r][n - 1 - c] = True
+        if not (runs_ok(mm, n, 3, None) or familia in ("bordas", "espalhada", "centro", "degraus")):
             continue
-        mm = mt
+        # completa com pares aleatórios (viés para as bordas nas famílias abertas)
+        alvo = rng.randint(minimo_pretas, maximo_pretas)
         tent = 0
-        alvo = max(minimo_pretas, sum(map(sum, mm)) + rng.choice([0, 2, 2, 4, 4]))
-        alvo = min(alvo, maximo_pretas)
-        while sum(map(sum, mm)) < alvo and tent < 400:
+        while sum(map(sum, mm)) < alvo and tent < 500:
             tent += 1
-            r, c = rng.randrange(n), rng.randrange(n)
+            if familia in ("bordas", "degraus") and rng.random() < 0.5:
+                r, c = rng.choice([(0, rng.randrange(n)), (rng.randrange(n), 0), (1, rng.randrange(n)), (rng.randrange(n), 1)])
+            else:
+                r, c = rng.randrange(n), rng.randrange(n)
             if mm[r][c]:
                 continue
             r2, c2 = n - 1 - r, n - 1 - c
@@ -97,7 +115,7 @@ def gerar_molde(n, minimo_pretas, maximo_pretas, rng, maxrun=None):
             if not (runs_ok(mm, n, 3, None) and sem_bloco_2x2(mm, n) and conexo(mm, n)):
                 mm[r][c] = mm[r2][c2] = False
         cont = sum(map(sum, mm))
-        if minimo_pretas <= cont <= maximo_pretas and runs_ok(mm, n, 3, maxrun) and conexo(mm, n):
+        if minimo_pretas <= cont <= maximo_pretas and runs_ok(mm, n, 3, maxrun) and conexo(mm, n) and sem_bloco_2x2(mm, n):
             return mm
     return None
 
@@ -108,7 +126,7 @@ def molde_para_texto(m):
 
 def gerar_moldes(n, quantidade, seed=1):
     rng = random.Random(seed)
-    lo, hi = (16, 21) if n == 9 else (28, 34)
+    lo, hi = (15, 21) if n == 9 else (22, 31)
     maxrun = n - 1
     vistos, saida = set(), []
     falhas = 0

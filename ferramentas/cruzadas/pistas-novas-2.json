@@ -1,0 +1,347 @@
+{
+ "ABRO": {
+  "grafia": "abro",
+  "medio": "Destranco a porta"
+ },
+ "ACASO": {
+  "grafia": "acaso",
+  "dificil": "Por ___, sem querer"
+ },
+ "ADAO": {
+  "grafia": "adão",
+  "medio": "Primeiro homem, segundo a Bíblia"
+ },
+ "AGEM": {
+  "grafia": "agem",
+  "medio": "Atuam, na prática"
+ },
+ "ALAS": {
+  "grafia": "alas",
+  "dificil": "Flancos de um batalhão, no plural"
+ },
+ "ALIANCAS": {
+  "grafia": "alianças",
+  "medio": "Anéis que casais trocam"
+ },
+ "ALO": {
+  "grafia": "alô",
+  "dificil": "Saudação de quem atende o telefone"
+ },
+ "AMADA": {
+  "grafia": "amada",
+  "dificil": "Namorada, a eleita do coração"
+ },
+ "AMARGA": {
+  "grafia": "amarga",
+  "medio": "Que tem gosto de fel"
+ },
+ "AMAVAM": {
+  "grafia": "amavam",
+  "dificil": "Eles queriam bem, antigamente"
+ },
+ "AMOS": {
+  "grafia": "amos",
+  "dificil": "Donos de alguém, no plural"
+ },
+ "ANIMAL": {
+  "grafia": "animal",
+  "dificil": "Bicho; ser vivo que não é planta"
+ },
+ "ARABE": {
+  "grafia": "árabe",
+  "dificil": "Povo que deu a álgebra ao mundo"
+ },
+ "AREA": {
+  "grafia": "área",
+  "medio": "Superfície, medida em m²",
+  "dificil": "Campo de estudo ou de atuação"
+ },
+ "ARRANJA": {
+  "grafia": "arranja",
+  "medio": "Consegue, dá um jeito de"
+ },
+ "ASILO": {
+  "grafia": "asilo",
+  "medio": "Abrigo para idosos"
+ },
+ "ATENTOS": {
+  "grafia": "atentos",
+  "medio": "Vigilantes, de olho aberto"
+ },
+ "ATUM": {
+  "grafia": "atum",
+  "dificil": "Peixe que costuma vir em lata"
+ },
+ "AVES": {
+  "grafia": "aves",
+  "medio": "Animais com penas e bico"
+ },
+ "BAR": {
+  "grafia": "bar",
+  "dificil": "Boteco com chope e petisco"
+ },
+ "BIA": {
+  "grafia": "bia",
+  "dificil": "Diminutivo de Beatriz"
+ },
+ "CAIRAM": {
+  "grafia": "caíram",
+  "dificil": "Despencaram; eles tombaram"
+ },
+ "CANA": {
+  "grafia": "cana",
+  "dificil": "Plantação que vira açúcar e álcool"
+ },
+ "CARO": {
+  "grafia": "caro",
+  "dificil": "Que pesa no bolso"
+ },
+ "CAVE": {
+  "grafia": "cave",
+  "medio": "Que alguém revire o chão, com pá"
+ },
+ "CEU": {
+  "grafia": "céu",
+  "dificil": "Abóbada azul que cobre a Terra"
+ },
+ "COM": {
+  "grafia": "com",
+  "medio": "Junto a, ao lado de",
+  "dificil": "Preposição oposta a 'sem'"
+ },
+ "CORRI": {
+  "grafia": "corri",
+  "dificil": "Disparei pelo parque, ontem"
+ },
+ "CUBO": {
+  "grafia": "cubo",
+  "dificil": "Sólido de seis faces quadradas"
+ },
+ "DEVI": {
+  "grafia": "devi",
+  "dificil": "Fiquei em dívida com o banco"
+ },
+ "DOMINA": {
+  "grafia": "domina",
+  "medio": "Controla, exerce poder sobre"
+ },
+ "ENERO": {
+  "grafia": "enero",
+  "dificil": "Janeiro, em espanhol"
+ },
+ "EPOCA": {
+  "grafia": "época",
+  "medio": "Período da história"
+ },
+ "ERRAM": {
+  "grafia": "erram",
+  "dificil": "Se enganam, mesmo os sábios"
+ },
+ "ERVAS": {
+  "grafia": "ervas",
+  "dificil": "Plantas de chá e tempero (pl.)"
+ },
+ "ESTAR": {
+  "grafia": "estar",
+  "dificil": "Encontrar-se em determinado lugar"
+ },
+ "FALTAVA": {
+  "grafia": "faltava",
+  "medio": "Não havia, estava ausente"
+ },
+ "FATIA": {
+  "grafia": "fatia",
+  "dificil": "Pedaço fino, cortado de algo"
+ },
+ "FICA": {
+  "grafia": "fica",
+  "medio": "Permanece, continua"
+ },
+ "GARUPA": {
+  "grafia": "garupa",
+  "dificil": "Assento traseiro da moto ou do cavalo"
+ },
+ "GRATO": {
+  "grafia": "grato",
+  "medio": "Agradecido, reconhecido"
+ },
+ "IMAS": {
+  "grafia": "ímãs",
+  "dificil": "Peças que atraem ferro (pl.)"
+ },
+ "IRADA": {
+  "grafia": "irada",
+  "dificil": "Furiosa, com muita raiva"
+ },
+ "JOGO": {
+  "grafia": "jogo",
+  "medio": "Partida, brincadeira ou disputa"
+ },
+ "JOGOS": {
+  "grafia": "jogos",
+  "medio": "Partidas e torneios"
+ },
+ "LARANJAS": {
+  "grafia": "laranjas",
+  "medio": "Frutas cítricas de suco doce"
+ },
+ "LER": {
+  "grafia": "ler",
+  "dificil": "Decifrar o que está escrito"
+ },
+ "LUA": {
+  "grafia": "lua",
+  "dificil": "Satélite que inspira poetas"
+ },
+ "MAE": {
+  "grafia": "mãe",
+  "dificil": "Quem deu à luz o filho"
+ },
+ "MAIS": {
+  "grafia": "mais",
+  "medio": "Em maior quantidade"
+ },
+ "MANDADOS": {
+  "grafia": "mandados",
+  "medio": "Ordens judiciais, como as de prisão"
+ },
+ "MARCOS": {
+  "grafia": "marcos",
+  "dificil": "Evangelista com símbolo de leão"
+ },
+ "MEL": {
+  "grafia": "mel",
+  "dificil": "Doce que vem das abelhas"
+ },
+ "METE": {
+  "grafia": "mete",
+  "medio": "Enfia, põe dentro"
+ },
+ "MOCAS": {
+  "grafia": "moças",
+  "dificil": "Garotas, no plural"
+ },
+ "MORA": {
+  "grafia": "mora",
+  "dificil": "Reside, tem sua casa em"
+ },
+ "MOVER": {
+  "grafia": "mover",
+  "medio": "Deslocar, tirar do lugar"
+ },
+ "NUMA": {
+  "grafia": "numa",
+  "medio": "Contração de 'em' com artigo feminino"
+ },
+ "OITO": {
+  "grafia": "oito",
+  "dificil": "Número de patas de uma aranha"
+ },
+ "OPERAR": {
+  "grafia": "operar",
+  "dificil": "Realizar cirurgia no hospital"
+ },
+ "ORA": {
+  "grafia": "ora",
+  "medio": "Neste instante, neste momento",
+  "dificil": "Expressão de desdém: '___ essa!'"
+ },
+ "OVARIO": {
+  "grafia": "ovário",
+  "dificil": "Órgão feminino que produz óvulos"
+ },
+ "PALMA": {
+  "grafia": "palma",
+  "dificil": "Parte interna da mão, com linhas"
+ },
+ "PARADAS": {
+  "grafia": "paradas",
+  "medio": "Pontos onde se espera o ônibus"
+ },
+ "PASSOS": {
+  "grafia": "passos",
+  "dificil": "Pegadas que se deixa ao andar"
+ },
+ "PISO": {
+  "grafia": "piso",
+  "dificil": "Chão de uma sala ou quarto"
+ },
+ "PUMA": {
+  "grafia": "puma",
+  "dificil": "Gato selvagem que vive na América"
+ },
+ "RADAR": {
+  "grafia": "radar",
+  "medio": "Aparelho que detecta objetos à distância"
+ },
+ "REI": {
+  "grafia": "rei",
+  "dificil": "Carta de baralho com coroa"
+ },
+ "RETA": {
+  "grafia": "reta",
+  "medio": "Linha sem curvas"
+ },
+ "RIR": {
+  "grafia": "rir",
+  "medio": "Achar graça; dar gargalhadas",
+  "dificil": "Oposto de chorar, em tom de piada"
+ },
+ "SACA": {
+  "grafia": "saca",
+  "medio": "Puxa e tira algo do bolso"
+ },
+ "SAIO": {
+  "grafia": "saio",
+  "dificil": "Eu ___ cedo de casa, todo dia"
+ },
+ "SEM": {
+  "grafia": "sem",
+  "medio": "Oposto de 'com'",
+  "dificil": "Locução de carência: ___ dinheiro"
+ },
+ "SIR": {
+  "grafia": "sir",
+  "dificil": "Título de cavaleiro inglês"
+ },
+ "SOAR": {
+  "grafia": "soar",
+  "medio": "Produzir um som que se ouve"
+ },
+ "SOLETRAR": {
+  "grafia": "soletrar",
+  "medio": "Dizer as letras de uma palavra"
+ },
+ "SUMA": {
+  "grafia": "suma",
+  "dificil": "Em ___, resumindo"
+ },
+ "TER": {
+  "grafia": "ter",
+  "dificil": "Possuir, ser proprietário de"
+ },
+ "TIROS": {
+  "grafia": "tiros",
+  "dificil": "Disparos de arma de fogo"
+ },
+ "TOLO": {
+  "grafia": "tolo",
+  "dificil": "Sem juízo; ingênuo ao extremo"
+ },
+ "TORTAS": {
+  "grafia": "tortas",
+  "medio": "Bolos salgados ou doces, assados"
+ },
+ "UMAS": {
+  "grafia": "umas",
+  "dificil": "Certas, no feminino plural"
+ },
+ "VELAS": {
+  "grafia": "velas",
+  "medio": "Peças de cera com pavio"
+ },
+ "VIAJA": {
+  "grafia": "viaja",
+  "dificil": "Vai para longe, pega estrada"
+ }
+}
