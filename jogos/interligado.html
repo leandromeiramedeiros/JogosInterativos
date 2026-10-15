@@ -147,6 +147,20 @@ svg.foco .no.sel,svg.foco .no.viz{opacity:1}
 svg.foco .fio{opacity:.18}
 svg.foco .fio.on{opacity:1}
 svg.foco .fio.on line.v{stroke:var(--fio-on);stroke-width:3;stroke-opacity:1}
+/* 2º nível: palavras ligadas às vizinhas, com fios tracejados */
+svg.foco .no.viz2{opacity:.78}
+svg.foco .fio.on2{opacity:1}
+svg.foco .fio.on2 line.v{stroke:var(--fio-on);stroke-width:2.2;stroke-opacity:.85;stroke-dasharray:6 5;animation:formiga 1.1s linear infinite}
+@keyframes formiga{to{stroke-dashoffset:-11}}
+@media (prefers-reduced-motion:reduce){svg.foco .fio.on2 line.v{animation:none}}
+.info .niv{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:6px}
+.info .niv:first-of-type{margin-top:7px}
+.info .niv>i{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#777);display:inline-flex;align-items:center;gap:6px;margin-right:2px}
+.info .niv>i svg{width:22px;height:6px;flex:none}
+.info .ch{display:inline-block;border-radius:999px;padding:1px 9px;font-size:13px;font-weight:800;border:1.5px solid var(--fio-on);line-height:1.5}
+.info .niv.d2 .ch{border-style:dashed;font-weight:600}
+.info .ch.esc{font-weight:600;border-color:var(--line);color:var(--muted,#777)}
+.info .tit{font-weight:800}
 
 /* aviso e fim */
 .aviso{position:fixed;left:50%;top:calc(110px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 15px;border-radius:8px;font-weight:800;font-size:14px;z-index:50;animation:desce .18s;max-width:calc(100vw - 32px);text-align:center;pointer-events:none}
@@ -217,7 +231,7 @@ dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
   </div>
   <div class="acoes">
     <button class="btn" id="bDica" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8a4.4 4.4 0 0 0-2.6 8c.5.4.8.9.8 1.5V12h3.6v-.7c0-.6.3-1.1.8-1.5A4.4 4.4 0 0 0 8 1.8zM6.3 14.2h3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="t">Dica</span><span class="n" id="nDicas">0</span></button>
-    <button class="btn" id="bSacudir" type="button" title="Embaralha o mapa: as palavras ganham posições novas"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6" transform="rotate(-12 8 8)"/><path d="M1.5 5.5q-1 2.5 0 5M14.5 5.5q1 2.5 0 5M3 3.5q-.8.8-1 1.6M13 12.5q.8-.8 1-1.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">Sacudir</span></button>
+    <button class="btn" id="bSacudir" type="button" title="Organiza o mapa: desembaraça os fios e aproxima as palavras ligadas"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4.5" y="4.5" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6" transform="rotate(-12 8 8)"/><path d="M1.5 5.5q-1 2.5 0 5M14.5 5.5q1 2.5 0 5M3 3.5q-.8.8-1 1.6M13 12.5q.8-.8 1-1.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">Sacudir</span></button>
     <span class="esp"></span>
     <button class="btn" id="bDesiste" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14V2.5M3.5 3h8.5l-2 3 2 3H3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="t">Desistir</span></button>
   </div>
@@ -245,7 +259,7 @@ dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
     <li>Toque numa palavra para destacar os fios dela.</li>
     <li>Travou? Toque em <b>Dica</b> e escolha uma palavra escondida: aparece uma pista sobre ela, como “propriedade de todos os seres vivos” para <i>vida</i>. A pista fica guardada na palavra.</li>
     <li>Arraste as palavras para onde quiser: os fios puxam as vizinhas e as outras abrem espaço. Arraste um fio para levar as duas pontas juntas. Use dois dedos ou a roda do mouse para dar zoom.</li>
-    <li><b>Sacudir</b> embaralha o mapa e dá posições novas a todas as palavras. Olhar o desenho de outro jeito ajuda a enxergar ligações.</li>
+    <li><b>Sacudir</b> organiza o mapa: desembaraça os fios, aproxima as palavras ligadas entre si e deixa as ligações fáceis de enxergar.</li>
   </ul>
   <p>Quanto mais rápido e com menos dicas, mais pontos.</p>
   <form method="dialog" class="bts"><button class="btn pri">Entendi</button></form>
@@ -456,6 +470,7 @@ function pintarFios(){
     const f=J.fios[i], ab=J.rev.has(J.nos[a].k)&&J.rev.has(J.nos[b].k);
     f.el.classList.toggle("aberto",ab);
     f.el.classList.toggle("on",J.sel===a||J.sel===b);
+    f.el.classList.toggle("on2",!!(J.d1&&J.sel!==a&&J.sel!==b&&((J.d1.has(a)&&J.d2.has(b))||(J.d1.has(b)&&J.d2.has(a)))));
   });
 }
 function posicionar(){
@@ -560,7 +575,7 @@ function medirMapa(){const r=$("mapa").getBoundingClientRect();VW=Math.max(200,r
 const aspecto=()=>VW/VH/1.5; // as peças são mais largas que altas: um mapa "quadrado" já sai largo
 
 /* Posição inicial: anéis a partir da palavra do tema, filhas perto do ângulo da mãe */
-function semear(nos,seed){
+function semear(nos,seed,organizar){
   let s=seed*9301+49297; const rnd=()=>(s=(s*9301+49297)%233280)/233280;
   const prof=new Array(nos.length).fill(-1), pai=new Array(nos.length).fill(-1), ang=new Array(nos.length).fill(0);
   prof[0]=0; const fila=[0], niveis=[[0]];
@@ -573,7 +588,28 @@ function semear(nos,seed){
     const porPai={}; g.forEach(j=>(porPai[pai[j]]||(porPai[pai[j]]=[])).push(j));
     for(const p in porPai){const fs=porPai[p];fs.forEach((j,k)=>{ang[j]=ang[p]+(k-(fs.length-1)/2)*(.9/d)+(rnd()-.5)*.25})}
   }
+  if(organizar) desembaracar(nos,niveis,ang,pai);
   for(let i=1;i<nos.length;i++){const r=J.raios[prof[i]]||prof[i]*ANEL;nos[i].x=Math.cos(ang[i])*r*sx;nos[i].y=Math.sin(ang[i])*r*sy}
+}
+/* Desembaraçar: em cada anel, cada palavra vai para perto da média dos ângulos das palavras ligadas a ela
+   (método do baricentro). Algumas passadas de dentro para fora e de fora para dentro bastam para quase todos os fios
+   ficarem curtos e sem se cruzar. Dentro do anel, o espaço de cada palavra é proporcional à largura dela. */
+function desembaracar(nos,niveis,ang,pai){
+  const media=(i)=>{let x=0,y=0;for(const j of nos[i].viz){if(j===0)continue;const w=j===pai[i]?2:1;x+=Math.cos(ang[j])*w;y+=Math.sin(ang[j])*w}
+    return (x||y)?Math.atan2(y,x):ang[i]};
+  const espalhar=(nv)=>{
+    const g=nv.map(i=>({i,a:media(i)})).sort((p,q)=>p.a-q.a);
+    const tot=g.reduce((a,o)=>a+nos[o.i].w+40,0); if(!tot) return;
+    // mantém o ângulo médio do anel e distribui pela volta conforme a largura das palavras
+    let c=0; const ini=g[0].a; const novos=[];
+    for(const o of g){const w=(nos[o.i].w+40)/tot*Math.PI*2;novos.push(c+w/2);c+=w}
+    const off=g.reduce((a,o,k)=>a+Math.atan2(Math.sin(o.a-novos[k]),Math.cos(o.a-novos[k])),0)/g.length;
+    g.forEach((o,k)=>ang[o.i]=novos[k]+off);
+  };
+  for(let it=0;it<6;it++){
+    for(let d=1;d<niveis.length;d++) espalhar(niveis[d]);
+    for(let d=niveis.length-1;d>=1;d--) espalhar(niveis[d]);
+  }
 }
 function cruza(p1,p2,p3,p4){
   const d=(ax,ay,bx,by,cx,cy)=>(bx-ax)*(cy-ay)-(by-ay)*(cx-ax);
@@ -585,13 +621,16 @@ function segRet(A,B,C){ // o segmento AB atravessa o retângulo de C?
   for(let s=1;s<steps;s++){const t=s/steps,x=A.x+(B.x-A.x)*t,y=A.y+(B.y-A.y)*t;if(Math.abs(x-C.x)<C.hw+2&&Math.abs(y-C.y)<C.hh+2)return true}
   return false;
 }
+/* Peso de um fio na nota: o que o jogador já enxerga conta muito mais do que o que ainda está escondido. */
+function pesoFio(a,b){return J&&J.rev&&!J.desistiu&&!J.fim?(visivel(a)&&visivel(b)?1:.15):1}
 function nota(nos,fios){
   let cr=0,th=0,ov=0;
+  const pf=fios.map(([a,b])=>pesoFio(a,b));
   for(let i=0;i<fios.length;i++)for(let j=i+1;j<fios.length;j++){
     const [a,b]=fios[i],[c,d]=fios[j]; if(a===c||a===d||b===c||b===d) continue;
-    if(cruza(nos[a],nos[b],nos[c],nos[d])) cr++;
+    if(cruza(nos[a],nos[b],nos[c],nos[d])) cr+=Math.min(pf[i],pf[j]);
   }
-  for(const [a,b] of fios) for(let c=0;c<nos.length;c++) if(c!==a&&c!==b&&segRet(nos[a],nos[b],nos[c])) th++;
+  fios.forEach(([a,b],k)=>{for(let c=0;c<nos.length;c++) if(c!==a&&c!==b&&segRet(nos[a],nos[b],nos[c])) th+=pf[k]});
   for(let i=0;i<nos.length;i++)for(let j=i+1;j<nos.length;j++){const A=nos[i],B=nos[j];if(Math.abs(A.x-B.x)<A.hw+B.hw&&Math.abs(A.y-B.y)<A.hh+B.hh)ov++}
   const bb=caixa(nos), k=Math.min(VW/bb.w,VH/bb.h), asp=Math.abs(Math.log((bb.w/bb.h)/(VW/VH)));
   return cr*10+th*14+ov*40+asp*6+Math.max(0,.75-k)*30;
@@ -606,25 +645,52 @@ function simular(nos,fios,iters){
   for(let t=0;t<iters;t++){passo(nos,fios,alpha);alpha*=.985;if(alpha<.02)alpha=.02}
 }
 /* Testa várias sementes e fica com o desenho de menos cruzamentos */
-function planejar(de){
+function planejar(de,organizar){
   const copia=()=>J.nos.map(n=>({x:0,y:0,vx:0,vy:0,hw:n.hw,hh:n.hh,w:n.w,h:n.h,viz:n.viz,d:n.d,fixo:false,ativo:true}));
   J.asp=Math.max(.7,Math.min(1.8,aspecto())); // peças são largas: anel estreito demais não as acomoda
-  const tent=J.nos.length>24?10:8, base=Math.floor(Math.random()*100000);
+  const tent=organizar?60:(J.nos.length>24?10:8), base=Math.floor(Math.random()*100000), t0=performance.now();
   let melhor=null,mn=1e9;
   for(let s=0;s<tent;s++){
-    const c=copia(); semear(c,base+s);
-    if(de&&s%2){c.forEach(p=>p.x=-p.x)} // espelha metade das tentativas para variar mais
-    simular(c,J.fios,320);
+    if(organizar&&melhor&&performance.now()-t0>1200) break; // limite de tempo para o botão responder rápido
+    const c=copia(), atual=organizar&&de&&s===0;
+    if(atual){ c.forEach((p,k)=>{p.x=de[k].x;p.y=de[k].y}); simular(c,J.fios,120); } // o desenho atual também concorre
+    else{
+      semear(c,base+s,organizar&&s%2===1); // no Sacudir, metade com os anéis ordenados pelos vizinhos
+      if(de&&s%2){c.forEach(p=>p.x=-p.x)} // espelha metade das tentativas para variar mais
+      simular(c,J.fios,320);
+    }
     let sc=nota(c,J.fios);
-    if(de){ // quanto mais parecido com o desenho atual, pior: a ideia é ver o mapa de outro jeito
+    if(organizar) J._tent=s+1;
+    if(de&&!organizar){ // quanto mais parecido com o desenho atual, pior: a ideia é ver o mapa de outro jeito
       const mx=de.reduce((a,p)=>a+p.x,0)/de.length, my=de.reduce((a,p)=>a+p.y,0)/de.length;
       const dist=c.reduce((a,p,i)=>a+Math.hypot(p.x-(de[i].x-mx),p.y-(de[i].y-my)),0)/c.length;
       sc+=Math.max(0,220-dist)*.25;
     }
     if(sc<mn){mn=sc;melhor=c}
   }
+  if(organizar) melhor=polir(melhor,mn);
   J.nos.forEach((n,i)=>{n.x=melhor[i].x;n.y=melhor[i].y;n.vx=n.vy=0;n.fixo=n.preso=false});
   return melhor;
+}
+/* Polimento do Sacudir: troca de lugar duas palavras do mesmo anel quando isso diminui os cruzamentos de fios;
+   depois deixa as peças se acomodarem e só fica com o resultado se a nota geral melhorou. */
+function cruzamentos(c){let n=0;const F=J.fios, pf=F.map(([a,b])=>pesoFio(a,b));
+  for(let i=0;i<F.length;i++){const [a,b]=F[i];for(let j=i+1;j<F.length;j++){const [p,q]=F[j];if(a===p||a===q||b===p||b===q)continue;if(cruza(c[a],c[b],c[p],c[q]))n+=Math.min(pf[i],pf[j])}}
+  return n}
+function polir(melhor,notaMelhor){
+  const c=melhor.map(p=>({...p})), t0=performance.now();
+  const anel={}; c.forEach((p,i)=>{if(i&&p.d)(anel[p.d]||(anel[p.d]=[])).push(i)});
+  const aneis=Object.values(anel).filter(g=>g.length>1); if(!aneis.length) return melhor;
+  let cr=cruzamentos(c);
+  for(let it=0;it<4000&&cr>0&&performance.now()-t0<700;it++){
+    const g=aneis[Math.floor(Math.random()*aneis.length)], a=g[Math.floor(Math.random()*g.length)], b=g[Math.floor(Math.random()*g.length)];
+    if(a===b) continue;
+    [c[a].x,c[b].x]=[c[b].x,c[a].x]; [c[a].y,c[b].y]=[c[b].y,c[a].y];
+    const n=cruzamentos(c);
+    if(n<=cr) cr=n; else {[c[a].x,c[b].x]=[c[b].x,c[a].x]; [c[a].y,c[b].y]=[c[b].y,c[a].y]}
+  }
+  simular(c,J.fios,160); // as palavras trocadas têm larguras diferentes: deixa o desenho se acomodar
+  return nota(c,J.fios)<notaMelhor?c:melhor;
 }
 
 /* Laço de animação: só roda enquanto há movimento */
@@ -756,10 +822,18 @@ new ResizeObserver(()=>{
 }).observe($("mapa"));
 
 /* ---------- Seleção ---------- */
+function niveisDe(i){ // vizinhas (1º nível) e vizinhas das vizinhas (2º nível), só entre as peças à vista
+  const ok=j=>J.nos[j].ativo&&visivel(j);
+  const d1=new Set(J.nos[i].viz.filter(ok)), d2=new Set();
+  for(const j of d1) for(const k of J.nos[j].viz) if(k!==i&&!d1.has(k)&&ok(k)) d2.add(k);
+  return {d1,d2};
+}
 function selecionar(i){
   const ant=J.sel; J.sel=i;
-  for(const n of J.nos) n.el.classList.remove("sel","viz");
-  if(i>=0){J.nos[i].el.classList.add("sel");J.nos[i].viz.forEach(j=>J.nos[j].el.classList.add("viz"))}
+  for(const n of J.nos) n.el.classList.remove("sel","viz","viz2");
+  J.d1=J.d2=null;
+  if(i>=0){const {d1,d2}=niveisDe(i); J.d1=d1; J.d2=d2;
+    J.nos[i].el.classList.add("sel"); d1.forEach(j=>J.nos[j].el.classList.add("viz")); d2.forEach(j=>J.nos[j].el.classList.add("viz2"))}
   atualizar();
   if(i>=0&&ant!==i) $("dicaTxt").hidden=true;
 }
@@ -769,11 +843,20 @@ function pintarInfo(){
   if(J.modoDica){$("info").hidden=false;$("infoTxt").innerHTML=`<b>Dica:</b> toque numa palavra escondida para ver uma pista sobre ela.`;return}
   const i=J.sel; $("info").hidden=i<0; if(i<0) return;
   const n=J.nos[i], aberto=J.rev.has(n.k)||J.desistiu;
-  const vz=n.viz.map(j=>J.nos[j]).filter(v=>v.ativo), vis=vz.filter(v=>J.rev.has(v.k)||J.desistiu).map(v=>`<b>${esc(v.txt)}</b>`), oc=vz.length-vis.length; // só conta o que está à vista
-  const lig=[...vis]; if(oc) lig.push(oc===1?"1 escondida":`${oc} escondidas`);
+  const {d1,d2}=J.d1?{d1:J.d1,d2:J.d2}:niveisDe(i);
+  const chips=set=>{ // palavras já achadas viram etiquetas; as escondidas só entram na contagem
+    const v=[...set].map(j=>J.nos[j]), ab=v.filter(x=>J.rev.has(x.k)||J.desistiu), oc=v.length-ab.length;
+    let h=ab.map(x=>`<span class="ch">${esc(x.txt)}</span>`).join("");
+    if(oc) h+=`<span class="ch esc">${oc===1?"1 escondida":oc+" escondidas"}</span>`;
+    return h||`<span class="ch esc">nenhuma à vista</span>`;
+  };
+  const traco=d=>`<svg viewBox="0 0 22 6" aria-hidden="true"><line x1="1" y1="3" x2="21" y2="3" stroke="var(--fio-on)" stroke-width="${d?2:3}" stroke-linecap="round"${d?' stroke-dasharray="4 3"':""}/></svg>`;
   const nl=n.vg.filter(s=>s.letra).length;
   const pistaHtml=!aberto&&J.pistas.has(n.k)?`<span class="pista"><i>Pista:</i> ${esc(pista(n)||"sem pista")}</span>`:"";
-  $("infoTxt").innerHTML=(aberto?`<b>${esc(n.txt)}</b> · `:`${nl} letras · `)+`ligada a ${lista(lig)}`+pistaHtml;
+  $("infoTxt").innerHTML=`<span class="tit">${aberto?esc(n.txt):nl+" letras"}</span>`
+    +`<span class="niv d1"><i>${traco(0)}Ligada a</i>${chips(d1)}</span>`
+    +(d2.size?`<span class="niv d2"><i>${traco(1)}E daí a</i>${chips(d2)}</span>`:"")
+    +pistaHtml;
 }
 
 /* ---------- Palpites ---------- */
@@ -880,14 +963,14 @@ function usarDica(i){
   if(matchMedia("(pointer:fine)").matches) $("resp").focus();
 }
 
-/* ---------- Sacudir: as peças tremem e ganham um desenho novo ---------- */
+/* ---------- Sacudir: as peças tremem e se reorganizam no desenho mais limpo que der ---------- */
 let arrRaf=0, sacudindo=false;
 $("bSacudir").onclick=()=>{
   if(!J||sacudindo) return;
   sacudindo=true; medirMapa();
   cancelAnimationFrame(simRaf); simRaf=0; alpha=0; alvo=0;
   const de=J.nos.map(n=>({x:n.x,y:n.y}));
-  const novo=planejar(de).map(n=>({x:n.x,y:n.y}));
+  const novo=planejar(de,true).map(n=>({x:n.x,y:n.y}));
   J.nos.forEach((n,i)=>{n.x=de[i].x;n.y=de[i].y;n.fixo=true});
   const mp=$("mapa"); mp.classList.remove("treme"); void mp.offsetWidth; mp.classList.add("treme");
   const bb=caixa(novo.map((p,i)=>({x:p.x,y:p.y,hw:J.nos[i].hw,hh:J.nos[i].hh})));
