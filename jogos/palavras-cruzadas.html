@@ -11,15 +11,16 @@
 :root{
   --paper:#f4efe4; --card:#fffdf8; --ink:#1d1b17; --muted:#6b6458; --line:#d9d0bf; --rule:#1d1b17;
   --accent:#c8372d; --accent-ink:#fff; --hl:#fde9a6; --cur:#f6c33c; --rev:#2f6fb5; --bad:#c8372d; --ok:#2e8b57; --ok-bg:#e3f2e8;
+  --wd:#cfe3f7; --clue-on:#b9d2f0; --clue-x:#dcd9d2; --blk:#1d1b17;
   --serif:"DM Serif Display",Georgia,"Times New Roman",serif; --sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"DM Mono",ui-monospace,Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#17150f; --card:#221f18; --ink:#efe8da; --muted:#a59c8b; --line:#3b362b; --rule:#efe8da;
-  --accent:#ff6b5c; --accent-ink:#1b0c09; --hl:#4b3f17; --cur:#a57f12; --rev:#7fb2ff; --bad:#ff6b5c; --ok:#5fd18f; --ok-bg:#16301f; color-scheme:dark}}
+  --accent:#ff6b5c; --accent-ink:#1b0c09; --hl:#4b3f17; --cur:#a57f12; --rev:#7fb2ff; --bad:#ff6b5c; --ok:#5fd18f; --ok-bg:#16301f; --wd:#27415f; --clue-on:#2f4d78; --clue-x:#413e37; --blk:#0a0907; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#17150f; --card:#221f18; --ink:#efe8da; --muted:#a59c8b; --line:#3b362b; --rule:#efe8da;
-  --accent:#ff6b5c; --accent-ink:#1b0c09; --hl:#4b3f17; --cur:#a57f12; --rev:#7fb2ff; --bad:#ff6b5c; --ok:#5fd18f; --ok-bg:#16301f; color-scheme:dark}
+  --accent:#ff6b5c; --accent-ink:#1b0c09; --hl:#4b3f17; --cur:#a57f12; --rev:#7fb2ff; --bad:#ff6b5c; --ok:#5fd18f; --ok-bg:#16301f; --wd:#27415f; --clue-on:#2f4d78; --clue-x:#413e37; --blk:#0a0907; color-scheme:dark}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;min-height:100vh;
@@ -47,7 +48,7 @@ button:focus-visible,.cell:focus-visible{outline:3px solid var(--accent);outline
 .nivel .q{font-family:var(--mono);font-size:12px;color:var(--muted)}
 .nivel p{margin:0;font-size:14px;color:var(--muted);line-height:1.45}
 .mini{display:grid;grid-template-columns:repeat(6,12px);grid-auto-rows:12px;gap:2px;margin:2px 0}
-.mini i{background:var(--ink);opacity:.85;border-radius:1px}.mini i.o{background:transparent;opacity:1}
+.mini i{background:var(--ink);opacity:.85;border-radius:1px}.mini i.o{background:transparent;opacity:1}.mini i.w{background:var(--card);box-shadow:inset 0 0 0 1px var(--muted);opacity:1}
 .estado{margin-top:auto;font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px}
 .estado.ok{color:var(--ok)}.estado.and{color:var(--accent)}.estado.novo{color:var(--muted);font-weight:600}
 .dica{font-size:13px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);padding-top:12px}
@@ -62,24 +63,54 @@ button:focus-visible,.cell:focus-visible{outline:3px solid var(--accent);outline
 .bar .lv{font-family:var(--serif);font-size:22px;margin-right:auto;display:flex;align-items:baseline;gap:10px}
 .bar .lv small{font-family:var(--mono);font-size:12px;color:var(--muted)}
 .relogio{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;padding:8px 10px;border-radius:6px;background:var(--card);border:1.5px solid var(--line)}
-.menu{position:relative}
-.menu-lista{position:absolute;right:0;top:calc(100% + 6px);background:var(--card);border:1.5px solid var(--ink);border-radius:6px;z-index:20;min-width:210px;padding:6px;box-shadow:0 12px 30px -12px rgba(0,0,0,.4)}
-.menu-lista button{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box;padding:10px 12px;border-radius:4px;font-size:14px;font-weight:600}
-.menu-lista button:hover,.menu-lista button:focus-visible{background:var(--hl)}
-.menu-lista small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+
+/* Ferramentas e faixa de dias */
+.ferr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0}
+.ferr .tempo{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:14px}
+.ferr .tempo .relogio{padding:6px 9px}
+.ferr .tempo b{font-weight:500}
+.tools{display:flex;gap:8px;align-items:center}
+.pill{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:13px;padding:9px 14px;border-radius:999px;background:var(--clue-x);color:var(--ink);white-space:nowrap}
+.pill:hover:not(:disabled):not([aria-disabled="true"]){box-shadow:inset 0 0 0 1.5px var(--ink)}
+.pill:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.pill[aria-disabled="true"]{opacity:.45;cursor:default}
+.pill svg{width:16px;height:16px}
+@media (max-width:560px){.ferr{gap:8px}.tools{width:100%}.pill{flex:1;padding:9px 6px}.pill svg{display:none}}
+.dias{display:flex;align-items:center;gap:6px}
+.dias .seta{all:unset;cursor:pointer;font-size:30px;line-height:1;padding:4px 8px;font-weight:800}
+.dias .seta[aria-disabled="true"]{opacity:.25;cursor:default}
+.dias .seta:focus-visible{outline:3px solid var(--accent)}
+.dlist{flex:1;display:grid;gap:6px;min-width:0}
+.dia{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:7px 8px;border-radius:6px;border:1.5px solid transparent;min-width:0}
+.dia:hover:not(:disabled){border-color:var(--line)}
+.dia:focus-visible{outline:3px solid var(--accent)}
+.dia.sel{border-color:var(--ink);background:var(--card)}
+.dia .dw{font-family:var(--serif);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dia .dd{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.dia .bd{align-self:flex-start;font-size:11px;font-weight:800;padding:2px 8px;border-radius:3px;margin-top:2px}
+.dia .bd.h,.dia .bd.d{background:var(--clue-on);color:var(--ink)}
+.dia .bd.j{background:var(--ink);color:var(--paper)}
+.dia .bd.i{background:var(--clue-x);color:var(--muted)}
+.dia[disabled]{cursor:default;opacity:.8}
+@media (max-width:560px){.dia{padding:6px}.dia .dw{font-size:13px}.dia .bd{font-size:10.5px;padding:2px 6px}}
 
 /* Grade + pistas */
-.jogo{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
-@media (max-width:860px){.jogo{grid-template-columns:1fr}}
+.jogo{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.jogo{grid-template-columns:minmax(0,1fr)}}
+.esq{display:flex;flex-direction:column;gap:10px;min-width:0}
 .gradebox{background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:12px;display:flex;justify-content:center}
+@media (max-width:560px){.gradebox{padding:6px}}
 .grade{display:grid;gap:0;--cs:36px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .cell{width:var(--cs);height:var(--cs);position:relative}
+.cell.b{background:var(--blk)}
 .cell.l{background:var(--card);border:1.5px solid var(--rule);margin:-.75px;cursor:pointer;display:grid;place-items:center;z-index:1}
+.grade.dn .cell.l{border-width:1px;margin:-.5px;border-color:var(--muted)}
 .cell.l .n{position:absolute;top:1px;left:2px;font-family:var(--mono);font-size:calc(var(--cs)*.27);line-height:1;color:var(--ink)}
 .cell.l .c{font-family:var(--sans);font-weight:800;font-size:calc(var(--cs)*.56);line-height:1;text-transform:uppercase;margin-top:calc(var(--cs)*.1)}
-.cell.l.hl{background:var(--hl)}
+.cell.l.hl{background:var(--wd)}
 .cell.l.cur{background:var(--cur)}
 .cell.l.rev .c{color:var(--rev)}
+.cell.l.err .c{color:var(--bad)}
 .cell.l.err::after{content:"";position:absolute;inset:3px;background:linear-gradient(to top right,transparent calc(50% - 1px),var(--bad) calc(50% - 1px),var(--bad) calc(50% + 1px),transparent calc(50% + 1px))}
 .cell.l.ok .c{color:var(--ok)}
 .feito .cell.l{cursor:default}
@@ -87,22 +118,28 @@ button:focus-visible,.cell:focus-visible{outline:3px solid var(--accent);outline
 @keyframes onda{40%{transform:translateY(-4px);background:var(--ok-bg)}}
 
 .pistabar{display:flex;align-items:stretch;gap:6px;background:var(--ink);color:var(--paper);border-radius:6px;min-height:52px}
-.pistabar button{all:unset;cursor:pointer;padding:0 12px;display:grid;place-items:center;font-size:22px;font-weight:800}
+.pistabar button{all:unset;cursor:pointer;padding:0 14px;display:grid;place-items:center;font-size:26px;font-weight:800}
 .pistabar button:focus-visible{outline:3px solid var(--cur);outline-offset:-3px}
-.pistabar .txt{flex:1;padding:9px 4px;display:flex;flex-direction:column;justify-content:center;gap:2px;font-size:15px;line-height:1.3}
-.pistabar .txt small{font-family:var(--mono);font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.06em}
+.pistabar .txt{flex:1;padding:9px 4px;display:flex;align-items:center;font-size:15px;line-height:1.3}
+.pistabar .txt b{font-family:var(--mono);font-weight:500;margin-right:.4em}
+.pistabar .txt small{opacity:.7;margin-left:.3em}
+@media (max-width:860px){
+  .pistabar{position:sticky;top:0;z-index:15;box-shadow:0 6px 0 var(--paper)}
+  .teclado button{height:42px}.teclado{gap:5px}
+  .teclado{position:sticky;bottom:0;z-index:15;background:var(--paper);padding:8px 0 calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 0 var(--paper)}
+}
 
-.pistas{display:flex;flex-direction:column;gap:14px}
-@media (max-width:860px){.pistas{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
-@media (max-width:520px){.pistas{grid-template-columns:1fr}}
+.pistas{display:grid;grid-template-columns:1fr 1fr;gap:14px;min-width:0}
+@media (max-width:560px){.pistas{grid-template-columns:1fr}}
+.pistas section{min-width:0}
 .pistas h3{font-family:var(--serif);font-weight:400;font-size:20px;margin:0 0 4px;border-bottom:2px solid var(--rule);padding-bottom:3px}
-.pistas ol{list-style:none;margin:0;padding:0}
-.pistas li button{all:unset;cursor:pointer;display:grid;grid-template-columns:26px 1fr;gap:4px;padding:6px 6px;border-radius:4px;font-size:14px;line-height:1.35;width:100%;box-sizing:border-box}
-.pistas li button:hover{background:var(--hl)}
+.pistas ol{list-style:none;margin:0;padding:0;position:relative;overflow-y:auto;max-height:var(--ph,260px);overscroll-behavior:contain}
+.pistas li button{all:unset;cursor:pointer;display:grid;grid-template-columns:28px 1fr;gap:4px;padding:6px 6px;border-radius:4px;font-size:14px;line-height:1.35;width:100%;box-sizing:border-box}
+.pistas li button:hover{background:var(--wd)}
 .pistas li button:focus-visible{outline:2px solid var(--accent)}
 .pistas li b{font-family:var(--mono);font-weight:500;font-size:13px}
-.pistas li.on button{background:var(--hl)}
-.pistas li.cruz button{box-shadow:inset 3px 0 0 var(--cur)}
+.pistas li.cruz button{background:var(--clue-x)}
+.pistas li.on button{background:var(--clue-on)}
 .pistas li.feita span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted)}
 
 /* Teclado na tela */
@@ -143,6 +180,7 @@ button:focus-visible,.cell:focus-visible{outline:3px solid var(--accent);outline
 </div>
 
 <script src="palavras-cruzadas/pistas.js?v=1"></script>
+<script src="palavras-cruzadas/grades.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -153,8 +191,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 /* ---------- Nível, data e sorteio ---------- */
 const NIVEIS={
   facil:{nome:"Fácil",alvo:7,max:11,base:1000,desc:"Sete palavras do dia a dia, com pistas diretas."},
-  medio:{nome:"Médio",alvo:10,max:13,base:2000,desc:"Dez palavras: Brasil, natureza, profissões e cultura geral."},
-  dificil:{nome:"Difícil",alvo:14,max:15,base:3000,desc:"Catorze palavras: vocabulário raro, literatura, história e ciência."}
+  medio:{nome:"Médio",alvo:10,max:13,base:2000,dn:true,tam:9,letras:4,palavras:2,desc:"Grade cheia 9×9, no estilo dos jornais: Brasil, natureza, profissões e cultura geral."},
+  dificil:{nome:"Difícil",alvo:14,max:15,base:3000,dn:true,tam:11,letras:4,palavras:2,desc:"Grade cheia 11×11 com pistas espertas: literatura, história e ciência."}
 };
 const INICIO=Date.UTC(2026,9,15);  // Nº 1 = 15/10/2026
 const DIA_MS=864e5;
@@ -261,9 +299,49 @@ function numerar(g){
   return {linhas:g.linhas,colunas:g.colunas,grade,palavras,ordem};
 }
 
+/* ---------- Grade densa (estilo O Globo) ---------- */
+/* Monta a mesma estrutura do gerador a partir das "linhas" de PC_GRADES; a numeração é a clássica. */
+function densa(src){
+  try{
+    const L=src.linhas, n=L.length; if(!Array.isArray(L)||n<5) return null;
+    const m=L[0].length;
+    if(!L.every(l=>typeof l==="string"&&l.length===m&&/^[A-Za-z#]+$/.test(l))) return null;
+    const branca=(r,c)=>r>=0&&c>=0&&r<n&&c<m&&L[r][c]!=="#";
+    const grade=L.map((l,r)=>Array.from(l,(ch,c)=>ch==="#"?null:{ch:ch.toUpperCase(),w:{}}));
+    const palavras=[]; let num=0;
+    for(let r=0;r<n;r++)for(let c=0;c<m;c++){
+      if(!branca(r,c)) continue;
+      const ih=!branca(r,c-1)&&branca(r,c+1), iv=!branca(r-1,c)&&branca(r+1,c);
+      if(!ih&&!iv) continue;
+      num++; grade[r][c].num=num;
+      for(const dir of ["h","v"]){
+        if(!(dir==="h"?ih:iv)) continue;
+        const cels=[]; let rr=r,cc=c;
+        while(branca(rr,cc)){cels.push([rr,cc]); if(dir==="h")cc++; else rr++}
+        const resp=cels.map(([a,b])=>grade[a][b].ch).join("");
+        const idx=palavras.length;
+        cels.forEach(([a,b])=>{grade[a][b].w[dir]=idx});
+        palavras.push({palavra:resp,pista:(src[dir]&&src[dir][num])||"(sem pista)",resp,dir,r,c,num,cels});
+      }
+    }
+    if(!palavras.length) return null;
+    const ordem=palavras.map((p,i)=>i).sort((a,b)=>(palavras[a].dir===palavras[b].dir?0:palavras[a].dir==="h"?-1:1)||palavras[a].num-palavras[b].num);
+    return {linhas:n,colunas:m,grade,palavras,ordem,densa:true};
+  }catch(e){return null}
+}
+function montarGrade(nv,dia){
+  if(NIVEIS[nv].dn){
+    const L=(window.PC_GRADES||{})[nv];
+    if(Array.isArray(L)&&L.length){ const d=densa(L[((dia.numero-1)%L.length+L.length)%L.length]); if(d) return d; }
+  }
+  return gerar(nv,dia.chave);
+}
+function diaInfo(n){ const ms=INICIO+(n-1)*DIA_MS; return {numero:n,ms,chave:new Date(ms).toISOString().slice(0,10)}; }
+
 /* ---------- Armazenamento ---------- */
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-const kEstado=(nv,ch)=>`pc:${ch}:${nv}`;
+// Médio e Difícil mudaram de formato (grade densa): chave nova para não misturar com progresso antigo.
+const kEstado=(nv,ch)=>`${NIVEIS[nv].dn?"pc2":"pc"}:${ch}:${nv}`;
 const kHist=nv=>`pc:hist:${nv}`;
 function sequencia(nv){
   const h=new Set(LS.get(kHist(nv),[]));
@@ -275,13 +353,13 @@ function sequencia(nv){
 
 /* ---------- Tela inicial ---------- */
 const fmtTempo=s=>{s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(x).padStart(2,"0")};
-const MINI={facil:"111110000100011110000100000000000000",medio:"111111100100111110001001011111000001",dificil:"111111101010111111101010111111101010"};
+const MINI={facil:"111110000100011110000100000000000000",medio:"wwbwwwwwwwbwbwwwwwwwwwwbwbwwwwwwwbww",dificil:"bbwwwwbwwwbwwwwwwwwwwwwwwbwwwbwwwwbb"};
 function pintarEdicao(){
   const dt=HOJE.data.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   $("edicao").innerHTML=`${esc(dt)}<br><b>Edição Nº ${HOJE.numero}</b> · uma cruzada nova por dia`;
 }
 function telaInicio(){
-  pararRelogio(); fecharMenu();
+  pararRelogio();
   HOJE=hojeInfo(); pintarEdicao();
   app.innerHTML=`<p class="intro">Todo dia há três cruzadas novas, iguais para todo mundo. Escolha o nível. Acentos e cedilha não contam: escreva <b>AVIAO</b> para AVIÃO.</p>
   <div class="niveis">${Object.entries(NIVEIS).map(([id,N])=>{
@@ -290,9 +368,10 @@ function telaInicio(){
     let est=`<span class="estado novo">Ainda não jogada hoje</span>`;
     if(st&&st.fim) est=`<span class="estado ok">✓ Resolvida em ${fmtTempo(st.seg)} · ${st.pts} pts</span>`;
     else if(st) est=`<span class="estado and">● Em andamento · ${fmtTempo(st.seg)}</span>`;
+    const mini=N.dn?[...MINI[id]].slice(0,36).map(x=>`<i class="${x==="b"?"":"o w"}"></i>`).join(""):[...MINI[id]].map(x=>`<i class="${x==="1"?"":"o"}"></i>`).join("");
     return `<button class="nivel" data-nv="${id}">
-      <div class="t"><b>${N.nome}</b><span class="q">${N.alvo} palavras</span></div>
-      <div class="mini" aria-hidden="true">${[...MINI[id]].map(x=>`<i class="${x==="1"?"":"o"}"></i>`).join("")}</div>
+      <div class="t"><b>${N.nome}</b><span class="q">${N.dn?N.tam+"×"+N.tam:N.alvo+" palavras"}</span></div>
+      <div class="mini" aria-hidden="true">${mini}</div>
       <p>${N.desc}</p>
       ${seq>1?`<p>Sequência: <b>${seq} dias</b></p>`:""}
       ${est}
@@ -303,14 +382,16 @@ function telaInicio(){
 
 /* ---------- Jogo ---------- */
 let J=null, relogio=null;
-function abrir(nv){
-  HOJE=hojeInfo();
-  const P=gerar(nv,HOJE.chave);
-  const salvo=LS.get(kEstado(nv,HOJE.chave),null);
-  J={nv,N:NIVEIS[nv],P,chave:HOJE.chave,numero:HOJE.numero,
-    ent:P.grade.map((row,r)=>row.map((x,c)=>salvo&&salvo.e&&salvo.e[r]?(salvo.e[r][c]||"").trim():"")),
+const nDias=()=>window.innerWidth<=560?3:5;
+function abrir(nv,dia,janela){
+  HOJE=hojeInfo(); dia=dia||{numero:HOJE.numero,chave:HOJE.chave};
+  const P=montarGrade(nv,dia);
+  const salvo=LS.get(kEstado(nv,dia.chave),null);
+  J={nv,N:NIVEIS[nv],P,chave:dia.chave,numero:dia.numero,janela,
+    ent:P.grade.map((row,r)=>row.map((x,c)=>x&&salvo&&salvo.e&&salvo.e[r]?(salvo.e[r][c]||"").trim():"")),
     rev:new Set(salvo?salvo.rev||[]:[]), err:new Set(),
     seg:salvo?salvo.seg||0:0, ver:salvo?salvo.ver||0:0, fim:!!(salvo&&salvo.fim), pts:salvo?salvo.pts||0:0,
+    nl:salvo?salvo.nl||0:0, np:salvo?salvo.np||0:0,
     sel:null, avisouCheia:false};
   const p0=P.palavras[P.ordem[0]];
   J.sel={r:p0.r,c:p0.c,dir:p0.dir};
@@ -319,13 +400,14 @@ function abrir(nv){
   if(!J.fim) iniciarRelogio();
 }
 function salvar(){
-  LS.set(kEstado(J.nv,J.chave),{e:J.ent.map(r=>r.map(x=>x||" ").join("")),rev:[...J.rev],seg:J.seg,ver:J.ver,fim:J.fim,pts:J.pts});
+  LS.set(kEstado(J.nv,J.chave),{e:J.ent.map(r=>r.map(x=>x||" ").join("")),rev:[...J.rev],seg:J.seg,ver:J.ver,fim:J.fim,pts:J.pts,nl:J.nl,np:J.np});
 }
 function iniciarRelogio(){
   pararRelogio();
   relogio=setInterval(()=>{
     if(document.hidden||!J||J.fim) return;
     J.seg++; const el=$("rel"); if(el) el.textContent=fmtTempo(J.seg);
+    const pe=$("pts"); if(pe) pe.textContent=pontos()+" pts";
     if(J.seg%5===0) salvar();
   },1000);
 }
@@ -335,33 +417,64 @@ const palavraEm=(r,c,dir)=>{const x=J.P.grade[r]&&J.P.grade[r][c];return x&&x.w[
 function palavraAtual(){ return palavraEm(J.sel.r,J.sel.c,J.sel.dir) }
 function completa(i){ return J.P.palavras[i].cels.every(([r,c])=>J.ent[r][c]) }
 
+const ICONE_OLHO='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7S18.5 19 12 19 1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+function statusDia(n){
+  if(n>HOJE.numero) return "i";
+  const fim=n===J.numero?J.fim:!!(LS.get(kEstado(J.nv,diaInfo(n).chave),null)||{}).fim;
+  return fim?"j":(n===HOJE.numero?"h":"d");
+}
+const NOME_STATUS={i:"Indisponível",j:"Jogado",h:"Hoje",d:"Disponível"};
+const diaSemana=ms=>new Date(ms).toLocaleDateString("pt-BR",{weekday:"long",timeZone:"UTC"}).replace(/(^|-)(.)/g,(m,a,b)=>a+b.toUpperCase());
+function desenharDias(){
+  const box=$("dias"); if(!box) return;
+  const nd=nDias(), max=HOJE.numero+3, min=HOJE.numero-33;  // janela de 37 dias, como no O Globo
+  if(J.janela==null) J.janela=J.numero-Math.floor(nd/2);
+  J.janela=Math.max(min,Math.min(J.janela,max-nd+1));
+  let h=`<button class="seta" id="dprev" aria-label="Dias anteriores"${J.janela<=min?' aria-disabled="true"':""}>‹</button><div class="dlist" style="grid-template-columns:repeat(${nd},minmax(0,1fr))">`;
+  for(let i=0;i<nd;i++){
+    const n=J.janela+i, d=diaInfo(n), st=statusDia(n);
+    const dt=new Date(d.ms), f=String(dt.getUTCDate()).padStart(2,"0")+"/"+String(dt.getUTCMonth()+1).padStart(2,"0")+"/"+String(dt.getUTCFullYear()).slice(2);
+    h+=`<button class="dia${n===J.numero?" sel":""}" data-n="${n}"${st==="i"?" disabled":""}${n===J.numero?' aria-current="date"':""}><span class="dw">${diaSemana(d.ms)}</span><span class="dd">${f}</span><span class="bd ${st}">${NOME_STATUS[st]}</span></button>`;
+  }
+  h+=`</div><button class="seta" id="dnext" aria-label="Próximos dias"${J.janela>=max-nd+1?' aria-disabled="true"':""}>›</button>`;
+  box.innerHTML=h;
+  $("dprev").onclick=()=>{J.janela-=nd-1;desenharDias()};
+  $("dnext").onclick=()=>{J.janela+=nd-1;desenharDias()};
+  box.querySelectorAll(".dia").forEach(b=>b.onclick=()=>trocarDia(+b.dataset.n));
+}
+function trocarDia(n){
+  if(!J||n===J.numero||n<HOJE.numero-33||n>HOJE.numero) return;
+  if(!J.fim) salvar();
+  pararRelogio(); abrir(J.nv,diaInfo(n),J.janela);
+}
+
 function desenharJogo(){
   const {P,N}=J;
   app.innerHTML=`
   <div class="bar">
-    <div class="lv">${N.nome}<small>Nº ${J.numero}</small></div>
-    <span class="relogio" id="rel" aria-label="Tempo">${fmtTempo(J.seg)}</span>
-    <div class="menu">
-      <button class="btn" id="ajuda" aria-haspopup="true" aria-expanded="false"${J.fim?" disabled":""}><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r=".9" fill="currentColor"/></svg>Ajuda</button>
-      <div class="menu-lista" id="menu" hidden role="menu">
-        <button role="menuitem" data-a="ver">Verificar grade<small>Marca as letras erradas (−${Math.round(N.base*.03)} pts)</small></button>
-        <button role="menuitem" data-a="letra">Revelar letra<small>Mostra a casa selecionada (−${Math.round(N.base*.04)} pts)</small></button>
-        <button role="menuitem" data-a="palavra">Revelar palavra<small>Mostra a palavra inteira (−${Math.round(N.base*.04)} por letra)</small></button>
-      </div>
-    </div>
+    <div class="lv">${N.nome}<small>${J.numero>=1?"Nº "+J.numero:diaInfo(J.numero).chave.split("-").reverse().join("/")}</small></div>
     <button class="btn" id="voltar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Níveis</button>
   </div>
+  <div class="ferr">
+    <div class="tempo"><span class="relogio" id="rel" aria-label="Tempo">${fmtTempo(J.seg)}</span><span id="pts"></span></div>
+    <div class="tools" role="group" aria-label="Ferramentas">
+      <button class="pill" data-a="letra" id="bl" title="Revelar letra (−${Math.round(N.base*.04)} pts)" aria-label="Revelar letra">${ICONE_OLHO}<span></span></button>
+      <button class="pill" data-a="palavra" id="bp" title="Revelar palavra (−${Math.round(N.base*.04)} pts por letra)" aria-label="Revelar palavra"><span></span></button>
+      <button class="pill" data-a="ver" id="bv" title="Marca as letras erradas (−${Math.round(N.base*.03)} pts)" aria-label="Validar"><span>Validar</span></button>
+    </div>
+  </div>
+  <div class="dias" id="dias"></div>
   <div id="fimbox"></div>
   <div class="jogo">
-    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
-      <div class="gradebox" id="gbox"><div class="grade${J.fim?" feito":""}" id="grade" role="grid" aria-label="Grade da cruzada"></div></div>
+    <div class="esq">
       <div class="pistabar"${J.fim?" hidden":""}><button id="ant" aria-label="Pista anterior">‹</button><div class="txt" id="pista" aria-live="polite"></div><button id="prox" aria-label="Próxima pista">›</button></div>
+      <div class="gradebox" id="gbox"><div class="grade${P.densa?" dn":""}${J.fim?" feito":""}" id="grade" role="grid" aria-label="Grade da cruzada"></div></div>
       <div class="teclado" id="tec"${J.fim?" hidden":""}>
         ${["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"].map((l,i)=>`<div>${i===2?`<button class="w" data-k="vira" aria-label="Virar direção">↻</button>`:""}${[...l].map(ch=>`<button data-k="${ch}">${ch}</button>`).join("")}${i===2?`<button class="w" data-k="apaga" aria-label="Apagar">⌫</button>`:""}</div>`).join("")}
       </div>
     </div>
     <aside class="pistas" id="listas">
-      ${["h","v"].map(d=>`<section><h3>${d==="h"?"Horizontais":"Verticais"}</h3><ol>${P.ordem.filter(i=>P.palavras[i].dir===d).map(i=>{const p=P.palavras[i];return `<li id="pl${i}"><button data-i="${i}"><b>${p.num}</b><span>${esc(p.pista)} <span style="color:var(--muted)">(${p.resp.length})</span></span></button></li>`}).join("")}</ol></section>`).join("")}
+      ${["h","v"].map(d=>`<section><h3>${d==="h"?"▸ Horizontais":"▾ Verticais"}</h3><ol>${P.ordem.filter(i=>P.palavras[i].dir===d).map(i=>{const p=P.palavras[i];return `<li id="pl${i}"><button data-i="${i}"><b>${p.num}.</b><span>${esc(p.pista)}${P.densa?"":` <span style="color:var(--muted)">(${p.resp.length})</span>`}</span></button></li>`}).join("")}</ol></section>`).join("")}
     </aside>
   </div>`;
   const g=$("grade");
@@ -369,7 +482,7 @@ function desenharJogo(){
   let html="";
   for(let r=0;r<P.linhas;r++)for(let c=0;c<P.colunas;c++){
     const x=P.grade[r][c];
-    html+=x?`<div class="cell l" data-r="${r}" data-c="${c}" role="gridcell"${x.num?`><span class="n">${x.num}</span>`:">"}<span class="c"></span></div>`:`<div class="cell"></div>`;
+    html+=x?`<div class="cell l" data-r="${r}" data-c="${c}" role="gridcell"${x.num?`><span class="n">${x.num}</span>`:">"}<span class="c"></span></div>`:`<div class="cell${P.densa?" b":""}"></div>`;
   }
   g.innerHTML=html;
   ajustarTamanho();
@@ -382,22 +495,39 @@ function desenharJogo(){
   $("ant").onclick=()=>pular(-1); $("prox").onclick=()=>pular(1);
   $("tec").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.k;if(k==="apaga")apagar();else if(k==="vira")virar();else digitar(k)});
   $("voltar").onclick=()=>{ if(J&&!J.fim) salvar(); J=null; telaInicio(); };
-  $("ajuda").onclick=e=>{e.stopPropagation();const m=$("menu");m.hidden=!m.hidden;$("ajuda").setAttribute("aria-expanded",String(!m.hidden));if(!m.hidden)m.querySelector("button").focus()};
-  $("menu").onclick=e=>{const b=e.target.closest("button");if(!b)return;fecharMenu();acao(b.dataset.a)};
+  document.querySelector(".tools").onclick=e=>{const b=e.target.closest("button");if(b)acao(b.dataset.a)};
+  desenharDias();
   pintar();
   if(J.fim) mostrarFim(false);
 }
-function fecharMenu(){const m=$("menu");if(m&&!m.hidden){m.hidden=true;$("ajuda").setAttribute("aria-expanded","false")}}
-document.addEventListener("click",e=>{if(!e.target.closest(".menu"))fecharMenu()});
+// botão do mouse não deve ficar com o foco (senão Tab/Espaço deixam de navegar pela grade)
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("button");if(b&&e.detail&&J)b.blur()});
 
 function ajustarTamanho(){
   const g=$("grade"),box=$("gbox"); if(!g||!box||!J) return;
-  const w=box.clientWidth-24;
-  const cs=Math.max(20,Math.min(44,Math.floor(w/J.P.colunas)));
+  const st=getComputedStyle(box), w=box.clientWidth-parseFloat(st.paddingLeft)-parseFloat(st.paddingRight);
+  const cs=Math.max(20,Math.min(J.P.densa?50:44,Math.floor(w/J.P.colunas)));
   g.style.setProperty("--cs",cs+"px");
+  const esq=document.querySelector(".esq");
+  if(esq&&window.matchMedia("(min-width:861px)").matches) $("listas").style.setProperty("--ph",Math.max(240,esq.offsetHeight-44)+"px");
+  else if($("listas")) $("listas").style.removeProperty("--ph");
+  { const dl=document.querySelector(".dlist"); if(dl&&dl.children.length!==nDias()) desenharDias(); }
 }
 window.addEventListener("resize",ajustarTamanho);
 
+function rolarPista(li){
+  if(!li) return; const ol=li.parentElement;
+  if(ol.scrollHeight>ol.clientHeight+1) ol.scrollTop=Math.max(0,li.offsetTop-(ol.clientHeight-li.offsetHeight)/2);
+}
+function pintarFerr(){
+  const N=J.N, lim=(n,u)=>N.letras==null?u:`${n}/${u==="Letra"?N.letras:N.palavras} ${u}`;
+  const bl=$("bl"),bp=$("bp"),bv=$("bv"); if(!bl) return;
+  bl.lastElementChild.textContent=lim(J.nl,"Letra"); bp.lastElementChild.textContent=lim(J.np,"Palavra");
+  bl.setAttribute("aria-disabled",String(J.fim||(N.letras!=null&&J.nl>=N.letras)));
+  bp.setAttribute("aria-disabled",String(J.fim||(N.palavras!=null&&J.np>=N.palavras)));
+  bv.setAttribute("aria-disabled",String(J.fim));
+  $("pts").textContent=pontos()+" pts";
+}
 function pintar(){
   const {P}=J, wi=J.fim?null:palavraAtual(), cur=J.fim?null:J.sel;
   const ativos=new Set(wi!=null?P.palavras[wi].cels.map(([r,c])=>r+","+c):[]);
@@ -411,11 +541,12 @@ function pintar(){
   });
   if(wi!=null){
     const p=P.palavras[wi];
-    $("pista").innerHTML=`<small>${p.num} ${p.dir==="h"?"horizontal":"vertical"} · ${p.resp.length} letras</small><span>${esc(p.pista)}</span>`;
+    $("pista").innerHTML=`<span><b>${p.dir==="h"?"H":"V"}${p.num}.</b>${esc(p.pista)}${P.densa?"":`<small>(${p.resp.length})</small>`}</span>`;
   }
   const cruzada=cur?palavraEm(cur.r,cur.c,cur.dir==="h"?"v":"h"):null;
   P.palavras.forEach((p,i)=>{const li=$("pl"+i);if(!li)return;li.classList.toggle("on",i===wi);li.classList.toggle("cruz",i===cruzada);li.classList.toggle("feita",J.fim||completa(i))});
-  const on=$("pl"+wi); if(on&&window.matchMedia("(min-width:861px)").matches){ const ls=$("listas"); if(ls.scrollHeight>ls.clientHeight) on.scrollIntoView({block:"nearest"}); }
+  if(wi!=null){ rolarPista($("pl"+wi)); if(cruzada!=null) rolarPista($("pl"+cruzada)); }
+  pintarFerr();
 }
 
 function clicar(r,c){
@@ -471,7 +602,7 @@ function mover(dr,dc){
   const dir=dc?"h":"v";
   if(J.sel.dir!==dir&&palavraEm(J.sel.r,J.sel.c,dir)!=null){J.sel.dir=dir;pintar();return}
   let r=J.sel.r+dr,c=J.sel.c+dc;
-  while(r>=0&&c>=0&&r<J.P.linhas&&c<J.P.colunas){
+  while(r>=0&&c>=0&&r<J.P.linhas&&c<J.P.colunas){   // casas pretas são puladas
     if(J.P.grade[r][c]){ const temD=palavraEm(r,c,dir)!=null; J.sel={r,c,dir:temD?dir:(dir==="h"?"v":"h")}; pintar(); return; }
     r+=dr;c+=dc;
   }
@@ -482,19 +613,25 @@ function depoisDeMudar(){
   if(!cheia){J.avisouCheia=false;return}
   const certa=J.P.grade.every((row,r)=>row.every((x,c)=>!x||J.ent[r][c]===x.ch));
   if(certa) vencer();
-  else if(!J.avisouCheia){J.avisouCheia=true;aviso("Quase! Tem letra errada na grade. Use Ajuda › Verificar.")}
+  else if(!J.avisouCheia){J.avisouCheia=true;aviso("Quase! Tem letra errada na grade. Use Validar.")}
 }
 function acao(a){
   if(!J||J.fim) return;
+  const N=J.N;
   if(a==="ver"){
+    if(!J.ent.some(row=>row.some(Boolean))){aviso("Preencha algumas letras antes de validar.");return}
     J.ver++; let n=0;
     J.P.grade.forEach((row,r)=>row.forEach((x,c)=>{ if(x&&J.ent[r][c]&&J.ent[r][c]!==x.ch){J.err.add(r+","+c);n++} }));
     aviso(n?`${n} letra${n>1?"s":""} errada${n>1?"s":""} marcada${n>1?"s":""}.`:"Nenhuma letra errada até aqui.");
     pintar(); salvar(); return;
   }
-  const cels=a==="letra"?[[J.sel.r,J.sel.c]]:J.P.palavras[palavraAtual()].cels;
-  cels.forEach(([r,c])=>{const key=r+","+c; if(J.ent[r][c]!==J.P.grade[r][c].ch||!J.rev.has(key)){ if(J.ent[r][c]!==J.P.grade[r][c].ch) J.rev.add(key); J.ent[r][c]=J.P.grade[r][c].ch; J.err.delete(key);} });
-  if(a==="palavra"){ const pr=proximaVazia(J.P.ordem.indexOf(palavraAtual())); if(pr) J.sel=pr; }
+  const letra=a==="letra";
+  if(letra?(N.letras!=null&&J.nl>=N.letras):(N.palavras!=null&&J.np>=N.palavras)){aviso(letra?"Suas letras reveladas acabaram.":"Suas palavras reveladas acabaram.");return}
+  const cels=letra?[[J.sel.r,J.sel.c]]:J.P.palavras[palavraAtual()].cels;
+  const falta=cels.filter(([r,c])=>J.ent[r][c]!==J.P.grade[r][c].ch);
+  if(!falta.length){aviso(letra?"Esta letra já está certa.":"Esta palavra já está certa.");return}
+  falta.forEach(([r,c])=>{const key=r+","+c; J.rev.add(key); J.ent[r][c]=J.P.grade[r][c].ch; J.err.delete(key)});
+  if(letra) J.nl++; else { J.np++; const pr=proximaVazia(J.P.ordem.indexOf(palavraAtual())); if(pr) J.sel=pr; }
   depoisDeMudar();
 }
 function pontos(){
@@ -508,15 +645,15 @@ function vencer(){
   $("grade").classList.add("feito");
   // onda de vitória na ordem das casas
   let d=0; $("grade").querySelectorAll(".cell.l").forEach(el=>{el.style.setProperty("--d",d++);el.classList.add("win")});
-  document.querySelector(".pistabar").hidden=true; $("tec").hidden=true; $("ajuda").disabled=true;
-  pintar(); mostrarFim(true);
+  document.querySelector(".pistabar").hidden=true; $("tec").hidden=true;
+  pintar(); desenharDias(); mostrarFim(true);
   try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome},"*") }catch(e){}
 }
 let cont=null;
 function mostrarFim(agora){
-  const box=$("fimbox"), seq=sequencia(J.nv);
+  const box=$("fimbox"), seq=sequencia(J.nv), hoje=J.numero===HOJE.numero;
   box.innerHTML=`<section class="fim" aria-labelledby="fimt">
-    <h2 id="fimt">${agora?"Cruzada resolvida!":"Você já resolveu a de hoje"}</h2>
+    <h2 id="fimt">${agora?"Cruzada resolvida!":hoje?"Você já resolveu a de hoje":"Você já resolveu esta cruzada"}</h2>
     <div class="linha">
       <div><b>${fmtTempo(J.seg)}</b><span>Tempo</span></div>
       <div><b>${J.pts}</b><span>Pontos</span></div>
@@ -524,7 +661,7 @@ function mostrarFim(agora){
       <div><b>${seq}</b><span>Sequência</span></div>
     </div>
     <p class="glossario">${J.P.ordem.map(i=>{const p=J.P.palavras[i];return `<b>${p.num}${p.dir==="h"?"H":"V"}</b> ${esc(p.palavra)}`}).join(" · ")}</p>
-    <p class="prox">Nova cruzada em <b id="cont">--:--:--</b></p>
+    ${hoje?`<p class="prox">Nova cruzada em <b id="cont">--:--:--</b></p>`:""}
     <div class="acoes">
       <button class="btn pri" id="compart">Copiar resultado</button>
       <button class="btn" id="outro">Outro nível</button>
@@ -555,16 +692,15 @@ function aviso(t){
 
 document.addEventListener("keydown",e=>{
   if(!J||J.fim||e.ctrlKey||e.metaKey||e.altKey) return;
-  if(e.target.closest&&e.target.closest(".menu-lista")) { if(e.key==="Escape"){fecharMenu();$("ajuda").focus()} return; }
-  const k=e.key;
+  const k=e.key, naBtn=!!(e.target.closest&&e.target.closest("button"));
   if(/^[a-zA-ZçÇ]$/.test(k)){e.preventDefault();digitar(norm(k));}
   else if(k==="Backspace"||k==="Delete"){e.preventDefault();apagar();}
   else if(k==="ArrowLeft"){e.preventDefault();mover(0,-1)}
   else if(k==="ArrowRight"){e.preventDefault();mover(0,1)}
   else if(k==="ArrowUp"){e.preventDefault();mover(-1,0)}
   else if(k==="ArrowDown"){e.preventDefault();mover(1,0)}
-  else if(k==="Tab"||k==="Enter"){e.preventDefault();pular(e.shiftKey?-1:1)}
-  else if(k===" "){e.preventDefault();virar()}
+  else if((k==="Tab"||k==="Enter")&&!naBtn){e.preventDefault();pular(e.shiftKey?-1:1)}
+  else if(k===" "&&!naBtn){e.preventDefault();virar()}
 });
 document.addEventListener("visibilitychange",()=>{ if(document.hidden&&J&&!J.fim) salvar(); });
 
