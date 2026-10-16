@@ -146,6 +146,18 @@ a{color:inherit}
 .art-int{background:#1b2230}
 .art-int .mark{font-family:"Bowlby One SC","Arial Black",Impact,sans-serif;color:#f4f1ea;letter-spacing:.02em;text-shadow:0 2px 0 rgba(0,0,0,.45);font-size:clamp(17px,8.8cqw,30px)}
 .art-int .mark span{color:#f2b134}
+.art-pino{background:#2f5fb8}
+.art-pino .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6d6;text-shadow:0 2px 0 #0f1f4d;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-pino .mark span{color:#ffd23f}
+.art-corrida{background:#8fd0ff}
+.art-corrida .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #0d2a5e;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-corrida .mark span{color:#ffd23f}
+.art-torre{background:#1b1640}
+.art-torre .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#f1f7ee;text-shadow:0 2px 0 #0a0820;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-torre .mark span{color:#5ee08a}
+.art-cao{background:#fbe9a6}
+.art-cao .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6d8;text-shadow:0 2px 0 #3a2a10;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-cao .mark span{color:#ffc53d}
 
 /* ---------- Jogador ---------- */
 .player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}

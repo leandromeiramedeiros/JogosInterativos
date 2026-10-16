@@ -16,6 +16,10 @@ Uma prateleira de jogos para jogar no navegador.
 | [Palavras Cruzadas](https://leandromeiramedeiros.github.io/JogosInterativos/#palavras-cruzadas) | Uma cruzada nova por dia em 3 níveis (7, 10 e 14 palavras). Pontua pelo tempo e pelas ajudas usadas. |
 | [Palpite](https://leandromeiramedeiros.github.io/JogosInterativos/#palpite) | Descubra a palavra do dia em 6 tentativas. 3 níveis: 4, 5 e 6 letras. |
 | [Interligado](https://leandromeiramedeiros.github.io/JogosInterativos/#interligado) | Descubra as palavras escondidas num mapa de associações. 14 temas (Futebol, Natureza, Música, Animais, Comida, Praia, Escola, Corpo Humano, Espaço, Cidade, Casa, Tecnologia, Viagem e Fazenda) em 3 níveis. Arraste palavras e fios, sacuda o mapa e peça pistas. |
+| [Puxe o Pino](https://leandromeiramedeiros.github.io/JogosInterativos/#puxe-o-pino) | Puxe os pinos na ordem certa: o ouro tem que cair no herói, e a lava não. |
+| [Corrida dos Portões](https://leandromeiramedeiros.github.io/JogosInterativos/#corrida-dos-portoes) | Arraste a multidão pelos portões que mais somam e vença o exército inimigo no fim da pista. |
+| [Torre do Poder](https://leandromeiramedeiros.github.io/JogosInterativos/#torre-do-poder) | Derrote só quem for mais fraco que você e suba a torre andar por andar. |
+| [Salve o Cachorro](https://leandromeiramedeiros.github.io/JogosInterativos/#salve-o-cachorro) | Desenhe uma linha para proteger o cachorro das abelhas por 10 segundos. A tinta é pouca. |
 
 ## Placar
 
