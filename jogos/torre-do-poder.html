@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Torre do Poder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120a2e;--bg2:#2a1659;--ink:#fff;--stone:#7a7aa3;--stone2:#5f5f87;--win:#241a4d;--green:#2fd16a;--red:#ff4a5a;--gold:#ffcf33;--rh:clamp(50px,10.4vh,72px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{margin:0;height:100%;background:#0b0620;color:var(--ink);font-family:Figtree,system-ui,sans-serif;overflow:hidden}
+body{display:flex;justify-content:center;align-items:center}
+#app{position:relative;width:100%;max-width:440px;height:100dvh;max-height:860px;background:linear-gradient(180deg,#0e0828 0%,#2a1659 55%,#5a2f86 100%);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 60px #000a}
+.stars{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 90px 80px,#fff9,transparent),radial-gradient(2px 2px at 160px 40px,#fff,transparent),radial-gradient(1.5px 1.5px at 250px 100px,#fff9,transparent),radial-gradient(2px 2px at 320px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 60px 150px,#fff8,transparent),radial-gradient(1.5px 1.5px at 300px 180px,#fff8,transparent);background-size:360px 220px}
+.moon{position:absolute;right:14px;top:96px;opacity:.7;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fffbe0,#f5e9a8);box-shadow:0 0 30px #fff6b055;pointer-events:none}
+#hud{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:8px}
+.chip{font-family:'Lilita One',sans-serif;background:#0007;border:2px solid #fff3;border-radius:14px;padding:4px 12px;font-size:18px;letter-spacing:.5px;white-space:nowrap}
+.chip small{font-family:Figtree;font-weight:700;opacity:.7;font-size:11px;display:block;line-height:1;margin-bottom:1px}
+#hudT{font-size:22px;color:var(--gold);text-shadow:0 2px 0 #7a4b00}
+.rbtn{font-family:'Lilita One';font-size:20px;width:42px;height:42px;border-radius:50%;border:2px solid #fff4;background:#0007;color:#fff;cursor:pointer}
+#hint{position:relative;z-index:4;text-align:center;font-size:13px;opacity:.8;padding:0 14px;min-height:18px}
+#stage{position:relative;flex:1;display:flex;align-items:flex-end;gap:8px;padding:6px 12px 22px;min-height:0}
+#stage:after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(#2b1d4f,#170f33);border-top:3px solid #4a3a82}
+.tower{position:relative;z-index:1;display:flex;flex-direction:column;align-items:stretch}
+.tower.hero{width:27%;flex:none}
+#towers{flex:1;display:flex;align-items:flex-end;gap:8px;min-width:0;z-index:1}
+#towers .tower{flex:1;min-width:0}
+.roof{height:34px;margin:0 -7px;background:var(--c);clip-path:polygon(50% 0,100% 100%,0 100%);position:relative;filter:drop-shadow(0 3px 0 #0005)}
+.roof:after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,#fff3 0 38%,transparent 38% 62%,#0003 62%)}
+.flag{position:absolute;top:-14px;left:50%;width:2px;height:16px;background:#ddd;z-index:2}
+.flag:after{content:"";position:absolute;left:2px;top:0;width:12px;height:8px;background:var(--c);clip-path:polygon(0 0,100% 50%,0 100%)}
+.body{background:repeating-linear-gradient(0deg,#0002 0 2px,transparent 2px 14px),var(--stone);border:3px solid var(--stone2);border-bottom:0;border-radius:4px 4px 0 0;display:flex;flex-direction:column;padding:0 3px}
+.room{position:relative;height:var(--rh);margin:3px 0;border-radius:8px;background:radial-gradient(ellipse at 50% 30%,#4a3a8c,var(--win));border:2px solid #1a1238;box-shadow:inset 0 0 12px #0008;display:flex;align-items:center;justify-content:center;transition:filter .2s}
+.room[data-t]{cursor:pointer}
+.room[data-t]:hover{filter:brightness(1.25)}
+.room.done{background:#1c1540;cursor:default}
+.room.done:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,#0000 0 6px,#ffffff08 6px 12px)}
+.cnt{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1px;height:100%;padding-bottom:3px;transition:all .3s}
+.room.done .cnt{opacity:0;transform:scale(.2)}
+.cnt svg{height:calc(var(--rh)*.58);width:auto;filter:drop-shadow(0 2px 0 #0006)}
+.cnt.boss svg{height:calc(var(--rh)*.66)}
+.cnt.idle svg{animation:idle 1.6s ease-in-out infinite}
+@keyframes idle{50%{transform:translateY(-2px) scale(1.04)}}
+.pw{font-family:'Lilita One',sans-serif;font-size:15px;line-height:1;padding:2px 8px;border-radius:10px;border:2px solid #0007;color:#fff;text-shadow:0 1px 0 #0006;min-width:28px;text-align:center}
+.pw.g{background:var(--green)}.pw.r{background:var(--red)}.pw.pot{background:#a24cff}.pw.add{background:#19b6c9}.pw.sub{background:#ff8a2b}
+.hero-wrap{position:absolute;left:0;top:0;z-index:20;width:56px;display:flex;flex-direction:column;align-items:center;pointer-events:none;will-change:transform}
+.hero-wrap .pw{background:var(--green);font-size:17px;padding:2px 9px;margin-bottom:1px}
+.hero-wrap svg{width:46px;height:46px;filter:drop-shadow(0 3px 0 #0006)}
+.hero-wrap.bump .pw{animation:bump .4s}
+@keyframes bump{40%{transform:scale(1.5)}}
+.hero-wrap.dead svg{filter:grayscale(1) drop-shadow(0 3px 0 #0006);transform:rotate(90deg) translateX(-4px);transition:transform .4s}
+.hero-wrap.dead .pw{background:#555}
+.hero-wrap.hit svg{animation:hit .3s}
+@keyframes hit{30%{transform:translateX(8px) rotate(14deg)}60%{transform:translateX(-4px)}}
+.pop{position:absolute;z-index:30;font-family:'Lilita One';font-size:26px;color:#fff;text-shadow:0 2px 0 #000a,0 0 8px #000;pointer-events:none;animation:pop .9s ease-out forwards;transform:translateX(-50%)}
+@keyframes pop{from{opacity:1;transform:translate(-50%,0) scale(.7)}30%{transform:translate(-50%,-14px) scale(1.2)}to{opacity:0;transform:translate(-50%,-52px) scale(1)}}
+.pad{display:flex;align-items:flex-end;justify-content:center}
+#ov{position:absolute;inset:0;z-index:50;background:#0a0420cc;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+#ov.on{display:flex}
+.card{width:100%;max-width:340px;text-align:center;background:linear-gradient(#3a2480,#26165a);border:3px solid #ffffff40;border-radius:24px;padding:22px 18px 20px;box-shadow:0 12px 0 #0006,0 0 50px #8a4dff55;animation:cin .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes cin{from{transform:scale(.6);opacity:0}}
+.card h1{font-family:'Lilita One';font-weight:400;font-size:40px;margin:0 0 4px;color:var(--gold);text-shadow:0 3px 0 #7a4b00;line-height:1.05}
+.card h2{font-family:'Lilita One';font-weight:400;font-size:32px;margin:0 0 6px;line-height:1.1}
+.card p{margin:6px 0 14px;font-size:15px;line-height:1.35;opacity:.92}
+.big{font-family:'Lilita One';font-size:44px;color:var(--green);line-height:1}
+.btn{font-family:'Lilita One';font-size:24px;color:#fff;border:0;border-radius:18px;padding:12px 30px;background:linear-gradient(#4fe37f,#1fb455);box-shadow:0 5px 0 #0c6b30;cursor:pointer;margin:4px;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #0c6b30}
+.btn.alt{background:linear-gradient(#ffb23b,#ee7d12);box-shadow:0 5px 0 #8a4505}
+.btn.alt:active{box-shadow:0 2px 0 #8a4505}
+.mini{font-size:13px;opacity:.75;margin-top:8px}
+.titleart{display:flex;justify-content:center;gap:6px;margin-bottom:8px}.titleart svg{height:54px}
+@media (max-height:600px){:root{--rh:46px}.roof{height:26px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="stars"></div><div class="moon"></div>
+  <div id="hud">
+    <div class="chip" id="hudT">TORRE 1</div>
+    <div class="chip"><small>PONTOS</small><span id="hudS">0</span></div>
+    <button class="rbtn" id="rst" title="Reiniciar torre" aria-label="Reiniciar torre">&#8635;</button>
+  </div>
+  <div id="hint">Limpe todos os quartos. Escolha a ordem certa!</div>
+  <div id="stage"></div>
+  <div id="ov"></div>
+</div>
+<script>
+(function(){
+"use strict";
+var NL=20, COLORS=['#e0524f','#f2b233','#45b36b','#a35cd6'];
+var KEY='torre-do-poder:melhor';
+
+/* ---------- SVG art ---------- */
+var ART={
+ hero:'<svg viewBox="0 0 48 48"><rect x="15" y="26" width="18" height="16" rx="5" fill="#3b82f6" stroke="#1d4ba8" stroke-width="2"/><rect x="18" y="38" width="5" height="6" rx="2" fill="#7a4b2a"/><rect x="25" y="38" width="5" height="6" rx="2" fill="#7a4b2a"/><circle cx="24" cy="19" r="11" fill="#ffd7a8" stroke="#c9915a" stroke-width="2"/><path d="M12 19a12 12 0 0 1 24 0v2H12z" fill="#c9ced9" stroke="#7b8294" stroke-width="2"/><path d="M24 4c5 0 7 4 4 7-2-3-6-3-8 0-2-4 0-7 4-7z" fill="#ff4a5a"/><circle cx="20" cy="24" r="1.8" fill="#222"/><circle cx="28" cy="24" r="1.8" fill="#222"/><path d="M21 28q3 2 6 0" stroke="#a5532f" stroke-width="1.6" fill="none" stroke-linecap="round"/><rect x="37" y="14" width="4" height="22" rx="1.5" fill="#e8eef7" stroke="#8a93a8" stroke-width="1.5"/><rect x="34" y="34" width="10" height="3.5" rx="1.5" fill="#ffcf33"/><circle cx="12" cy="33" r="7" fill="#ffcf33" stroke="#b8860b" stroke-width="2"/><circle cx="12" cy="33" r="2.5" fill="#ff4a5a"/></svg>',
+ g:'<svg viewBox="0 0 48 48"><path d="M8 42V22C8 11 15 5 24 5s16 6 16 17v20l-5-4-5 4-6-4-6 4-5-4z" fill="#f4f1ff" stroke="#b9b0e8" stroke-width="2"/><ellipse cx="18" cy="22" rx="3" ry="4.2" fill="#2b2250"/><ellipse cx="30" cy="22" rx="3" ry="4.2" fill="#2b2250"/><ellipse cx="13.5" cy="29" rx="3" ry="2" fill="#ffb3d1"/><ellipse cx="34.5" cy="29" rx="3" ry="2" fill="#ffb3d1"/><path d="M20 30q4 4 8 0" stroke="#2b2250" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+ s:'<svg viewBox="0 0 48 48"><path d="M4 43C2 28 10 11 24 11s22 17 20 32z" fill="#59d36b" stroke="#2f9a45" stroke-width="2"/><ellipse cx="16" cy="21" rx="5" ry="3" fill="#ffffff66" transform="rotate(-25 16 21)"/><circle cx="17" cy="30" r="5" fill="#fff"/><circle cx="31" cy="30" r="5" fill="#fff"/><circle cx="18" cy="31" r="2.4" fill="#222"/><circle cx="30" cy="31" r="2.4" fill="#222"/><path d="M20 38q4 3 8 0" stroke="#1f6e30" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+ d:'<svg viewBox="0 0 48 48"><path d="M10 26L1 14l13 4zM38 26l9-12-13 4z" fill="#8a4dd6" stroke="#5b2a9a" stroke-width="1.5"/><path d="M14 14l-2-9 7 6zM34 14l2-9-7 6z" fill="#fff2c4" stroke="#b8a45a" stroke-width="1.5"/><ellipse cx="24" cy="28" rx="15" ry="15" fill="#e5564f" stroke="#a42a2a" stroke-width="2"/><ellipse cx="24" cy="35" rx="9" ry="8" fill="#ffd479"/><circle cx="17" cy="23" r="4" fill="#fff"/><circle cx="31" cy="23" r="4" fill="#fff"/><ellipse cx="17.5" cy="23.5" rx="1.4" ry="3" fill="#222"/><ellipse cx="30.5" cy="23.5" rx="1.4" ry="3" fill="#222"/><path d="M18 32q6 5 12 0" stroke="#7a1c1c" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 33l1.5 3 1.5-3zM25 33l1.5 3 1.5-3z" fill="#fff"/><circle cx="21" cy="28" r="1" fill="#7a1c1c"/><circle cx="27" cy="28" r="1" fill="#7a1c1c"/></svg>',
+ crown:'<path d="M14 12L11 1l8 5 5-6 5 6 8-5-3 11z" fill="#ffcf33" stroke="#b8860b" stroke-width="1.5" stroke-linejoin="round"/><circle cx="24" cy="5" r="1.6" fill="#ff4a5a"/>',
+ x2:'<svg viewBox="0 0 48 48"><rect x="19" y="4" width="10" height="7" rx="2" fill="#c9915a" stroke="#7a4b2a" stroke-width="1.5"/><path d="M19 11h10v7l9 15a8 8 0 0 1-7 12H17a8 8 0 0 1-7-12l9-15z" fill="#b25cff" stroke="#6b2fb0" stroke-width="2"/><path d="M14 33h20l3 5a6 6 0 0 1-5 7H16a6 6 0 0 1-5-7z" fill="#d79bff"/><circle cx="21" cy="31" r="2" fill="#fff"/><circle cx="28" cy="38" r="1.5" fill="#fff"/></svg>',
+ add:'<svg viewBox="0 0 48 48"><path d="M36 4l8-1-1 8L22 32l-6-6z" fill="#e8eef7" stroke="#8a93a8" stroke-width="2" stroke-linejoin="round"/><rect x="9" y="27" width="16" height="5" rx="2" fill="#ffcf33" stroke="#b8860b" stroke-width="1.5" transform="rotate(45 17 29.500)"/><rect x="9" y="30" width="6" height="14" rx="2" fill="#7a4b2a" transform="rotate(45 12 37)"/><circle cx="8" cy="42" r="3.5" fill="#ff4a5a"/></svg>',
+ chest:'<svg viewBox="0 0 48 48"><path d="M6 22a18 12 0 0 1 36 0z" fill="#b8742f" stroke="#6b3d12" stroke-width="2"/><rect x="6" y="22" width="36" height="20" rx="3" fill="#a5601f" stroke="#6b3d12" stroke-width="2"/><rect x="6" y="22" width="36" height="5" fill="#ffcf33" stroke="#b8860b" stroke-width="1.5"/><rect x="20" y="24" width="8" height="10" rx="2" fill="#ffcf33" stroke="#b8860b" stroke-width="1.5"/><circle cx="24" cy="29" r="1.6" fill="#6b3d12"/></svg>',
+ sub:'<svg viewBox="0 0 48 48"><rect x="4" y="38" width="40" height="6" rx="2" fill="#5a5a72" stroke="#33334a" stroke-width="2"/><path d="M6 38l5-24 5 24zM17 38l7-30 7 30zM32 38l5-24 5 24z" fill="#cfd4e4" stroke="#7b8294" stroke-width="2" stroke-linejoin="round"/><path d="M24 8l2 8-2 2-2-2z" fill="#ff4a5a"/></svg>'
+};
+function sprite(r){
+  if(r.t==='e'){
+    var s=ART[r.k];
+    if(r.boss){s=s.replace('</svg>',ART.crown+'</svg>');}
+    var hue=[0,0,0][0]; if(r.k!=='d'){hue=(r.v||0)*70;}
+    return s.replace('<svg ','<svg style="'+(hue?'filter:hue-rotate('+hue+'deg) drop-shadow(0 2px 0 #0006);':'')+'" ');
+  }
+  if(r.t==='x2')return ART.x2;
+  if(r.t==='add')return r.chest?ART.chest:ART.add;
+  return ART.sub;
+}
+function label(r){
+  if(r.t==='x2')return '×2';
+  if(r.t==='add')return '+'+r.v;
+  if(r.t==='sub')return '−'+r.v;
+  if(r.t==='div')return '÷2';
+  return ''+r.p;
+}
+
+/* ---------- logic ---------- */
+function E(p,k,boss){return {t:'e',p:p,k:k||'s',boss:!!boss,v:(p%3)}}
+function X(){return {t:'x2'}}
+function A(v){return {t:'add',v:v}}
+function C(v){return {t:'add',v:v,chest:true}}
+function S(v){return {t:'sub',v:v}}
+function D(){return {t:'div'}}
+var HAND=[
+ {hero:10,towers:[[E(22,'d',1),E(8,'s'),E(6,'g')]]},
+ {hero:8,towers:[[E(14,'d',1),X(),E(6,'s')],[E(7,'g')]]},
+ {hero:5,towers:[[E(28,'d',1),S(3),E(9,'g')],[A(6),E(4,'s'),X()]]},
+ {hero:6,towers:[[E(50,'d',1),E(20,'g'),E(9,'s')],[D(),A(8),X(),E(5,'s')]]},
+ {hero:7,towers:[[E(100,'d',1),E(15,'g'),S(5),E(6,'s')],[X(),C(10),E(30,'d')],[E(9,'s'),E(12,'g')]]}
+];
+function apply(r,p){
+  switch(r.t){
+    case 'e':return p>r.p?p+r.p:0;
+    case 'x2':return p*2;
+    case 'add':return p+r.v;
+    case 'sub':return p-r.v;
+    case 'div':return Math.floor(p/2);
+  }
+  return 0;
+}
+function solve(h,rooms){
+  var n=rooms.length,full=(1<<n)-1,best={};
+  function dfs(mask,p){
+    if(mask===full)return true;
+    var b=best[mask]; if(b!==undefined&&b>=p)return false; best[mask]=p;
+    for(var i=0;i<n;i++){
+      if(!(mask>>i&1)){var q=apply(rooms[i],p); if(q>0&&dfs(mask|(1<<i),q))return true;}
+    }
+    return false;
+  }
+  return dfs(0,h);
+}
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gen(i){
+  var R=rng(i*7919+101),last=null;
+  var n=Math.min(10,5+Math.floor(i/2));
+  for(var at=0;at<500;at++){
+    var hero=4+Math.floor(R()*9),p=hero,rooms=[],nx=0,nd=0,ok=true;
+    for(var k=0;k<n;k++){
+      var isLast=k===n-1,t='e',x=R();
+      if(!isLast){
+        if(x<.15&&nx<(i>11?2:1)){t='x2';nx++}
+        else if(x<.32)t='add';
+        else if(x<.40)t='chest';
+        else if(x<.48&&k>0&&p>=4)t='sub';
+        else if(x<.54&&nd<1&&k>0&&p>=6){t='div';nd++}
+      }
+      if(p<2&&t==='e')t='add';
+      var r;
+      if(t==='x2'){r={t:'x2'};p*=2}
+      else if(t==='add'||t==='chest'){var v=Math.max(2,Math.floor(p*(.3+R()*.4)));r={t:'add',v:v,chest:t==='chest'};p+=v}
+      else if(t==='sub'){var v2=Math.max(1,Math.floor(p*(.15+R()*.2)));r={t:'sub',v:v2};p-=v2}
+      else if(t==='div'){r={t:'div'};p=Math.floor(p/2)}
+      else{var e=Math.max(1,Math.floor(p*(.6+R()*.37)));if(e>=p)e=p-1;if(e<1){ok=false;break}
+        r={t:'e',p:e,k:['g','s','d'][Math.floor(R()*3)],v:Math.floor(R()*5),boss:isLast};if(isLast)r.k='d';p+=e}
+      rooms.push(r);
+    }
+    if(!ok||nx<1||p>9999)continue;
+    for(var a=rooms.length-1;a>0;a--){var b=Math.floor(R()*(a+1)),tmp=rooms[a];rooms[a]=rooms[b];rooms[b]=tmp}
+    var red=rooms.filter(function(q){return q.t==='e'&&q.p>=hero}).length;
+    if(red<2&&at<300)continue;
+    if(!solve(hero,rooms))continue;
+    var nt=n<=7?2:3,tw=[];for(var j=0;j<nt;j++)tw.push([]);
+    rooms.forEach(function(q,idx){tw[idx%nt].push(q)});
+    last={hero:hero,towers:tw};
+    return last;
+  }
+  return last||{hero:10,towers:[[E(8,'s'),E(30,'d',1)]]};
+}
+var cache={};
+function levelData(i){
+  if(i<HAND.length)return HAND[i];
+  if(!cache[i])cache[i]=gen(i);
+  return cache[i];
+}
+function flat(d){var a=[];d.towers.forEach(function(t){t.forEach(function(r){a.push(r)})});return a}
+window.__torre={solve:solve,levelData:levelData,flat:flat,NL:NL};
+
+/* ---------- state / UI ---------- */
+var $=function(s){return document.querySelector(s)};
+var lvl=0,hero=0,towers=[],busy=false,over=false,score=0,heroEl,hx=0,hy=0,best=0;
+try{best=parseInt(localStorage.getItem(KEY),10)||0}catch(e){}
+function saveBest(n){if(n>best){best=n;try{localStorage.setItem(KEY,String(n))}catch(e){}}}
+
+function loadLevel(){
+  var d=levelData(lvl);
+  hero=d.hero;
+  towers=d.towers.map(function(t){return t.map(function(r){var c={};for(var k in r)c[k]=r[k];c.done=false;return c})});
+  busy=false;over=false;
+  $('#ov').className='';
+  render();
+}
+function render(){
+  var st=$('#stage'),h='';
+  h+='<div class="tower hero" id="htower"><div class="roof" style="--c:#3b82f6"><div class="flag" style="--c:#3b82f6"></div></div><div class="body"><div class="room pad" id="pad"></div><div class="room"></div></div></div>';
+  h+='<div id="towers">';
+  towers.forEach(function(t,ti){
+    h+='<div class="tower"><div class="roof" style="--c:'+COLORS[(ti+lvl)%4]+'"></div><div class="body">';
+    t.forEach(function(r,ri){
+      h+='<div class="room" data-t="'+ti+'" data-r="'+ri+'" id="r'+ti+'_'+ri+'"><div class="cnt idle'+(r.boss?' boss':'')+'">'+
+         '<span class="pw"></span>'+sprite(r)+'</div></div>';
+    });
+    h+='</div></div>';
+  });
+  h+='</div>';
+  h+='<div class="hero-wrap" id="hero"><span class="pw" id="hp">'+hero+'</span>'+ART.hero+'</div>';
+  st.innerHTML=h;
+  heroEl=$('#hero');
+  $('#hudT').textContent='TORRE '+(lvl+1);
+  $('#hudS').textContent=score;
+  refresh();
+  requestAnimationFrame(function(){placeHome()});
+}
+function refresh(){
+  $('#hp').textContent=hero;
+  towers.forEach(function(t,ti){t.forEach(function(r,ri){
+    var el=document.getElementById('r'+ti+'_'+ri); if(!el)return;
+    var pw=el.querySelector('.pw'); pw.textContent=label(r);
+    var c='pw ';
+    if(r.t==='e')c+=hero>r.p?'g':'r';
+    else if(r.t==='x2')c+='pot';
+    else if(r.t==='add')c+='add';
+    else c+='sub';
+    pw.className=c;
+    if(r.done){el.classList.add('done');el.removeAttribute('data-t')}
+  })});
+}
+function relRect(el){
+  var a=el.getBoundingClientRect(),b=$('#stage').getBoundingClientRect();
+  return {x:a.left-b.left,y:a.top-b.top,w:a.width,h:a.height};
+}
+function homePos(){
+  var r=relRect($('#pad'));
+  return {x:r.x+r.w/2-28,y:r.y+r.h-heroEl.offsetHeight-2};
+}
+function placeHome(){
+  if(!heroEl||busy)return;
+  var p=homePos();hx=p.x;hy=p.y;heroEl.style.transform='translate('+hx+'px,'+hy+'px)';
+}
+function move(x,y,ms,arc){
+  return new Promise(function(res){
+    var fx=hx,fy=hy;
+    hx=x;hy=y;
+    heroEl.style.transform='translate('+x+'px,'+y+'px)';
+    var a=heroEl.animate([
+      {transform:'translate('+fx+'px,'+fy+'px)'},
+      {transform:'translate('+((fx+x)/2)+'px,'+(Math.min(fy,y)-arc)+'px)',offset:.5},
+      {transform:'translate('+x+'px,'+y+'px)'}
+    ],{duration:ms,easing:'ease-in-out'});
+    a.onfinish=res; a.oncancel=res;
+  });
+}
+function pop(el,txt,color){
+  var st=$('#stage'),r=relRect(el),s=document.createElement('div');
+  s.className='pop';s.textContent=txt;s.style.left=(r.x+r.w/2)+'px';s.style.top=(r.y)+'px';
+  if(color)s.style.color=color;
+  st.appendChild(s);setTimeout(function(){s.remove()},950);
+}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function bumpHero(){heroEl.classList.remove('bump');void heroEl.offsetWidth;heroEl.classList.add('bump')}
+
+async function tap(ti,ri){
+  if(busy||over)return;
+  var r=towers[ti][ri]; if(!r||r.done)return;
+  busy=true;
+  var el=document.getElementById('r'+ti+'_'+ri),rc=relRect(el);
+  await move(rc.x+rc.w/2-28-6,rc.y+rc.h-heroEl.offsetHeight-2,480,46);
+  var ok=true,txt='',col='#fff';
+  if(r.t==='e'){
+    if(hero>r.p){hero+=r.p;txt='+'+r.p;col='#7dffa5'}
+    else ok=false;
+  }else if(r.t==='x2'){hero*=2;txt='×2';col='#e0b0ff'}
+  else if(r.t==='add'){hero+=r.v;txt='+'+r.v;col='#7df0ff'}
+  else if(r.t==='sub'){hero-=r.v;txt='−'+r.v;col='#ffb36b';if(hero<1)ok=false}
+  else if(r.t==='div'){hero=Math.floor(hero/2);txt='÷2';col='#ffb36b';if(hero<1)ok=false}
+  if(!ok){
+    heroEl.classList.add('hit');
+    pop(el,'☠','#fff');
+    await sleep(300);
+    heroEl.classList.add('dead');$('#hp').textContent='☠';
+    over=true;
+    await sleep(900);
+    lose();return;
+  }
+  r.done=true;
+  pop(el,txt,col);bumpHero();
+  heroEl.classList.add('hit');
+  refresh();
+  await sleep(450);
+  heroEl.classList.remove('hit');
+  if(towers.every(function(t){return t.every(function(q){return q.done})})){
+    over=true;
+    await sleep(250);
+    win();return;
+  }
+  var hp=homePos();
+  await move(hp.x,hp.y,420,34);
+  busy=false;
+}
+
+/* ---------- overlays ---------- */
+function show(html){var o=$('#ov');o.innerHTML='<div class="card">'+html+'</div>';o.className='on'}
+function clampScore(){return Math.max(1,Math.min(50000,Math.round(score)))}
+function endRun(nivel){
+  if(score>0){try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:clampScore(),nivel:'Torre '+nivel},'*')}catch(e){}}
+}
+function start(){
+  show('<div class="titleart">'+ART.hero+ART.g+ART.s+ART.d+'</div><h1>Torre do Poder</h1><p>Toque nos quartos para enfrentar inimigos e pegar itens. Só vence quem tem mais poder: escolha a ordem certa!</p><button class="btn" id="go">Jogar</button><div class="mini">'+(best?'Recorde: Torre '+best+' de '+NL:'Venza '+NL+' torres')+'</div>');
+  $('#go').onclick=function(){newRun(0)};
+}
+function newRun(l){score=0;lvl=l;loadLevel()}
+function win(){
+  score+=hero;saveBest(lvl+1);
+  $('#hudS').textContent=score;
+  if(lvl+1>=NL){
+    endRun(NL);
+    show('<h1>Campeão!</h1><p>Você conquistou todas as '+NL+' torres!</p><div class="mini">PONTOS</div><div class="big">'+clampScore()+'</div><br><button class="btn" id="again">Jogar de novo</button>');
+    $('#again').onclick=function(){newRun(0)};
+    return;
+  }
+  show('<h2>Torre vencida!</h2><p>Poder final</p><div class="big">'+hero+'</div><div class="mini">Pontos: '+score+'</div><br><button class="btn" id="nx">Próxima torre</button>');
+  $('#nx').onclick=function(){lvl++;loadLevel()};
+}
+function lose(){
+  endRun(lvl+1);
+  show('<h2>Derrota!</h2><p>O herói foi derrotado na torre '+(lvl+1)+'.</p><div class="mini">PONTOS DA JORNADA</div><div class="big" style="color:#ffcf33">'+(score>0?clampScore():0)+'</div><br><button class="btn" id="retry">Tentar de novo</button><br><button class="btn alt" id="again">Jogar de novo</button>');
+  $('#retry').onclick=function(){score=0;loadLevel()};
+  $('#again').onclick=function(){newRun(0)};
+}
+
+$('#stage').addEventListener('click',function(e){
+  var el=e.target.closest&&e.target.closest('.room[data-t]');
+  if(el)tap(+el.dataset.t,+el.dataset.r);
+});
+$('#rst').onclick=function(){if(!busy||over===false&&false){}; if($('#ov').className==='on')return; if(busy)return; loadLevel()};
+window.addEventListener('resize',function(){placeHome()});
+window.__torre.tap=tap;window.__torre.state=function(){return {lvl:lvl,hero:hero,towers:towers,busy:busy,over:over,score:score}};
+loadLevel();
+start();
+})();
+</script>
+</body>
+</html>
