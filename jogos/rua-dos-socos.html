@@ -1098,11 +1098,11 @@ function drawMenu(c){
     c.fillStyle=on?'rgba(255,207,58,.28)':'rgba(255,255,255,.08)';c.fillRect(x,64,148,106);
     c.strokeStyle=on?'#ffcf3a':'#ffffff55';c.lineWidth=on?3:1;c.strokeRect(x,64,148,106);
     // character
-    const fake={k:'hero',hero:id,look:LOOKS[id],scale:(LOOKS[id].scale||1)*1.5,x:0,y:0,z:0,dir:1,state:'idle',t:0,anim:tick,inv:0,flash:0,weapon:null,S:S,dead:false};
-    const oc=cam;cam=-(x+74);fake.x=0;fake.y=128;
+    const fake={k:'hero',hero:id,look:LOOKS[id],scale:(LOOKS[id].scale||1)*1.25,x:0,y:0,z:0,dir:1,state:'idle',t:0,anim:tick,inv:0,flash:0,weapon:null,S:S,dead:false};
+    const oc=cam;cam=-(x+74);fake.x=0;fake.y=134;
     drawChar(c,fake);cam=oc;
-    txt(c,S.name.toUpperCase(),x+74,160,15,on?'#ffcf3a':'#fff','center');
-    txt(c,S.desc,x+74,70+0,8,'#cfe','center',false);
+    txt(c,S.name.toUpperCase(),x+74,156,15,on?'#ffcf3a':'#fff','center');
+    txt(c,S.desc,x+74,166,8,'#cfe','center',false);
   });
   button(c,16,180,110,24,coop?'2 JOGADORES':'1 JOGADOR',()=>{coop=!coop},'#3a8bff',13);
   button(c,190,178,100,28,'JOGAR',startGame,null,18);

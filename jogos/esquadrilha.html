@@ -989,7 +989,7 @@ requestAnimationFrame(tick);
 
 window.__esq={
   get s(){return {state,score,lives,bombs,wlvl,stage,phase,loop,en:en.length,bigs:bigs.length,eb:eb.length,mult,boss:!!bossObj}},
-  god(v){god=v},setW(v){wlvl=v},
+  god(v){god=v},sc(v){score=v},setW(v){wlvl=v},
   jump(st){stage=st;startStage()},
   toBoss(){stageT=STAGE_LEN+1000;en.length=0;queue.length=0},
   killBoss(){if(bossObj){for(const p of bossObj.parts)if(p.hp>0)damagePart(bossObj,p,9999);damageBody(bossObj,99999)}},

@@ -411,7 +411,7 @@ function choose(i){
 /* ---------- end ---------- */
 function endGame(win){
   if(state==='over')return;
-  state='over';uiT=0;winFlag=win;
+  state='over';uiT=0;winFlag=win;bannerT=0;
   const secs=Math.floor(t);score=Math.round(kills+secs*5+level*50+bonus);
   const pts=clamp(score,0,50000);
   newBest=score>best;if(newBest){best=score;try{localStorage.setItem('horda_best',String(best))}catch(e){}}
