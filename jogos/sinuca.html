@@ -257,7 +257,7 @@ function resolveShot(){
 }
 function strikeReset(){strike=null}
 function endGame(){
-  state='over';
+  state='over';banner=null;
   const win=scores[0]>scores[1],tie=scores[0]===scores[1];
   over={win,tie,pts:0};
   if(mode===1){
@@ -349,7 +349,7 @@ function clampD(x,y){
   return {x:Math.max(x,PX0+R),y};
 }
 function placeAt(x,y){const p=clampD(x,y),c=balls[0];c.x=p.x;c.y=p.y;placeValid=validPlace(c.x,c.y)}
-function confirmPlace(){if(!placeValid)return;state='aim';wait=0;const vz=vezBall(),c=balls[0];if(vz)aimAng=Math.atan2(vz.y-c.y,vz.x-c.x);power=0}
+function confirmPlace(){if(!placeValid)return;banner=null;state='aim';wait=0;const vz=vezBall(),c=balls[0];if(vz)aimAng=Math.atan2(vz.y-c.y,vz.x-c.x);power=0}
 
 function toLogical(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 function hitUI(p){for(let i=UI.length-1;i>=0;i--){const b=UI[i];if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h)return b}return null}
@@ -702,8 +702,7 @@ function render(){
   ctx.restore();
   drawHUD();
   if(state==='aim'&&isHuman())drawPowerBar();
-  drawBanner();
-  if(state==='over')drawOver();
+  if(state==='over')drawOver();else drawBanner();
 }
 
 /* ================= LOOP ================= */
