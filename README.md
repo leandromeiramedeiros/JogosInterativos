@@ -20,6 +20,9 @@ Uma prateleira de jogos para jogar no navegador.
 | [Corrida dos Portões](https://leandromeiramedeiros.github.io/JogosInterativos/#corrida-dos-portoes) | Arraste a multidão pelos portões que mais somam e vença o exército inimigo no fim da pista. |
 | [Torre do Poder](https://leandromeiramedeiros.github.io/JogosInterativos/#torre-do-poder) | Derrote só quem for mais fraco que você e suba a torre andar por andar. |
 | [Salve o Cachorro](https://leandromeiramedeiros.github.io/JogosInterativos/#salve-o-cachorro) | Desenhe uma linha para proteger o cachorro das abelhas por 10 segundos. A tinta é pouca. |
+| [Estilingue](https://leandromeiramedeiros.github.io/JogosInterativos/#estilingue) | Estique o estilingue, mire e derrube as torres de madeira, pedra e vidro até não sobrar nenhum inimigo. |
+| [Doce na Corda](https://leandromeiramedeiros.github.io/JogosInterativos/#doce-na-corda) | Corte as cordas na hora certa para o doce pegar as estrelas e cair na boca do sapinho. |
+| [Arena de Briga](https://leandromeiramedeiros.github.io/JogosInterativos/#arena-de-briga) | Luta de plataforma para 2 jogadores no mesmo teclado (ou contra a CPU). Jogue o rival para fora da arena. |
 
 ## Placar
 
