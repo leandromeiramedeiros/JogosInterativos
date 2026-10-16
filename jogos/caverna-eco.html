@@ -8,9 +8,9 @@
 <style>
 html,body{margin:0;height:100%;background:#05070d;overflow:hidden;font-family:Figtree,system-ui,sans-serif;color:#e8f4ff;-webkit-user-select:none;user-select:none;touch-action:none}
 #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
-canvas{image-rendering:pixelated;display:block}
+canvas{display:block}
 .ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,6,12,.74);z-index:20}
-.card{background:linear-gradient(#10243a,#0a1422);border:2px solid #3fd0ff55;border-radius:14px;padding:16px 22px;max-width:min(92vw,520px);max-height:94vh;overflow:auto;text-align:center;box-shadow:0 0 40px #3fd0ff33}
+.card{box-sizing:border-box;background:linear-gradient(#10243a,#0a1422);border:2px solid #3fd0ff55;border-radius:14px;padding:16px 22px;max-width:min(92vw,520px);max-height:94vh;overflow:auto;text-align:center;box-shadow:0 0 40px #3fd0ff33}
 h1{font-family:"Lilita One",Figtree,sans-serif;font-weight:400;font-size:clamp(30px,7vw,52px);margin:0;color:#bff4ff;text-shadow:0 0 18px #3fd0ff,0 3px 0 #0a3550;letter-spacing:1px}
 h2{font-family:"Lilita One",Figtree,sans-serif;font-weight:400;margin:0 0 6px;font-size:28px;color:#ffe08a}
 p{margin:6px 0;font-size:14px;line-height:1.35;color:#c5dcee}
@@ -21,27 +21,31 @@ button.b:active{transform:translateY(3px);box-shadow:0 1px 0 #1d6f94}
 button.b.s{background:linear-gradient(#35506b,#243a50);color:#cfe8ff;box-shadow:0 4px 0 #101c2a;font-size:16px;padding:7px 18px}
 .res{font-size:15px;margin:8px 0;line-height:1.6}.res b{color:#ffe08a}
 #top{position:fixed;top:6px;right:6px;display:flex;gap:6px;z-index:10}
-#top button{font:700 12px Figtree,sans-serif;background:#0d1c2ccc;color:#bfe9ff;border:1px solid #3fd0ff66;border-radius:8px;padding:6px 10px;cursor:pointer}
+#top button{font:700 12px Figtree,sans-serif;background:#0d1c2ccc;color:#bfe9ff;border:1px solid #3fd0ff66;border-radius:8px;padding:6px 10px;cursor:pointer;min-height:30px}
+body.touch #top button{min-height:38px;min-width:46px;font-size:13px}
+#top button:focus-visible,button.b:focus-visible{outline:2px solid #ffe08a;outline-offset:2px}
+body.touch .kb,body:not(.touch) .tc{display:none!important}
+@media (max-aspect-ratio:4/5){body.touch #stage{padding-bottom:170px;box-sizing:border-box}}
 #touch{position:fixed;inset:0;pointer-events:none;display:none;z-index:9}
 body.touch #touch{display:block}
 .tb{position:absolute;pointer-events:auto;border-radius:50%;background:#0d1c2c99;border:2px solid #7fe7ff77;color:#dff6ff;font:700 12px Figtree,sans-serif;display:flex;align-items:center;justify-content:center;touch-action:none}
 .tb.on{background:#3fd0ff88}.tb.off{opacity:.35}
-#dp{left:10px;bottom:10px;width:150px;height:150px}
+#dp{left:max(10px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:150px;height:150px}
 #dp .tb{width:50px;height:50px;border-radius:12px;font-size:20px}
 #bt .tb{width:62px;height:62px}
 </style>
 </head>
 <body>
 <div id="stage"><canvas id="c"></canvas></div>
-<div id="top"><button id="bMapa">MAPA</button><button id="bMenu">MENU</button></div>
+<div id="top"><button id="bSom" aria-label="Som">SOM</button><button id="bMapa">MAPA</button><button id="bMenu">PAUSA</button></div>
 <div id="touch">
- <div id="dp" style="position:absolute;left:0;bottom:0">
+ <div id="dp" style="position:absolute">
   <div class="tb" data-a="U" style="left:50px;top:0">&#9650;</div>
   <div class="tb" data-a="L" style="left:0;top:50px">&#9664;</div>
   <div class="tb" data-a="R" style="left:100px;top:50px">&#9654;</div>
   <div class="tb" data-a="D" style="left:50px;top:100px">&#9660;</div>
  </div>
- <div id="bt" style="position:absolute;right:0;bottom:0;width:100%;height:0">
+ <div id="bt" style="position:absolute;right:0;bottom:max(12px,env(safe-area-inset-bottom));width:100%;height:0">
   <div class="tb" data-a="J" style="right:14px;bottom:70px">PULO</div>
   <div class="tb" data-a="A" style="right:84px;bottom:20px">ATAQUE</div>
   <div class="tb" data-a="S" id="tbS" style="right:84px;bottom:94px">DASH</div>
@@ -52,7 +56,8 @@ body.touch #touch{display:block}
 <div class="ov" id="pTitle"><div class="card">
  <h1>Caverna Eco</h1>
  <p>Lume, a pequena exploradora do capacete brilhante, desce a uma caverna viva. Encontre habilidades, derrote os guardi&otilde;es e descubra o Cora&ccedil;&atilde;o da Montanha.</p>
- <div class="keys"><span><b>&larr; &rarr; / A D</b> mover</span><span><b>Z / Espa&ccedil;o / K</b> pular</span><span><b>X / J</b> atacar (&uarr; ataca para cima)</span><span><b>C / L</b> investida</span><span><b>V / Shift</b> disparo de eco</span><span><b>M</b> mapa &nbsp; <b>Esc</b> menu</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span></div>
+ <div class="keys kb"><span><b>&larr; &rarr; / A D</b> mover</span><span><b>Z / Espa&ccedil;o / K</b> pular</span><span><b>X / J</b> atacar (&uarr; ataca para cima)</span><span><b>C / L</b> investida</span><span><b>V / Shift</b> disparo de eco</span><span><b>M</b> mapa &nbsp; <b>Esc</b> menu</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span></div>
+ <div class="keys tc"><span><b>Direcional</b> mover e (&uarr;) atacar para cima</span><span><b>PULO</b> pular, duas vezes no ar com a habilidade</span><span><b>ATAQUE</b> golpe de espada</span><span><b>DASH / ECO</b> aparecem ao achar as habilidades</span><span><b>MAPA / PAUSA</b> no canto da tela</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span></div>
  <button class="b" id="bPlay">Jogar</button><button class="b s" id="bNew" style="display:none">Novo jogo</button>
  <p id="tBest" style="font-size:12px"></p>
 </div></div>
@@ -62,13 +67,13 @@ body.touch #touch{display:block}
  <button class="b" id="pCont">Continuar</button><br>
  <button class="b s" id="pMap">Mapa</button>
  <button class="b s" id="pSnd">Som: ligado</button><br>
- <button class="b s" id="pEnd">Encerrar jornada</button>
+ <button class="b s" id="pMenu">Menu principal</button><button class="b s" id="pEnd">Encerrar jornada</button>
 </div></div>
 
 <div class="ov" id="pEndS"><div class="card">
  <h2 id="eT">Fim da jornada</h2>
  <div class="res" id="eR"></div>
- <button class="b" id="eAgain">Jogar de novo</button>
+ <button class="b" id="eAgain">Jogar de novo</button><button class="b s" id="eMenu">Menu principal</button>
 </div></div>
 
 <script>
@@ -76,14 +81,17 @@ body.touch #touch{display:block}
 'use strict';
 const W=480,H=270,T=16,CW=30,CH=17;
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
-let K=1;
+let K=1,VW=W,camX=0,camSnap=true;
 function resize(){
-  const dpr=window.devicePixelRatio||1,s=Math.min(innerWidth/W,innerHeight/H);
-  const k=Math.max(1,Math.floor(s*dpr)); K=k;
-  cv.width=W*k;cv.height=H*k;
-  const cs=Math.floor(s*dpr)>=1?k/dpr:s;
-  cv.style.width=(W*cs)+'px';cv.style.height=(H*cs)+'px';
+  /* em tela vertical (celular em pé) mostra só uma janela da sala, que segue a Lume */
+  VW=innerWidth/Math.max(1,innerHeight)<.8?320:W;
+  const dpr=Math.min(window.devicePixelRatio||1,3),s=Math.max(.2,Math.min(innerWidth/VW,innerHeight/H));
+  const k=Math.min(8,Math.max(1,Math.ceil(s*dpr-.001))); K=k;
+  cv.width=VW*k;cv.height=H*k;
+  cv.style.width=Math.floor(VW*s)+'px';cv.style.height=Math.floor(H*s)+'px';
+  cv.style.imageRendering=Math.abs(s*dpr-k)<.03?'pixelated':'auto';
 }
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 addEventListener('resize',resize);resize();
 const mkc=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
 const tileC=mkc(W,272),tctx=tileC.getContext('2d');
@@ -91,6 +99,7 @@ const lightC=mkc(W,H),lctx=lightC.getContext('2d');
 
 /* ---------- audio ---------- */
 let AC=null,muted=false;
+try{muted=localStorage.getItem('caverna-eco-mute')==='1'}catch(e){}
 function sfx(f,d=.08,type='square',v=.04,sl=0){
   if(muted)return;
   try{
@@ -128,11 +137,11 @@ function mk(id,gx,gy,name,bi,ex,ops,o){
 }
 let r;
 r=mk('A',0,1,'Clareira Musgosa',0,{R:12},[['=',9,12,4,1],['#',16,13,3,2]]);
-r.save=[5,14];r.en=[['bug',22,14],['bug',25,14]];r.hints=[[24,150,'← → mover    Z pular    X atacar']];
+r.save=[5,14];r.en=[['bug',22,14],['bug',25,14]];r.hints=[[120,150,'HINT_MOVE']];
 r=mk('B',1,1,'Túnel de Musgo',0,{L:12,R:12,U:13},[['=',3,12,4,1],['=',8,8,4,1],['=',13,4,5,1]]);
 r.en=[['bug',10,14],['bug',22,14],['bat',20,5]];r.hints=[[200,36,'▲ saída alta']];
 r=mk('C',2,1,'Câmara dos Fungos',0,{L:12,R:12,D:13},[['C',26,12,2,3],['=',6,12,4,1],['=',20,11,4,1],['#',9,13,2,2]]);
-r.en=[['plant',22,14],['bug',5,14],['bat',18,4]];r.hints=[[330,150,'parede rachada']];
+r.save=[24,14];r.en=[['plant',16,14],['bug',5,14],['bat',18,4]];r.hints=[[330,150,'parede rachada']];
 r=mk('D',2,2,'Gruta Escondida',0,{U:13,R:12},[['C',26,12,2,3],['=',4,12,4,1],['=',8,9,3,1],['=',12,6,3,1],['=',9,3,4,1]]);
 r.en=[['bug',18,14],['bat',22,6]];r.items=[{id:'dbl',k:'ab',tx:22,ty:14}];
 r=mk('E',1,0,'Santuário do Rastro',0,{D:13},[['=',5,11,4,1],['=',20,11,4,1]]);
@@ -164,6 +173,14 @@ r.en=[['beetle',10,14],['bat',12,5],['beetle',20,14]];r.items=[{id:'f3',k:'fr',t
 r=mk('Q',9,1,'Salão do Golem',3,{L:12},[['=',5,10,4,1],['=',21,10,4,1]]);
 r.boss='golem';
 
+const HINTS={HINT_MOVE:['← → mover    Z pular    X atacar','Direcional mover    PULO    ATAQUE']};
+const isTouch=()=>document.body.classList.contains('touch');
+const ABT={
+ dbl:'Toque em PULO de novo no ar para alcançar plataformas altas.',
+ dash:'Toque em DASH para disparar numa linha reta. Atravessa vãos, quebra paredes rachadas e fere besouros blindados.',
+ claw:'Encoste na parede, segure o direcional para ela e deslize. Toque em PULO para escalar entre duas paredes.',
+ echo:'Toque em ECO para atirar uma onda sonora. Abre as portas de cristal azul.'
+};
 const ABN={
  dbl:['PULO DUPLO','Aperte pular de novo no ar (Z / Espaço / K) para alcançar plataformas altas.',[120,230,255]],
  dash:['INVESTIDA','Aperte C / L para disparar numa linha reta. Atravessa vãos, quebra paredes rachadas e fere besouros blindados.',[255,170,80]],
@@ -188,14 +205,21 @@ const MAPK={ArrowLeft:'L',KeyA:'L',ArrowRight:'R',KeyD:'R',ArrowUp:'U',KeyW:'U',
 const held={},press={};
 function setAct(a,on){if(on){if(!held[a])press[a]=true;held[a]=true}else held[a]=false}
 addEventListener('keydown',e=>{
-  if(MAPK[e.code]){setAct(MAPK[e.code],true);e.preventDefault();
-    if(state==='title'&&e.code==='Space'){startGame(false);}
-    return}
+  const onBtn=e.target&&e.target.tagName==='BUTTON';
+  if(state==='title'||state==='end'||state==='pause'){
+    /* nos menus, Enter/Espaço ativam o botão em foco; sem foco, o botão principal */
+    if((e.code==='Enter'||e.code==='Space')&&!onBtn){
+      e.preventDefault();
+      if(state==='title')startGame(false);else if(state==='end')newRun();else if(e.code==='Enter')togglePause();
+      return}
+    if(onBtn&&(e.code==='Enter'||e.code==='Space'))return;
+  }
+  if(MAPK[e.code]){setAct(MAPK[e.code],true);e.preventDefault();return}
+  if(e.repeat)return;
   if(e.code==='KeyM'){toggleMap();e.preventDefault()}
   else if(e.code==='Escape'||e.code==='KeyP'){togglePause();e.preventDefault()}
-  else if(e.code==='Enter'){if(state==='title')startGame(false);else if(state==='end')newRun();else if(state==='pause')togglePause()}
 });
-addEventListener('keyup',e=>{if(MAPK[e.code]){setAct(MAPK[e.code],false);e.preventDefault()}});
+addEventListener('keyup',e=>{if(MAPK[e.code]){setAct(MAPK[e.code],false);if(!(e.target&&e.target.tagName==='BUTTON'&&state!=='play'))e.preventDefault()}});
 addEventListener('blur',()=>{for(const k in held)held[k]=false});
 document.querySelectorAll('.tb').forEach(b=>{
   const a=b.dataset.a;
@@ -288,8 +312,10 @@ function move(o){
   if(o.vx){
     o.x+=o.vx;
     const x0=Math.floor((o.x-hw)/T),x1=Math.floor((o.x+hw-.01)/T),y0=Math.floor((o.y-o.h)/T),y1=Math.floor((o.y-.01)/T);
+    const sg=o.vx>0?1:-1;
     for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++)if(isSolid(tx,ty)){
-      if(o.vx>0){o.x=tx*T-hw;o.hitX=1}else{o.x=(tx+1)*T+hw;o.hitX=-1}
+      /* o.vx é zerado no primeiro choque; o sentido original evita atravessar a parede quando o corpo cobre duas linhas */
+      if(sg>0){o.x=Math.min(o.x,tx*T-hw);o.hitX=1}else{o.x=Math.max(o.x,(tx+1)*T+hw);o.hitX=-1}
       o.vx=0;
     }
   }
@@ -315,7 +341,7 @@ function fx(x,y,n,c,sp,life,size,g){
 }
 function updateFx(){
   for(let i=fxs.length-1;i>=0;i--){const f=fxs[i];f.x+=f.vx;f.y+=f.vy;f.vy+=f.g;f.vx*=.98;if(--f.l<=0)fxs.splice(i,1)}
-  for(const a of ambient){a.x+=a.vx+Math.sin(frame*.02+a.ph)*.15;a.y+=a.vy;if(a.y<-4){a.y=H+4;a.x=Math.random()*W}if(a.x<0)a.x=W;if(a.x>W)a.x=0}
+  for(const a of ambient){if(RM)break;a.x+=a.vx+Math.sin(frame*.02+a.ph)*.15;a.y+=a.vy;if(a.y<-4){a.y=H+4;a.x=Math.random()*W}if(a.x<0)a.x=W;if(a.x>W)a.x=0}
 }
 
 /* ---------- player ---------- */
@@ -628,7 +654,7 @@ function updateBoss(){
 /* ---------- rooms ---------- */
 let entry={x:0,y:0},entering=0;
 function enterRoom(id,px,py,keepHp){
-  R=ROOMS[id];S.room=S.room;
+  R=ROOMS[id];camSnap=true;
   S.vis[id]=1;
   if(!P||!keepHp)P=P||newPlayer(px,py);
   P.x=px;P.y=py;P.vx=P.vx||0;
@@ -718,7 +744,7 @@ function calc(win){
 }
 function endGame(win){
   if(ended)return;ended=true;state='end';
-  const c=calc(win),P2=Math.max(1,Math.min(50000,Math.round(c.tot)));
+  const c=calc(win),P2=Math.max(0,Math.min(50000,Math.round(c.tot)));
   const newBest=P2>best;if(newBest){best=P2;try{localStorage.setItem(BKEY,String(best))}catch(e){}}
   const fr=S.frag,items=c.nab+fr;
   document.getElementById('eT').textContent=win?'Você chegou ao Coração!':'Fim da jornada';
@@ -731,7 +757,7 @@ function endGame(win){
   document.getElementById('pEndS').style.display='flex';
   document.getElementById('pPause').style.display='none';
   try{localStorage.removeItem(SKEY)}catch(e){}
-  try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:P2,nivel:pct()+'% do mapa'},'*')}catch(e){}
+  if(P2>0){try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:P2,nivel:win?'Jornada completa':pct()+'% do mapa'},'*')}catch(e){}}
 }
 function fmtT(s){s=Math.floor(s);const m=Math.floor(s/60);return m+'min '+String(s%60).padStart(2,'0')+'s'}
 function toggleMap(){
@@ -746,13 +772,23 @@ function togglePause(){
 }
 document.getElementById('bPlay').onclick=()=>startGame(false);
 document.getElementById('bNew').onclick=()=>{try{localStorage.removeItem(SKEY)}catch(e){}S=null;startGame(true)};
+document.getElementById('pMenu').onclick=()=>{persist();showTitle()};
+document.getElementById('eMenu').onclick=showTitle;
 document.getElementById('pCont').onclick=togglePause;
 document.getElementById('pMap').onclick=toggleMap;
 document.getElementById('pEnd').onclick=()=>{document.getElementById('pPause').style.display='none';endGame(false)};
-document.getElementById('pSnd').onclick=e=>{muted=!muted;e.target.textContent='Som: '+(muted?'desligado':'ligado')};
+function syncSnd(){
+  document.getElementById('pSnd').textContent='Som: '+(muted?'desligado':'ligado');
+  const b=document.getElementById('bSom');b.textContent=muted?'MUDO':'SOM';b.setAttribute('aria-pressed',muted?'true':'false');
+}
+function toggleSnd(){muted=!muted;try{localStorage.setItem('caverna-eco-mute',muted?'1':'0')}catch(e){}syncSnd();if(!muted)sfx(660,.08,'triangle',.05)}
+document.getElementById('pSnd').onclick=toggleSnd;
+document.getElementById('bSom').onclick=e=>{e.target.blur();toggleSnd()};
+syncSnd();
 document.getElementById('eAgain').onclick=newRun;
 document.getElementById('bMapa').onclick=e=>{e.target.blur();if(state==='play'||state==='map'||state==='pause')toggleMap()};
 document.getElementById('bMenu').onclick=e=>{e.target.blur();if(state==='play'||state==='pause'||state==='map')togglePause()};
+document.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{if(b.id!=='bPlay'&&b.id!=='eAgain')setTimeout(()=>b.blur(),0)}));
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')togglePause()});
 function updateTouchBtns(){
   const s=document.getElementById('tbS'),e=document.getElementById('tbE');
@@ -798,7 +834,7 @@ function drawBG(){
   ctx.drawImage(getLayer(R.bi,0),Math.round(-60-px*.12),0);
   ctx.drawImage(getLayer(R.bi,1),Math.round(-60-px*.25),0);
   ctx.fillStyle=pal.mote;
-  for(const a of ambient){ctx.globalAlpha=.25+.3*Math.sin(frame*.04+a.ph)**2;ctx.fillRect(Math.round(a.x),Math.round(a.y),a.s>1.8?2:1,a.s>1.8?2:1)}
+  for(const a of ambient){ctx.globalAlpha=RM?.35:.25+.3*Math.sin(frame*.04+a.ph)**2;ctx.fillRect(Math.round(a.x),Math.round(a.y),a.s>1.8?2:1,a.s>1.8?2:1)}
   ctx.globalAlpha=1;
 }
 function drawPlayer(){
@@ -930,7 +966,7 @@ function drawThings(){
     ctx.fillStyle='rgba('+col+',.95)';ctx.beginPath();ctx.moveTo(ix,iy-8);ctx.lineTo(ix+6,iy);ctx.lineTo(ix,iy+8);ctx.lineTo(ix-6,iy);ctx.fill();
     ctx.fillStyle='#fff';ctx.fillRect(ix-1,iy-4,2,4);
   }
-  for(const h of R.hints){ctx.font='700 8px Figtree,sans-serif';ctx.textAlign='center';ctx.fillStyle='rgba(200,235,255,.55)';ctx.fillText(h[2],h[0],h[1])}
+  for(const h of R.hints){ctx.font='700 8px Figtree,sans-serif';ctx.textAlign='center';ctx.fillStyle='rgba(200,235,255,.55)';const hs=HINTS[h[2]];ctx.fillText(hs?hs[isTouch()?1:0]:h[2],h[0],h[1])}
   if(S.orb&&S.orb.room===R.id){
     const o=S.orb,p=.6+.4*Math.sin(frame*.08);
     ctx.fillStyle='rgba(160,140,255,'+p+')';ctx.beginPath();ctx.arc(o.x,o.y+Math.sin(frame*.07)*2,6,0,6.3);ctx.fill();
@@ -995,15 +1031,15 @@ function drawHUD(){
   if(P.dashCd>0&&S.ab.dash){ctx.fillStyle='rgba(255,170,80,.8)';ctx.fillRect(8,41,Math.round(20*(1-P.dashCd/36)),2)}
   if(roomT>0&&R){
     const a=Math.min(1,roomT/40);ctx.globalAlpha=a;ctx.textAlign='center';
-    ctx.font='400 16px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#000';ctx.fillText(R.name,W/2+1,31);ctx.fillStyle='#e8fbff';ctx.fillText(R.name,W/2,30);
-    ctx.font='700 8px Figtree,sans-serif';ctx.fillStyle=BIO[R.bi].edge;ctx.fillText(BIO[R.bi].n.toUpperCase(),W/2,41);ctx.globalAlpha=1;
+    ctx.font='400 16px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#000';ctx.fillText(R.name,VW/2+1,31);ctx.fillStyle='#e8fbff';ctx.fillText(R.name,VW/2,30);
+    ctx.font='700 8px Figtree,sans-serif';ctx.fillStyle=BIO[R.bi].edge;ctx.fillText(BIO[R.bi].n.toUpperCase(),VW/2,41);ctx.globalAlpha=1;
   }
   if(boss&&boss.active&&boss.dying===0){
-    const bw=220,x=(W-bw)/2,y=H-20;
+    const bw=Math.min(220,VW-40),x=(VW-bw)/2,y=H-20;
     ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-2,y-2,bw+4,10);ctx.fillStyle=boss.t==='golem'?'#ff6ad0':'#7fe06a';ctx.fillRect(x,y,bw*boss.hp/boss.max,6);
-    ctx.font='700 8px Figtree,sans-serif';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.fillText(boss.name,W/2,y-4);
+    ctx.font='700 8px Figtree,sans-serif';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.fillText(boss.name,VW/2,y-4);
   }
-  if(popup){ctx.globalAlpha=Math.min(1,popup.l/30);ctx.textAlign='center';ctx.font='400 13px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#000';ctx.fillText(popup.t,W/2+1,71);ctx.fillStyle='#ffe9a0';ctx.fillText(popup.t,W/2,70);ctx.globalAlpha=1}
+  if(popup){ctx.globalAlpha=Math.min(1,popup.l/30);ctx.textAlign='center';ctx.font='400 13px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#000';ctx.fillText(popup.t,VW/2+1,71);ctx.fillStyle='#ffe9a0';ctx.fillText(popup.t,VW/2,70);ctx.globalAlpha=1}
   ctx.textAlign='left';
 }
 function heart(x,y,full){
@@ -1018,19 +1054,19 @@ function drawBanner(){
   const f=banner.id==='frag',col=f?[255,110,140]:ABN[banner.id][2];
   ctx.fillStyle='rgba('+col+',.15)';ctx.fillRect(0,y-22,W,100);
   ctx.fillStyle='rgba('+col+',.8)';ctx.fillRect(0,y-22,W,1);ctx.fillRect(0,y+77,W,1);
-  ctx.font='400 12px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#ffe08a';ctx.fillText(f?'FRAGMENTO DE VIDA':'NOVA HABILIDADE',W/2,y-4);
-  ctx.font='400 28px "Lilita One",Figtree,sans-serif';ctx.fillStyle='rgb('+col+')';ctx.fillText(f?'+1 VIDA MÁXIMA':ABN[banner.id][0],W/2,y+26);
+  ctx.font='400 12px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#ffe08a';ctx.fillText(f?'FRAGMENTO DE VIDA':'NOVA HABILIDADE',VW/2,y-4);
+  ctx.font='400 28px "Lilita One",Figtree,sans-serif';ctx.fillStyle='rgb('+col+')';ctx.fillText(f?'+1 VIDA MÁXIMA':ABN[banner.id][0],VW/2,y+26);
   ctx.font='700 10px Figtree,sans-serif';ctx.fillStyle='#dff3ff';
-  const lines=wrap(f?'Sua vida máxima aumentou e você foi totalmente curada.':ABN[banner.id][1],360);
-  lines.forEach((l,i)=>ctx.fillText(l,W/2,y+46+i*13));
-  if(banner.t>45){ctx.font='700 9px Figtree,sans-serif';ctx.fillStyle='rgba(255,255,255,'+(.5+.4*Math.sin(frame*.15))+')';ctx.fillText('Pressione pular ou toque em PULO para continuar',W/2,y+90)}
+  const lines=wrap(f?'Sua vida máxima aumentou e você foi totalmente curada.':(isTouch()?ABT[banner.id]:ABN[banner.id][1]),Math.min(360,VW-24));
+  lines.forEach((l,i)=>ctx.fillText(l,VW/2,y+46+i*13));
+  if(banner.t>45){ctx.font='700 9px Figtree,sans-serif';ctx.fillStyle='rgba(255,255,255,'+(.5+.4*Math.sin(frame*.15))+')';ctx.fillText(isTouch()?'Toque em PULO para continuar':'Pressione pular para continuar',VW/2,y+90)}
   ctx.globalAlpha=1;ctx.textAlign='left';
 }
 function drawMap(){
-  ctx.fillStyle='rgba(2,5,10,.94)';ctx.fillRect(0,0,W,H);
-  ctx.textAlign='center';ctx.font='400 18px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#bff4ff';ctx.fillText('MAPA',W/2,28);
-  ctx.font='700 9px Figtree,sans-serif';ctx.fillStyle='#8aa8c0';ctx.fillText(pct()+'% explorado  •  M ou Esc para fechar',W/2,41);
-  const cw=36,ch=26,gap=6,ox=Math.round((W-(10*(cw+gap)-gap))/2),oy=62;
+  ctx.fillStyle='#02050a';ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';ctx.font='400 18px "Lilita One",Figtree,sans-serif';ctx.fillStyle='#bff4ff';ctx.fillText('MAPA',VW/2,28);
+  ctx.font='700 9px Figtree,sans-serif';ctx.fillStyle='#8aa8c0';ctx.fillText(pct()+'% explorado  •  '+(isTouch()?'toque em MAPA para fechar':'M ou Esc para fechar'),VW/2,41);
+  const sm=VW<W,cw=sm?26:36,ch=sm?20:26,gap=sm?4:6,ox=Math.round((VW-(10*(cw+gap)-gap))/2),oy=62;
   const seen={};
   for(const id of ORDER){const R2=ROOMS[id];if(S.vis[id]){seen[id]=2;for(const d of['L','R','U','D']){if(R2.ex[d]!=null){const [dx,dy]=DIRS[d],n=AT[(R2.gx+dx)+','+(R2.gy+dy)];if(n&&!seen[n])seen[n]=1}}}}
   for(const id of ORDER){const R2=ROOMS[id];if(S.vis[id])seen[id]=2}
@@ -1052,16 +1088,24 @@ function drawMap(){
     for(const it of R2.items){if(!S.got[it.id]&&S.vis[id]&&0){}}
     if(R2.id===R.id&&Math.floor(mapT/18)%2===0){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(x+1,y+1,cw-2,ch-2);ctx.lineWidth=1;ctx.fillStyle='#fff';ctx.fillRect(x+cw/2-2,y+ch/2-2,4,4)}
   }
-  ctx.font='700 9px Figtree,sans-serif';ctx.fillStyle='#ffe9a0';ctx.fillText('◆ cristal de descanso',W/2-80,H-30);
-  ctx.fillStyle='#fff';ctx.fillText('■ você está aqui (piscando)',W/2+60,H-30);
-  ctx.fillStyle='#8aa8c0';ctx.fillText(R.name+'  •  '+BIO[R.bi].n,W/2,H-16);
+  ctx.font='700 9px Figtree,sans-serif';ctx.fillStyle='#ffe9a0';ctx.fillText('◆ cristal de descanso',VW/2-(sm?72:80),H-30);
+  ctx.fillStyle='#fff';ctx.fillText(sm?'■ você está aqui':'■ você está aqui (piscando)',VW/2+(sm?66:60),H-30);
+  ctx.fillStyle='#8aa8c0';ctx.fillText(R.name+'  •  '+BIO[R.bi].n,VW/2,H-16);
   ctx.textAlign='left';
+}
+function updateCam(){
+  if(VW>=W||!P){camX=0;return}
+  let t=P.x-VW/2;
+  if(boss&&boss.active&&boss.dying===0){const m=(P.x+boss.x)/2-VW/2;t=Math.max(P.x-VW+48,Math.min(P.x-48,m))}
+  t=Math.max(0,Math.min(W-VW,t));
+  camX=Math.round(camSnap?t:camX+(t-camX)*.2);camSnap=false;
 }
 function render(){
   ctx.setTransform(K,0,0,K,0,0);ctx.imageSmoothingEnabled=false;
   if(!R){ctx.fillStyle='#05070d';ctx.fillRect(0,0,W,H);return}
-  const sx=shake>0?Math.round((Math.random()-.5)*shake*1.5):0,sy=shake>0?Math.round((Math.random()-.5)*shake*1.5):0;
-  ctx.save();ctx.translate(sx,sy);
+  updateCam();
+  const sx=shake>0&&!RM?Math.round((Math.random()-.5)*shake*1.5):0,sy=shake>0&&!RM?Math.round((Math.random()-.5)*shake*1.5):0;
+  ctx.save();ctx.translate(sx-camX,sy);
   drawBG();
   ctx.drawImage(tileC,0,0);
   drawDecor();
@@ -1075,8 +1119,8 @@ function render(){
   ctx.restore();
   if(state!=='title'&&P&&S){drawHUD()}
   if(P&&P.dead>0){ctx.fillStyle='rgba(0,0,0,'+Math.min(.85,P.dead/60)+')';ctx.fillRect(0,0,W,H);
-    if(P.dead>20){ctx.textAlign='center';ctx.font='400 20px "Lilita One",Figtree,sans-serif';ctx.fillStyle='rgba(200,230,255,'+Math.min(1,(P.dead-20)/20)+')';ctx.fillText('Sua luz se apagou...',W/2,H/2);ctx.textAlign='left'}}
-  if(flashV>0){ctx.fillStyle='rgba(255,255,255,'+flashV*.5+')';ctx.fillRect(0,0,W,H)}
+    if(P.dead>20){ctx.textAlign='center';ctx.font='400 20px "Lilita One",Figtree,sans-serif';ctx.fillStyle='rgba(200,230,255,'+Math.min(1,(P.dead-20)/20)+')';ctx.fillText('Sua luz se apagou...',VW/2,H/2);ctx.textAlign='left'}}
+  if(flashV>0){ctx.fillStyle='rgba(255,255,255,'+flashV*(RM?.12:.5)+')';ctx.fillRect(0,0,W,H)}
   if(fadeV>0){ctx.fillStyle='rgba(0,0,0,'+fadeV+')';ctx.fillRect(0,0,W,H)}
   if(winT>60){ctx.fillStyle='rgba(255,255,255,'+Math.min(1,(winT-60)/80)+')';ctx.fillRect(0,0,W,H)}
   if(state==='banner')drawBanner();
@@ -1096,20 +1140,25 @@ function loop(t){
 }
 
 /* ---------- init ---------- */
-(function init(){
+function showTitle(){
   const sv=loadS();
-  S=sv||freshS();
-  resetRooms();
+  for(const id of ['pPause','pEndS'])document.getElementById(id).style.display='none';
   document.getElementById('tBest').textContent=best?'Recorde: '+best:'';
-  if(sv){document.getElementById('bNew').style.display='inline-block';document.getElementById('bPlay').title='Continua do ultimo cristal'}
+  const hasSave=!!sv;
+  document.getElementById('bNew').style.display=hasSave?'inline-block':'none';
+  document.getElementById('bPlay').textContent=hasSave?'Continuar':'Jogar';
+  document.getElementById('bPlay').title=hasSave?'Continua do último cristal':'';
   /* title backdrop */
-  const keepS=S;S=freshS();resetRooms();
+  S=freshS();resetRooms();ended=false;winT=0;boss=null;orbs=[];fxs=[];projs=[];shots=[];banner=null;popup=null;
   P=newPlayer(5*T+8+28,15*T);R=ROOMS.A;
   enterRoom('A',P.x,P.y,true);
-  S=keepS;resetRooms();
+  S=sv||freshS();resetRooms();
   document.getElementById('pTitle').style.display='flex';
   state='title';
-  window.__dbg={step,setAct,held,get S(){return S},get P(){return P},get R(){return R},get state(){return state},enterRoom,startGame,ROOMS,get boss(){return boss},get enemies(){return enemies},changeRoom,endGame,hurt};
+  const pb=document.getElementById('bPlay');try{pb.focus({preventScroll:true})}catch(e){}
+}
+(function init(){
+  showTitle();
   requestAnimationFrame(loop);
 })();
 })();
