@@ -15,6 +15,13 @@ body{font-family:'Figtree',system-ui,sans-serif;color:#f4f1ff}
 #cv{position:absolute;left:0;top:0;width:360px;height:640px;display:block}
 .ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(6,4,20,.25);z-index:3;padding:16px;box-sizing:border-box}
 .oculto{display:none!important}
+.fundo{align-items:flex-end;padding-bottom:26px}
+.fundo .card{padding:16px 20px 18px}
+.fundo .fim-titulo{font-size:34px;margin:0 0 4px}
+.linha{display:flex;justify-content:center;gap:28px;align-items:flex-end}
+.fundo .grande{font-size:58px}
+.fundo .medio{font-size:34px}
+.fundo .fim-btn{margin-top:14px}
 .card{width:300px;box-sizing:border-box;padding:26px 22px 24px;border-radius:26px;background:rgba(16,12,44,.84);border:2px solid rgba(255,255,255,.1);box-shadow:0 18px 50px rgba(0,0,0,.5);text-align:center}
 .logo{font-family:'Lilita One',sans-serif;font-size:62px;line-height:1;color:#ffd45a;text-shadow:0 5px 0 #b4530a,0 0 28px rgba(255,190,70,.5);letter-spacing:2px;margin:6px 0 10px}
 .sub{font-size:17px;font-weight:700;margin:0 0 16px;color:#e9e4ff}
@@ -24,7 +31,7 @@ body{font-family:'Figtree',system-ui,sans-serif;color:#f4f1ff}
 .regras li:nth-child(2)::before{background:linear-gradient(135deg,#ffe066,#ff9f1c)}
 .regras li:nth-child(3)::before{background:linear-gradient(135deg,#ff8fd0,#c04bff)}
 .regras b{color:#fff}
-.btn{font-family:'Lilita One',sans-serif;font-size:26px;letter-spacing:1px;color:#3b1d00;background:linear-gradient(#ffe36b,#ffa323);border:none;border-radius:999px;padding:12px 46px 14px;cursor:pointer;box-shadow:0 6px 0 #b4530a,0 10px 24px rgba(0,0,0,.35);transition:transform .08s}
+.btn{font-family:'Lilita One',sans-serif;font-size:26px;letter-spacing:1px;white-space:nowrap;color:#3b1d00;background:linear-gradient(#ffe36b,#ffa323);border:none;border-radius:999px;padding:12px 34px 14px;cursor:pointer;box-shadow:0 6px 0 #b4530a,0 10px 24px rgba(0,0,0,.35);transition:transform .08s}
 .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #b4530a}
 .dica{font-size:13px;color:#a79fd1;margin:14px 0 0}
 .fim-titulo{font-family:'Lilita One',sans-serif;font-size:40px;color:#ff7aa8;text-shadow:0 4px 0 #6b0f3c;margin:4px 0 14px}
@@ -55,13 +62,13 @@ body{font-family:'Figtree',system-ui,sans-serif;color:#f4f1ff}
       <p class="dica">Enter ou Espaço também começam</p>
     </div>
   </div>
-  <div id="ovFim" class="ov oculto">
+  <div id="ovFim" class="ov fundo oculto">
     <div class="card">
       <div class="fim-titulo">Fim de jogo</div>
-      <div class="rot">Pontos</div>
-      <div id="fimPontos" class="grande">0</div>
-      <div class="rot">Recorde</div>
-      <div id="fimRecorde" class="medio">0</div>
+      <div class="linha">
+        <div><div class="rot">Pontos</div><div id="fimPontos" class="grande">0</div></div>
+        <div><div class="rot">Recorde</div><div id="fimRecorde" class="medio">0</div></div>
+      </div>
       <div><span id="novoRec" class="novo oculto">NOVO RECORDE!</span></div>
       <button id="btnDeNovo" class="btn fim-btn">Jogar de novo</button>
     </div>
@@ -71,7 +78,7 @@ body{font-family:'Figtree',system-ui,sans-serif;color:#f4f1ff}
 (() => {
 'use strict';
 const LW=360, LH=640, COS=Math.cos(Math.PI/6), SIN=0.5;
-const U=36, UY=28, BASE=3, PERF=0.1, ANCH=420, ANCH_FIM=330, DT=1/60, GRAV=40;
+const U=36, UY=28, BASE=3, PERF=0.1, ANCH=420, ANCH_FIM=190, DT=1/60, GRAV=40;
 const KEY='empilha_recorde', KEY_MUDO='empilha_mudo', NIVEL='Normal';
 
 const $=id=>document.getElementById(id);
@@ -311,7 +318,7 @@ function atualiza(dt){
   const k=Math.min(1,dt*8);
   const tx=top.cx+(mx-top.cx)*zoomT, tz=top.cz+(mz-top.cz)*zoomT;
   const tfy=n*(1-0.5*zoomT);
-  const ts=1+(Math.min(1,600/(n*UY+200))-1)*zoomT;
+  const ts=1+(Math.min(1,330/(n*UY+120))-1)*zoomT;
   const tay=ANCH+(ANCH_FIM-ANCH)*zoomT;
   vis.fx+=(tx-vis.fx)*k; vis.fz+=(tz-vis.fz)*k;
   vis.fy+=(tfy-vis.fy)*k; vis.s+=(ts-vis.s)*k; vis.ay+=(tay-vis.ay)*k;
