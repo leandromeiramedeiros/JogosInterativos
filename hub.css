@@ -191,6 +191,18 @@ a{color:inherit}
 .art-horda{background:#120c1c}
 .art-horda .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#f4eaff;text-shadow:0 2px 0 #0a0612;font-size:clamp(18px,9.4cqw,32px);line-height:1}
 .art-horda .mark span{color:#d9a8ff}
+.art-forca{background:#22382c}
+.art-forca .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#f4f1ea;text-shadow:0 2px 0 #0f1c14;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-forca .mark span{color:#ffd23f}
+.art-eco{background:#0b1424}
+.art-eco .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#e6fff9;text-shadow:0 2px 0 #03121a;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-eco .mark span{color:#5ef2d6}
+.art-sinuca{background:#3b2414}
+.art-sinuca .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #1a0f05;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-sinuca .mark span{color:#7fe6a0}
+.art-cla{background:#1a5c2a}
+.art-cla .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #0b3416;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-cla .mark span{color:#ffd23f}
 
 /* ---------- Jogador ---------- */
 .player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}

@@ -31,6 +31,10 @@ Uma prateleira de jogos para jogar no navegador.
 | [Rua dos Socos](https://leandromeiramedeiros.github.io/JogosInterativos/#rua-dos-socos) | Briga de rua com combos, arremessos e chefes. Limpe a cidade, o porto e o terraço. |
 | [Empilha](https://leandromeiramedeiros.github.io/JogosInterativos/#empilha) | Um toque para soltar cada bloco. Acerte em cima do anterior e a torre sobe; erre e ela encolhe. |
 | [Horda](https://leandromeiramedeiros.github.io/JogosInterativos/#horda) | Sobreviva 10 minutos contra hordas de monstros. As armas atiram sozinhas; você só escolhe as melhorias. |
+| [Jogo da Forca](https://leandromeiramedeiros.github.io/JogosInterativos/#jogo-da-forca) | Descubra a palavra antes de completar o boneco. 3 níveis, de palavras curtas a compostas, com dicas e sequência perfeita. |
+| [Caverna Eco](https://leandromeiramedeiros.github.io/JogosInterativos/#caverna-eco) | Explore uma caverna viva, ganhe pulo duplo, investida e garra de parede para abrir caminhos e vencer dois chefes. |
+| [Sinuca](https://leandromeiramedeiros.github.io/JogosInterativos/#sinuca) | Sinuca brasileira: acerte sempre a bola da vez, some pontos e cuidado com a falta de 7. Contra a CPU ou a dois. |
+| [Clássico](https://leandromeiramedeiros.github.io/JogosInterativos/#futebol-classico) | Futebol arcade com os grandes do Rio e de São Paulo. Amistoso a dois ou o Torneio Rio-São Paulo contra a CPU. |
 
 ## Placar
 
