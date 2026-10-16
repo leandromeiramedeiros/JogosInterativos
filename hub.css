@@ -167,6 +167,30 @@ a{color:inherit}
 .art-arena{background:#2a1550}
 .art-arena .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #0b0620;font-size:clamp(18px,9.4cqw,32px);line-height:1}
 .art-arena .mark span{color:#ffb347}
+.art-kart{background:#1d1d33}
+.art-kart .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #7a1010;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-kart .mark span{color:#ffd23f}
+.art-voa{background:#1e6f8c}
+.art-voa .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #0b3a4a;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-voa .mark span{color:#ffd23f}
+.art-ze{background:#3a6fd8}
+.art-ze .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6d6;text-shadow:0 2px 0 #0f1f4d;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-ze .mark span{color:#5ee08a}
+.art-tropa{background:#3b2a1a}
+.art-tropa .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6e0;text-shadow:0 2px 0 #1a0f05;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-tropa .mark span{color:#ffb347}
+.art-esq{background:#0b2340}
+.art-esq .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #061426;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-esq .mark span{color:#3ec1ff}
+.art-rua{background:#1a0f2e}
+.art-rua .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #3a0a24;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-rua .mark span{color:#ffe066}
+.art-emp{background:#1b1440}
+.art-emp .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6d6;text-shadow:0 2px 0 #0b0820;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-emp .mark span{color:#5ee08a}
+.art-horda{background:#120c1c}
+.art-horda .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#f4eaff;text-shadow:0 2px 0 #0a0612;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-horda .mark span{color:#d9a8ff}
 
 /* ---------- Jogador ---------- */
 .player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}

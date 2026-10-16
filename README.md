@@ -23,6 +23,14 @@ Uma prateleira de jogos para jogar no navegador.
 | [Estilingue](https://leandromeiramedeiros.github.io/JogosInterativos/#estilingue) | Estique o estilingue, mire e derrube as torres de madeira, pedra e vidro até não sobrar nenhum inimigo. |
 | [Doce na Corda](https://leandromeiramedeiros.github.io/JogosInterativos/#doce-na-corda) | Corte as cordas na hora certa para o doce pegar as estrelas e cair na boca do sapinho. |
 | [Arena de Briga](https://leandromeiramedeiros.github.io/JogosInterativos/#arena-de-briga) | Luta de plataforma para 2 jogadores no mesmo teclado (ou contra a CPU). Jogue o rival para fora da arena. |
+| [Kart Turbo](https://leandromeiramedeiros.github.io/JogosInterativos/#kart-turbo) | Corrida de kart vista de cima: derrape nas curvas, pegue turbos e mísseis e chegue em 1º em 3 pistas. |
+| [Voa Voa](https://leandromeiramedeiros.github.io/JogosInterativos/#voa-voa) | Toque para o tucano Tuca bater as asas e passar entre os troncos. Um toque, recorde infinito. |
+| [Pulo do Zé](https://leandromeiramedeiros.github.io/JogosInterativos/#pulo-do-ze) | Plataforma clássica: Zé, o faz-tudo de bigode, pula em mangas bravas, quebra tijolos e chega na bandeira em 4 fases. |
+| [Tropa de Lata](https://leandromeiramedeiros.github.io/JogosInterativos/#tropa-de-lata) | Corra e atire contra o exército de robôs, liberte reféns, pegue armas pesadas e derrube chefes gigantes. |
+| [Esquadrilha](https://leandromeiramedeiros.github.io/JogosInterativos/#esquadrilha) | Tiro vertical com aviões: desvie das rajadas, junte power-ups e derrube encouraçados e fortalezas. |
+| [Rua dos Socos](https://leandromeiramedeiros.github.io/JogosInterativos/#rua-dos-socos) | Briga de rua com combos, arremessos e chefes. Limpe a cidade, o porto e o terraço. |
+| [Empilha](https://leandromeiramedeiros.github.io/JogosInterativos/#empilha) | Um toque para soltar cada bloco. Acerte em cima do anterior e a torre sobe; erre e ela encolhe. |
+| [Horda](https://leandromeiramedeiros.github.io/JogosInterativos/#horda) | Sobreviva 10 minutos contra hordas de monstros. As armas atiram sozinhas; você só escolhe as melhorias. |
 
 ## Placar
 
