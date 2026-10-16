@@ -914,7 +914,7 @@ function drawHUD(){
  else if(M.st==='kickoff'&&M.t<200){label(g,'Setas/WASD mover · Espaço chutar · K passar',480,H-100,'rgba(255,255,255,.85)',14)}
 }
 function drawRadar(){
- const g=ctx,M=match,rx=330,ry=H-92,rw=300,rh=300*(PY1-PY0)/(PX1-PX0)+20,k=rw/(PX1-PX0+40);
+ const g=ctx,M=match,rw=250,rh=250*(PY1-PY0)/(PX1-PX0)+20,rx=(W-250)/2,ry=H-rh-4,k=rw/(PX1-PX0+40);
  g.globalAlpha=.8;g.fillStyle='#14502a';rr(g,rx,ry,rw,rh,6);g.fill();g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=1;
  const ox=rx+20*k,oy=ry+10;const X=x=>ox+(x-PX0)*k,Y=y=>oy+(y-PY0)*k;
  g.strokeRect(X(PX0),Y(PY0),(PX1-PX0)*k,(PY1-PY0)*k);g.beginPath();g.moveTo(X((PX0+PX1)/2),Y(PY0));g.lineTo(X((PX0+PX1)/2),Y(PY1));g.stroke();
