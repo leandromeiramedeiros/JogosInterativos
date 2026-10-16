@@ -896,7 +896,7 @@ function render(){
   if(paused){ctx.fillStyle='#000a';ctx.fillRect(0,0,W,H);txt('PAUSADO',W/2,H/2,30,'#ffd23f','center')}
   if(state==='play'&&lvl===3&&bossDone===false){
     const b=enemies.find(e=>e.type==='M');
-    if(b&&b.act){txt('MANGÃO',W/2-40,48,10,'#ff9a6a','center');for(let i=0;i<3;i++)R(i<b.hp?'#ff4a2a':'#4a2a2a',W/2-6+i*14-4,52,12,6)}
+    if(b&&b.act){txt('MANGÃO',W/2,48,10,'#ff9a6a','center');for(let i=0;i<3;i++)R(i<b.hp?'#ff4a2a':'#4a2a2a',W/2-19+i*14,52,12,6)}
   }
 }
 function drawHUD(){
