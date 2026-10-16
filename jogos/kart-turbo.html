@@ -51,7 +51,7 @@ const TRACKS=[
   pts:[[700,300],[1300,260],[1900,300],[2300,500],[2350,900],[2000,1150],[1600,1000],[1250,1150],[1350,1450],[1000,1550],[500,1450],[300,1100],[450,700]],
   th:{out:'#2a6e32',grass:'#4aa84a',asph:'#4b5160',sp1:'#215a29',sp2:'#6cc26a'}},
  {name:'Deserto Rápido',desc:'Médio · longas retas e um cotovelo',stars:2,w:160,world:[3000,2000],seed:23,deco:'cactus',
-  pts:[[500,400],[1100,300],[1700,380],[2000,250],[2500,300],[2750,650],[2500,950],[2000,900],[1800,1200],[2200,1500],[2500,1750],[1900,1850],[1300,1700],[1000,1350],[1400,1100],[900,950],[450,1200],[250,900],[300,600]],
+  pts:[[500,400],[1100,300],[1700,380],[2000,250],[2500,300],[2750,650],[2500,950],[2000,900],[1900,1240],[2250,1500],[2500,1750],[1900,1850],[1300,1700],[950,1420],[1500,1100],[800,860],[420,1200],[250,900],[300,600]],
   th:{out:'#b98a3e',grass:'#e3bf6f',asph:'#585562',sp1:'#a47831',sp2:'#f0d28a'}},
  {name:'Montanha Maluca',desc:'Difícil · curvas fechadas',stars:3,w:150,world:[3000,2200],seed:37,deco:'pine',
   pts:[[400,500],[900,250],[1400,500],[1900,250],[2400,400],[2700,800],[2300,1050],[2650,1400],[2500,1900],[1900,2000],[1500,1700],[1100,2000],[500,1900],[300,1500],[700,1250],[350,950]],
@@ -617,7 +617,7 @@ function drawResults(){
 function drawMenu(){
   const g=ctx.createLinearGradient(0,0,0,VH);g.addColorStop(0,'#1b2a6b');g.addColorStop(1,'#0e1222');ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
   // scrolling checker bands
-  ctx.save();ctx.globalAlpha=.18;const off=(animT*40)%48;
+  ctx.save();ctx.globalAlpha=.08;const off=(animT*40)%48;
   for(let r=0;r<2;r++)for(let x=-48;x<VW+48;x+=24){ctx.fillStyle=((x/24+r)%2===0)?'#fff':'#000';ctx.fillRect(x+off,r*24+(r?VH-48:0)-r*24+r*0,24,24);}
   ctx.restore();
   // title
