@@ -10,7 +10,7 @@
 html,body{margin:0;height:100%;background:#0b0818;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:Figtree,system-ui,sans-serif}
 #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block;background:#000;touch-action:none}
-#mute{position:fixed;top:6px;right:6px;z-index:5;background:rgba(0,0,0,.55);color:#fff;border:1px solid #fff5;border-radius:6px;font:800 12px Figtree,sans-serif;padding:5px 9px;cursor:pointer}
+#mute{position:fixed;bottom:4px;left:50%;transform:translateX(-50%);opacity:.7;z-index:5;background:rgba(0,0,0,.55);color:#fff;border:1px solid #fff5;border-radius:6px;font:800 12px Figtree,sans-serif;padding:5px 9px;cursor:pointer}
 #touch{display:none;position:fixed;inset:0;pointer-events:none;z-index:4}
 body.touch #touch{display:block}
 #pad{position:absolute;left:14px;bottom:14px;width:128px;height:128px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);pointer-events:auto;touch-action:none}
@@ -669,6 +669,7 @@ function enemyMelee(e,range,dmg,kd,once){
 function updEnemy(e){
   const T=e.T,dm=1+.12*stageI;
   e.anim++;if(e.inv>0)e.inv--;if(e.flash>0)e.flash--;if(e.cd>0)e.cd--;
+  e.hpShow=(e.hpShow==null?e.hp:e.hpShow+(e.hp-e.hpShow)*.08);
   e.poise=Math.max(0,e.poise-.12);
   switch(e.state){
   case 'idle':case 'walk':{
@@ -694,6 +695,7 @@ function updEnemy(e){
       gx=tg.x+side*ring;gy=tg.y+(e.idx-1)*16;sp*=.75;
       if(Math.abs(gx-e.x)<6&&Math.abs(gy-e.y)<4){e.state='idle';break}
     }
+    if(locked){gx=clamp(gx,cam+16,cam+W-16)}
     const ddx=gx-e.x,ddy=gy-e.y,dd=Math.hypot(ddx,ddy);
     if(dd>2){e.x+=ddx/dd*sp;e.y+=ddy/dd*sp*.75;e.state='walk'}else e.state='idle';
     // separation
@@ -1064,7 +1066,7 @@ function drawHUD(c){
   txt(c,STAGES[stageI].name.toUpperCase(),W/2,25,9,'#ffd23f','center');
   if(lastHit&&lastHit.e){
     const e=lastHit.e,x=W/2-45;
-    drawBar(c,x,33,90,6,e.hp,e.maxhp,e.hp+Math.max(0,8-lastHit.timer*0),'#ff5a5a');
+    drawBar(c,x,33,90,6,e.hp,e.maxhp,e.hpShow==null?e.hp:e.hpShow,'#ff5a5a');
     txt(c,e.T.name.toUpperCase(),W/2,50,9,'#fff','center');
   }
   if(goFlag&&!locked&&(tick>>4)&1){txt(c,'VAI!',W-62,150,22,'#ffe14a','center');
@@ -1161,7 +1163,7 @@ function frame(now){
 }
 buildStage(0);
 requestAnimationFrame(frame);
-window.__dbg={get state(){return{scene,stageI,cam,locked,waveI,players:players.map(p=>({hp:p.hp,x:p.x,y:p.y,st:p.state,score:p.score,lives:p.lives})),enemies:enemies.length,queue:queue.length}},start:startGame,setStage:(i)=>{loadStage(i)},press,players:()=>players,enemies:()=>enemies,spawn:spawnEnemy};
+window.__dbg={go:(w)=>{const S=STAGES[stageI];waveI=w;cam=w<S.waves.length?S.waves[w].at-1:S.bossAt-1;players.forEach(p=>p.x=cam+100)},get state(){return{scene,stageI,cam,locked,waveI,players:players.map(p=>({hp:p.hp,x:p.x,y:p.y,st:p.state,score:p.score,lives:p.lives})),enemies:enemies.length,queue:queue.length}},start:startGame,setStage:(i)=>{loadStage(i)},press,players:()=>players,enemies:()=>enemies,spawn:spawnEnemy};
 </script>
 </body>
 </html>
