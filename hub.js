@@ -361,14 +361,15 @@ function route(){
       for(const el of [board,recent]){ el.style.setProperty("--g1",g1); el.style.setProperty("--g2",g2) }
       $("bgame").textContent=j.titulo;
       atual=j.id; meuId=null; limparEnvio(); abrirPlacar(false); carregarPlacar();
+      saiuDaTelaCheia=false; abrirFab(false);
     }
     player.hidden=false; document.body.classList.add("playing");
-    frame.focus();
+    frame.focus(); telaCheiaAoTocar();
   }else{
     const saindo=atual; atual=null;
     player.hidden=true; document.body.classList.remove("playing");
     frame.removeAttribute("src"); frame.src="about:blank"; /* para sons e cronômetros do jogo */
-    limparEnvio(); fecharCelebra();
+    limparEnvio(); fecharCelebra(); sairTelaCheia();
     document.title="Jogos Interativos";
     if(saindo){ const b=document.getElementById("play-"+saindo); if(b) b.focus({preventScroll:false}) }
   }
@@ -376,8 +377,36 @@ function route(){
 function fechar(){ if(location.hash.length>1) location.hash=""; else route() }
 document.getElementById("back").addEventListener("click",e=>{e.preventDefault();fechar()});
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("celebra").hidden){ fecharCelebra(); return } if(e.key==="Escape"&&atual&&!recent.open&&!document.fullscreenElement){ if(board.classList.contains("open")&&!matchMedia("(min-width:900px)").matches) abrirPlacar(false); else fechar() } });
-document.getElementById("full").addEventListener("click",()=>{
-  try{ const p=player.requestFullscreen?.(); if(p&&p.catch) p.catch(()=>{}) }catch(e){}
+/* ================= Tela cheia e celular deitado ================= */
+// A página inteira entra em tela cheia (não só o jogador), para a comemoração do pódio aparecer por cima.
+function pedirTelaCheia(){
+  if(document.fullscreenElement||!document.fullscreenEnabled) return false;
+  try{ const p=document.documentElement.requestFullscreen({navigationUI:"hide"}); if(p&&p.catch) p.catch(()=>{}); return true }catch(e){ return false }
+}
+function sairTelaCheia(){ if(document.fullscreenElement) try{ document.exitFullscreen().catch(()=>{}) }catch(e){} }
+document.getElementById("full").addEventListener("click",()=>{ document.fullscreenElement?sairTelaCheia():pedirTelaCheia() });
+
+// Celular deitado: o CSS esconde a barra e o placar; aqui o jogo entra em tela cheia no primeiro toque.
+// O navegador só deixa pedir tela cheia logo depois de um toque; o jogo fica no mesmo site, então o toque dentro do iframe vale.
+const DEITADO=matchMedia("(orientation:landscape) and (max-height:540px)");
+const fab=$("fab"), fabTab=$("fab-tab");
+let saiuDaTelaCheia=false;   // a pessoa saiu da tela cheia de propósito: não insistir até girar de novo ou trocar de jogo
+function telaCheiaAoTocar(){ if(atual&&DEITADO.matches&&!saiuDaTelaCheia) pedirTelaCheia() }
+function abrirFab(abrir){ fab.classList.toggle("open",abrir); fabTab.setAttribute("aria-expanded",abrir) }
+fabTab.onclick=()=>{ abrirFab(!fab.classList.contains("open")); telaCheiaAoTocar() };
+$("fab-back").onclick=()=>{ abrirFab(false); fechar() };
+$("fab-rank").onclick=()=>{ abrirFab(false); abrirPlacar(!board.classList.contains("open")) };
+$("fab-full").onclick=()=>{ abrirFab(false); if(document.fullscreenElement){ saiuDaTelaCheia=true; sairTelaCheia() } else { saiuDaTelaCheia=false; pedirTelaCheia() } };
+$("fab-full").hidden=!document.fullscreenEnabled;   // iPhone não tem tela cheia para páginas; lá basta esconder a barra
+document.addEventListener("fullscreenchange",()=>{ if(!document.fullscreenElement&&atual&&DEITADO.matches) saiuDaTelaCheia=true });
+DEITADO.addEventListener("change",()=>{
+  saiuDaTelaCheia=false; abrirFab(false);
+  if(!DEITADO.matches&&document.fullscreenElement) sairTelaCheia();
+});
+frame.addEventListener("load",()=>{
+  let doc=null; try{ doc=frame.contentDocument }catch(e){}
+  if(!doc) return;
+  for(const ev of ["touchend","pointerup","keydown"]) doc.addEventListener(ev,()=>{ abrirFab(false); telaCheiaAoTocar() },{capture:true,passive:true});
 });
 addEventListener("hashchange",route);
 route();

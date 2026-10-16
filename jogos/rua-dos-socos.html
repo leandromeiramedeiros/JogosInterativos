@@ -10,10 +10,15 @@
 html,body{margin:0;height:100%;background:#0b0818;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:Figtree,system-ui,sans-serif}
 #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block;background:#000;touch-action:none}
-#mute{position:fixed;bottom:4px;left:50%;transform:translateX(-50%);opacity:.7;z-index:5;background:rgba(0,0,0,.55);color:#fff;border:1px solid #fff5;border-radius:6px;font:800 12px Figtree,sans-serif;padding:5px 9px;cursor:pointer}
+#ui{position:fixed;z-index:5;display:flex;gap:6px;top:6px;right:6px}
+.ub{background:rgba(0,0,0,.62);color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:7px;font:800 12px Figtree,sans-serif;padding:0 9px;height:28px;min-width:36px;cursor:pointer;touch-action:manipulation}
+.ub:focus-visible{outline:2px solid #ffcf3a}
+.ub.off{text-decoration:line-through;opacity:.7}
+#pause{visibility:hidden}
+#hint{position:fixed;z-index:5;left:0;right:0;text-align:center;color:#dff;font:700 13px Figtree,sans-serif;display:none;pointer-events:none;padding:0 12px;box-sizing:border-box}
 #touch{display:none;position:fixed;inset:0;pointer-events:none;z-index:4}
-body.touch #touch{display:block}
-#pad{position:absolute;left:14px;bottom:14px;width:128px;height:128px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);pointer-events:auto;touch-action:none}
+body.touch.playing #touch{display:block}
+#pad{position:absolute;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));width:128px;height:128px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);pointer-events:auto;touch-action:none}
 #knob{position:absolute;left:44px;top:44px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.4)}
 .tb{position:absolute;border-radius:50%;pointer-events:auto;touch-action:none;color:#fff;font:400 15px "Lilita One",Impact,sans-serif;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.55);text-shadow:0 1px 2px #000}
 .tb.on{filter:brightness(1.6)}
@@ -24,7 +29,8 @@ body.touch #touch{display:block}
 </head>
 <body>
 <div id="wrap"><canvas id="c"></canvas></div>
-<button id="mute">SOM: LIGADO</button>
+<div id="ui"><button class="ub" id="pause" aria-label="Pausar">II</button><button class="ub" id="mute" aria-pressed="false" aria-label="Som ligado ou desligado">SOM</button></div>
+<div id="hint">Dica: gire o celular para jogar em uma tela maior</div>
 <div id="touch">
   <div id="pad"><div id="knob"></div></div>
   <div class="tb" id="bA">SOCO</div>
@@ -37,13 +43,24 @@ const W=480,H=270,Y0=184,Y1=254;
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
 let SC=1;
 function resize(){
-  const dpr=window.devicePixelRatio||1;
+  const dpr=Math.min(window.devicePixelRatio||1,3);
   const k=Math.min(innerWidth/W,innerHeight/H);
   const cw=Math.floor(W*k),ch=Math.floor(H*k);
   cv.style.width=cw+'px';cv.style.height=ch+'px';
-  SC=Math.max(1,Math.round(cw*dpr/W));
-  cv.width=W*SC;cv.height=H*SC;
+  SC=Math.max(.5,cw*dpr/W);
+  cv.width=Math.round(W*SC);cv.height=Math.round(H*SC);
+  layoutUI(cw,ch);
 }
+function layoutUI(cw,ch){
+  const ui=document.getElementById('ui'),hint=document.getElementById('hint');
+  const top=(innerHeight-ch)/2,left=(innerWidth-cw)/2;
+  if(top>=70){ui.style.top=(top-36)+'px';ui.style.right=Math.max(6,left)+'px';hint.style.top=(top-62)+'px'}
+  else if(top>=40){ui.style.top=(top-34)+'px';ui.style.right=Math.max(6,left)+'px';hint.style.top='6px'}
+  else{ui.style.top=(top+ch*4/270)+'px';ui.style.right=(innerWidth-left-cw*340/480)+'px';hint.style.top='6px'}
+  hint.dataset.ok=top>=70?'1':'';
+  syncHint();
+}
+function syncHint(){const h=document.getElementById('hint');h.style.display=(h.dataset.ok&&document.body.classList.contains('touch')&&innerHeight>innerWidth)?'block':'none'}
 addEventListener('resize',resize);resize();
 const FONT='"Lilita One",Impact,sans-serif';
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
@@ -57,7 +74,7 @@ function mk(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;c
 let AC=null,muted=false;
 try{muted=localStorage.getItem('ruaMute')==='1'}catch(e){}
 const muteBtn=document.getElementById('mute');
-function showMute(){muteBtn.textContent=muted?'SOM: MUDO':'SOM: LIGADO'}showMute();
+function showMute(){muteBtn.classList.toggle('off',muted);muteBtn.setAttribute('aria-pressed',muted?'true':'false');muteBtn.title=muted?'Som desligado':'Som ligado'}showMute();
 muteBtn.onclick=()=>{muted=!muted;try{localStorage.setItem('ruaMute',muted?'1':'0')}catch(e){}showMute();muteBtn.blur()};
 function beep(f,d,type,vol,slide){
   if(muted)return;
@@ -105,17 +122,18 @@ addEventListener('keydown',e=>{
   const c=e.code;
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space'].includes(c))e.preventDefault();
   if(e.repeat)return;
+  if(c==='KeyM'){muteBtn.click();return}
   if(scene==='menu'){
     if(c==='Enter'||c==='Space'){startGame();return}
     if(c==='ArrowLeft'||c==='KeyA')sel=0;
     if(c==='ArrowRight'||c==='KeyD')sel=1;
-    if(c==='Digit1')coop=false;if(c==='Digit2')coop=true;if(c==='KeyT')coop=!coop;
+    if(!touchOnly()){if(c==='Digit1')coop=false;if(c==='Digit2')coop=true;if(c==='KeyT')coop=!coop}
     return;
   }
-  if(scene==='over'){if(c==='Enter'||c==='Space')scene='menu';return}
+  if(scene==='over'){if(overT>25){if(c==='Enter'||c==='Space')startGame();else if(c==='Escape'||c==='KeyQ')scene='menu'}return}
   if(scene==='clear'){if((c==='Enter'||c==='Space')&&clearT>40)nextStage();return}
-  if(c==='KeyP'||c==='Escape'){paused=!paused;return}
-  if(c==='KeyM'){muteBtn.click();return}
+  if(c==='KeyP'||c==='Escape'){setPause(!paused);return}
+  if(paused){if(c==='Enter'||c==='Space')setPause(false);else if(c==='KeyQ')quitRun();return}
   const m1=coop?KM1c:KM1;
   if(m1[c])press(0,m1[c],1);
   if(coop&&KM2[c])press(1,KM2[c],1);
@@ -125,13 +143,29 @@ addEventListener('keyup',e=>{
   if(m1[e.code])press(0,m1[e.code],0);
   if(coop&&KM2[e.code])press(1,KM2[e.code],0);
 });
-function releaseAll(){for(const I of inp)for(const k of['l','r','u','d','a','j'])I[k]=0}
+function releaseAll(){for(const I of inp)for(const k of['l','r','u','d','a','j'])I[k]=0;if(typeof knob!=='undefined')knob.style.transform=''}
 addEventListener('blur',releaseAll);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){releaseAll();if(scene==='play')paused=true}});
+addEventListener('contextmenu',e=>e.preventDefault());
+function setPause(v){if(scene!=='play')return;paused=!!v;releaseAll()}
+const pauseBtn=document.getElementById('pause');
+pauseBtn.onclick=()=>{setPause(!paused);pauseBtn.blur()};
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function touchOnly(){return document.body.classList.contains('touch')&&!matchMedia('(any-pointer:fine)').matches}
+let uiState='';
+function syncUI(){
+  const st=(scene==='play'?(paused?'pause':'play'):'other');
+  if(st===uiState)return;
+  const was=uiState;uiState=st;
+  document.body.classList.toggle('playing',st==='play');
+  pauseBtn.style.visibility=scene==='play'?'visible':'hidden';
+  pauseBtn.textContent=paused?'>':'II';pauseBtn.setAttribute('aria-label',paused?'Continuar':'Pausar');
+  if(was==='play')releaseAll();
+}
 
 // touch controls
 const pad=document.getElementById('pad'),knob=document.getElementById('knob');
-function enableTouch(){document.body.classList.add('touch')}
+function enableTouch(){document.body.classList.add('touch');syncHint()}
 if(matchMedia('(pointer:coarse)').matches)enableTouch();
 addEventListener('touchstart',enableTouch,{passive:true});
 function padUpdate(e){
@@ -362,7 +396,7 @@ function mkHero(idx,hero){
 function startGame(){
   players=[mkHero(0,sel?'tonhao':'duda')];
   if(coop)players.push(mkHero(1,sel?'duda':'tonhao'));
-  stageI=0;ended=false;win=false;overT=0;
+  stageI=0;ended=false;win=false;overT=0;newRec=false;hitstop=0;shake=0;freeze=0;
   loadStage(0);scene='play';paused=false;
   inp[0]=newInp();inp[1]=newInp();
 }
@@ -379,12 +413,23 @@ function nextStage(){
   scene='play';loadStage(stageI+1);
 }
 function totalScore(){return players.reduce((a,p)=>a+p.score,0)}
+let newRec=false;
+function commitScore(){
+  const sc=totalScore();
+  newRec=sc>bestScore&&sc>0;
+  if(newRec){bestScore=sc;try{localStorage.setItem('ruaDosSocosBest',String(sc))}catch(e){}}
+  if(sc>0){
+    const P=clamp(Math.round(sc),1,50000);
+    try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:P,nivel:players.length>1?"2 jogadores":"1 jogador"},"*")}catch(e){}
+  }
+}
 function endGame(w){
   if(ended)return;ended=true;win=w;scene='over';overT=0;
-  const sc=totalScore();
-  if(sc>bestScore){bestScore=sc;try{localStorage.setItem('ruaDosSocosBest',String(sc))}catch(e){}}
-  const P=clamp(Math.round(sc),1,50000);
-  if(sc>0){try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:P,nivel:"Fase "+(stageI+1)},"*")}catch(e){}}
+  commitScore();
+}
+function quitRun(){
+  if(!ended){ended=true;commitScore()}
+  paused=false;releaseAll();scene='menu';
 }
 
 // ---------- fx ----------
@@ -793,7 +838,7 @@ function update(){
   if(scene!=='play'){
     if(scene==='clear')clearT++;
     if(scene==='over')overT++;
-    cam+=.3;
+    if(scene==='menu'&&!RM){cam+=.3;if(cam>Math.max(1,BG.worldW-W-4))cam=0}
     for(const I of inp){I.aE=I.jE=I.spE=0}
     return;
   }
@@ -1013,7 +1058,7 @@ function txt(c,s,x,y,size,col,al,stroke){
   c.fillStyle=col;c.fillText(s,x,y);
 }
 function drawWorld(c){
-  const ox=shake?rnd(-shake,shake):0,oy=shake?rnd(-shake,shake)*.6:0;
+  const sk=RM?0:shake,ox=sk?rnd(-sk,sk):0,oy=sk?rnd(-sk,sk)*.6:0;
   c.save();c.translate(Math.round(ox),Math.round(oy));
   drawBG(c,cam);
   const ents=[];
@@ -1069,7 +1114,7 @@ function drawHUD(c){
     drawBar(c,x,33,90,6,e.hp,e.maxhp,e.hpShow==null?e.hp:e.hpShow,'#ff5a5a');
     txt(c,e.T.name.toUpperCase(),W/2,50,9,'#fff','center');
   }
-  if(goFlag&&!locked&&(tick>>4)&1){txt(c,'VAI!',W-62,150,22,'#ffe14a','center');
+  if(goFlag&&!locked&&(RM||(tick>>4)&1)){txt(c,'VAI!',W-62,150,22,'#ffe14a','center');
     c.fillStyle='#ffe14a';c.strokeStyle='#14101e';c.lineWidth=2;c.beginPath();c.moveTo(W-38,138);c.lineTo(W-16,150);c.lineTo(W-38,162);c.lineTo(W-38,155);c.lineTo(W-48,155);c.lineTo(W-48,145);c.lineTo(W-38,145);c.closePath();c.stroke();c.fill()}
   if(bannerT>0){
     const a=clamp(bannerT/30,0,1)*clamp((150-bannerT)/12,0,1);c.globalAlpha=a;
@@ -1106,25 +1151,33 @@ function drawMenu(c){
     txt(c,S.name.toUpperCase(),x+74,156,15,on?'#ffcf3a':'#fff','center');
     txt(c,S.desc,x+74,166,8,'#cfe','center',false);
   });
-  button(c,16,180,110,24,coop?'2 JOGADORES':'1 JOGADOR',()=>{coop=!coop},'#3a8bff',13);
+  if(touchOnly())coop=false;
+  else button(c,16,180,110,24,coop?'2 JOGADORES':'1 JOGADOR',()=>{coop=!coop},'#3a8bff',13);
   button(c,190,178,100,28,'JOGAR',startGame,null,18);
   if(bestScore>0)txt(c,'Recorde: '+bestScore,W-16,196,11,'#ffe14a','right');
-  const L=['Mover: WASD / setas    Soco: J ou Z    Pulo: K ou X',
+  const T=touchOnly();
+  const L=T?['Mova com o direcional e use os botões SOCO, PULO e ESPECIAL',
+           'Especial gasta um pouco de vida    Correr: toque duplo no direcional',
+           'Agarrar: ande em um inimigo atordoado, depois SOCO para arremessar',
+           'Toque em JOGAR   |   Quebre barris para achar itens!']:
+          ['Mover: WASD / setas    Soco: J ou Z    Pulo: K ou X',
            'Especial: Soco + Pulo juntos (gasta um pouco de vida)',
            'Correr: toque duplo na direção    Agarrar: ande em um inimigo atordoado, depois Soco para arremessar',
            coop?'2 jogadores: P1 WASD + J(soco) X(pulo)   P2 setas + K(soco) L(pulo)':'Enter ou Espaço para jogar   |   P pausa   |   T alterna 1P/2P   |   Quebre barris para itens!'];
-  L.forEach((s,i)=>txt(c,s,W/2,222+i*12,i===2?8:9,'#fff','center',false));
+  L.forEach((s,i)=>txt(c,s,W/2,222+i*12,T?9:(i===2?8:9),'#fff','center',false));
 }
 function drawOver(c){
   c.fillStyle='rgba(8,4,24,'+Math.min(.8,overT/30)+')';c.fillRect(0,0,W,H);
   if(overT<20)return;
   btns.length=0;
-  txt(c,win?'VITÓRIA!':'FIM DE JOGO',W/2,80,38,win?'#7dff7d':'#ff5a5a','center');
-  txt(c,win?'A Rua dos Socos é de vocês!':'Você caiu na rua... mas levanta!',W/2,100,11,'#fff','center');
-  txt(c,'Pontos: '+totalScore(),W/2,136,22,'#ffe14a','center');
-  txt(c,'Recorde: '+bestScore,W/2,158,14,'#fff','center');
-  txt(c,'Fase alcançada: '+(stageI+1),W/2,176,11,'#cfe','center');
-  button(c,170,192,140,30,'Jogar de novo',()=>{scene='menu'},null,16);
+  txt(c,win?'VITÓRIA!':'FIM DE JOGO',W/2,70,38,win?'#7dff7d':'#ff5a5a','center');
+  txt(c,win?(players.length>1?'A Rua dos Socos é de vocês!':'A Rua dos Socos é sua!'):'Você caiu na rua... mas levanta!',W/2,90,11,'#fff','center');
+  txt(c,'Pontos: '+totalScore(),W/2,126,22,'#ffe14a','center');
+  if(newRec&&((tick>>3)&1||RM))txt(c,'NOVO RECORDE!',W/2,142,12,'#7dff7d','center');
+  txt(c,'Recorde: '+bestScore,W/2,160,14,'#fff','center');
+  txt(c,win?'Fases concluídas: 3 de 3':'Fase alcançada: '+(stageI+1)+' de 3',W/2,176,11,'#cfe','center');
+  button(c,92,192,140,30,'Jogar de novo',startGame,null,16);
+  button(c,248,192,140,30,'Menu',()=>{scene='menu'},'#3a8bff',16);
 }
 function drawClear(c){
   c.fillStyle='rgba(8,4,24,.6)';c.fillRect(0,0,W,H);
@@ -1136,12 +1189,14 @@ function drawClear(c){
 }
 function drawPause(c){
   c.fillStyle='rgba(0,0,0,.55)';c.fillRect(0,0,W,H);
-  txt(c,'PAUSADO',W/2,H/2,30,'#fff','center');txt(c,'Pressione P para continuar',W/2,H/2+20,11,'#fff','center');
+  txt(c,'PAUSADO',W/2,108,30,'#fff','center');txt(c,'P ou Esc: continuar    Q: sair para o menu',W/2,126,10,'#cfe','center');
+  button(c,130,142,220,28,'Continuar',()=>setPause(false),null,15);
+  button(c,130,182,220,28,'Sair para o menu',quitRun,'#3a8bff',15);
 }
-cv.addEventListener('pointerdown',()=>{if(paused&&scene==='play')paused=false});
 
 function render(){
   const c=ctx;
+  btns.length=0;syncUI();
   c.setTransform(SC,0,0,SC,0,0);c.imageSmoothingEnabled=false;
   c.fillStyle='#000';c.fillRect(0,0,W,H);
   if(scene==='menu'){drawMenu(c);return}
@@ -1161,9 +1216,9 @@ function frame(now){
   render();
   requestAnimationFrame(frame);
 }
+try{document.fonts.load('16px "Lilita One"')}catch(e){}
 buildStage(0);
 requestAnimationFrame(frame);
-window.__dbg={go:(w)=>{const S=STAGES[stageI];waveI=w;cam=w<S.waves.length?S.waves[w].at-1:S.bossAt-1;players.forEach(p=>p.x=cam+100)},get state(){return{scene,stageI,cam,locked,waveI,players:players.map(p=>({hp:p.hp,x:p.x,y:p.y,st:p.state,score:p.score,lives:p.lives})),enemies:enemies.length,queue:queue.length}},start:startGame,setStage:(i)=>{loadStage(i)},press,players:()=>players,enemies:()=>enemies,spawn:spawnEnemy};
 </script>
 </body>
 </html>

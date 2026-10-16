@@ -343,6 +343,32 @@ a{color:inherit}
 }
 @media (min-width:900px){#rank-toggle{display:none}}
 
+/* ---------- Celular deitado: o jogo ocupa a tela toda ---------- */
+/* Some a barra de cima e o placar lateral; sobra só uma lingueta na borda esquerda (Voltar · Placar · Tela cheia).
+   O placar vira gaveta pela direita e só abre por essa lingueta ou quando chega uma pontuação para salvar. */
+.fab{display:none}
+@media (orientation:landscape) and (max-height:540px){
+  .pbar{display:none}
+  .stage{grid-template-columns:minmax(0,1fr);padding:0 env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px)}
+  .board{position:absolute;top:0;bottom:0;right:0;left:auto;width:min(380px,64vw);max-height:none;border-left:1px solid var(--line);border-top:0;border-radius:20px 0 0 20px;
+    box-shadow:-24px 0 48px -12px rgba(0,0,0,.55);padding-top:max(12px,env(safe-area-inset-top,0px));padding-bottom:max(12px,env(safe-area-inset-bottom,0px));
+    padding-left:14px;padding-right:max(14px,env(safe-area-inset-right,0px));transform:translateX(105%);visibility:hidden;transition:transform .25s ease,visibility .25s}
+  .board.open{transform:none;visibility:visible}
+  .bclose{display:grid;place-items:center}
+  .grab{display:none}
+  .fab{display:flex;align-items:center;gap:6px;position:absolute;z-index:3;top:50%;left:env(safe-area-inset-left,0px);translate:0 -50%}
+  .fab-tab{display:grid;place-items:center;width:22px;height:56px;padding:0;border-radius:0 12px 12px 0;cursor:pointer;color:#fff;
+    background:rgba(10,14,24,.55);border:1px solid rgba(255,255,255,.28);border-left:0;opacity:.6;transition:opacity .2s}
+  .fab-tab svg{width:13px;height:13px}
+  .fab.open .fab-tab,.fab-tab:focus-visible{opacity:1}
+  .fab-menu{display:none;flex-direction:column;gap:8px}
+  .fab.open .fab-menu{display:flex}
+  .fab-menu button{display:grid;place-items:center;width:42px;height:42px;padding:0;border-radius:50%;cursor:pointer;color:#fff;
+    background:rgba(10,14,24,.78);border:1px solid rgba(255,255,255,.3);box-shadow:0 6px 16px -6px rgba(0,0,0,.6)}
+  .fab-menu button:first-child{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .fab-menu svg{width:17px;height:17px}
+}
+
 /* ---------- Medalhas e troféus: brilho que passa, estrelinhas, cintilar ---------- */
 .sheen{animation:brilho 4.8s ease-in-out infinite}
 @keyframes brilho{0%,52%{transform:translateX(-60px)}82%,100%{transform:translateX(80px)}}
