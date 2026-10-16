@@ -149,7 +149,7 @@ function mkTile(kind,seed){
   return c;
 }
 const TILES=[mkTile('g',0),mkTile('g',1),mkTile('g',2),mkTile('g',3),mkTile('s',2),mkTile('s',3)];
-const isStone=(tx,ty)=>vnoise(tx*0.15+10.3,ty*0.15+3.7)>0.63;
+const isStone=(tx,ty)=>vnoise(tx*0.15+10.3,ty*0.15+3.7)>0.68;
 const FLC=['#ffe14a','#ff7fb0','#fff','#9fd0ff','#ff9a4a'];
 function drawDeco(tx,ty,px,py,stone){
   const h=hash2(tx*3+1,ty*5+7),ox=px+10+hash2(tx+99,ty)*44,oy=py+10+hash2(tx,ty+77)*44;

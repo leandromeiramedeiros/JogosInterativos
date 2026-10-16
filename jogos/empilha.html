@@ -405,7 +405,7 @@ function desenha(){
 function hud(){
   ctx.save();
   ctx.textAlign='center'; ctx.textBaseline='middle';
-  if(estado!=='inicio'){
+  if(estado==='jogo'||estado==='fim-anim'){
     const sc=Math.max(0,cnt()-1)+perfeitos;
     ctx.font="64px 'Lilita One','Trebuchet MS',sans-serif";
     ctx.lineWidth=8; ctx.strokeStyle='rgba(20,10,50,.6)';

@@ -421,11 +421,11 @@ function addBig(kind){
   const b={kind,x:180,y:-80,t:0,parts:[],flash:0,dying:0,lock:false,exposed:false,air:true,boss:false,hw:30,hh:20,bx:0,by:0,hp:30,score:3000,phase:1,sp:0};
   if(kind==='bomber'){b.x=rnd(110,250);b.y=-60;b.hw=40;b.hh=18;b.hp=26;
     addPart(b,-34,4,9,9);addPart(b,34,4,9,9);addPart(b,0,24,8,9)}
-  else if(kind==='ship'){b.boss=true;b.air=false;b.x=180;b.y=-150;b.hw=34;b.hh=95;b.hp=130;b.lock=true;b.score=15000;
+  else if(kind==='ship'){b.boss=true;b.air=false;b.x=180;b.y=-150;b.hw=34;b.hh=95;b.hp=130;b.lock=true;b.score=6000;
     addPart(b,0,70,13,26);addPart(b,0,25,13,26);addPart(b,0,-20,13,26);addPart(b,-25,-68,9,15,'aa');addPart(b,25,-68,9,15,'aa')}
-  else if(kind==='wing'){b.boss=true;b.x=180;b.y=-80;b.hw=62;b.hh=26;b.hp=190;b.lock=true;b.score=25000;b.by=4;
+  else if(kind==='wing'){b.boss=true;b.x=180;b.y=-80;b.hw=62;b.hh=26;b.hp=190;b.lock=true;b.score=9000;b.by=4;
     addPart(b,-100,-12,16,36,'eng');addPart(b,100,-12,16,36,'eng');addPart(b,-48,14,11,26);addPart(b,48,14,11,26);addPart(b,0,-18,11,30)}
-  else if(kind==='fort'){b.boss=true;b.air=false;b.x=180;b.y=-130;b.hw=44;b.hh=44;b.hp=240;b.lock=true;b.score=40000;
+  else if(kind==='fort'){b.boss=true;b.air=false;b.x=180;b.y=-130;b.hw=44;b.hh=44;b.hp=240;b.lock=true;b.score=14000;
     addPart(b,-98,-56,14,34);addPart(b,98,-56,14,34);addPart(b,-98,56,14,34);addPart(b,98,56,14,34);addPart(b,-42,70,10,26);addPart(b,42,70,10,26)}
   b.hp*=hm();b.max=b.hp;
   for(const p of b.parts){}
@@ -479,7 +479,7 @@ function updateBig(b){
     if(b.y>H+80)b.dead=true;
   }
   else if(b.kind==='ship'){
-    if(b.y<150)b.y+=0.8;else{b.x=180+50*Math.sin(b.t*0.012)}
+    if(b.y<185)b.y+=0.8;else{b.x=180+50*Math.sin(b.t*0.012)}
     if(b.y<100)return;
     if(!b.exposed){
       for(const p of b.parts){if(p.hp<=0)continue;if(--p.cd<=0){
@@ -511,7 +511,7 @@ function updateBig(b){
     }
   }
   else if(b.kind==='fort'){
-    if(b.y<150)b.y+=0.8;
+    if(b.y<175)b.y+=0.8;
     if(b.y<100)return;
     if(!b.exposed){
       for(const p of b.parts){if(p.hp<=0)continue;if(--p.cd<=0){const wx=b.x+p.ox,wy=b.y+p.oy;
