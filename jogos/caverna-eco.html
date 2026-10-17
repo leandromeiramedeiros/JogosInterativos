@@ -30,7 +30,7 @@ body.touch .kb,body:not(.touch) .tc{display:none!important}
 body.touch #touch{display:block}
 .tb{position:absolute;pointer-events:auto;border-radius:50%;background:#0d1c2c99;border:2px solid #7fe7ff77;color:#dff6ff;font:700 12px Figtree,sans-serif;display:flex;align-items:center;justify-content:center;touch-action:none}
 .tb.on{background:#3fd0ff88}.tb.off{opacity:.35}
-#dp{left:max(10px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:150px;height:150px}
+#dp{pointer-events:auto;touch-action:none;left:max(10px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:150px;height:150px}
 #dp .tb{width:50px;height:50px;border-radius:12px;font-size:20px}
 #bt .tb{width:62px;height:62px}
 </style>
@@ -221,12 +221,24 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>{if(MAPK[e.code]){setAct(MAPK[e.code],false);if(!(e.target&&e.target.tagName==='BUTTON'&&state!=='play'))e.preventDefault()}});
 addEventListener('blur',()=>{for(const k in held)held[k]=false});
-document.querySelectorAll('.tb').forEach(b=>{
+document.querySelectorAll('#bt .tb').forEach(b=>{
   const a=b.dataset.a;
   const dn=e=>{e.preventDefault();b.setPointerCapture&&b.setPointerCapture(e.pointerId);setAct(a,true);b.classList.add('on')};
   const up=e=>{e.preventDefault();setAct(a,false);b.classList.remove('on')};
   b.addEventListener('pointerdown',dn);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
 });
+/* direcional numa peça só: dá para deslizar o dedo de ◀ para ▶ (e para as diagonais) sem levantar; antes cada seta prendia o toque */
+{
+  const dp=document.getElementById('dp'),bs={};let id=null;
+  dp.querySelectorAll('.tb').forEach(b=>{bs[b.dataset.a]=b});
+  const set=on=>{for(const a in bs){setAct(a,!!on[a]);bs[a].classList.toggle('on',!!on[a])}};
+  const at=e=>{const r=dp.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,ax=Math.abs(x),ay=Math.abs(y);
+    set({L:x<-14&&ax>ay*.5,R:x>14&&ax>ay*.5,U:y<-14&&ay>ax*.5,D:y>14&&ay>ax*.5})};
+  dp.addEventListener('pointerdown',e=>{e.preventDefault();if(id!==null)return;id=e.pointerId;try{dp.setPointerCapture(id)}catch(_){}at(e)});
+  dp.addEventListener('pointermove',e=>{if(e.pointerId===id){e.preventDefault();at(e)}});
+  const up=e=>{if(e.pointerId===id){id=null;set({})}};
+  dp.addEventListener('pointerup',up);dp.addEventListener('pointercancel',up);dp.addEventListener('lostpointercapture',up);
+}
 addEventListener('touchstart',()=>document.body.classList.add('touch'),{passive:true});
 if(matchMedia&&matchMedia('(pointer:coarse)').matches)document.body.classList.add('touch');
 addEventListener('contextmenu',e=>e.preventDefault());
