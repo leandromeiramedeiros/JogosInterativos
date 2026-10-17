@@ -71,7 +71,7 @@ window.INTERLIGADO_TEMAS.corpo = {
         ["cérebro","cabeça"],
         ["cérebro","coração"],
         ["amor","coração"],
-        ["cotovelo","braço"],
+        ["abraço","braço"],
         ["mão","braço"],
         ["músculo","braço"],
         ["músculo","perna"],
@@ -86,8 +86,8 @@ window.INTERLIGADO_TEMAS.corpo = {
         ["inteligência","cérebro"],
         ["memória","cérebro"],
         ["inteligência","memória"],
-        ["ciúme","amor"],
-        ["ciúme","cotovelo"],
+        ["beijo","amor"],
+        ["beijo","abraço"],
         ["dedo","mão"],
         ["anel","mão"],
         ["dedo","anel"],
@@ -117,6 +117,8 @@ window.INTERLIGADO_TEMAS.corpo = {
     }
   },
   pistas: {
+    "beijo": "Carinho feito com a boca, sinal de amor.",
+    "abraço": "Carinho em que a gente envolve alguém com os dois braços.",
     "corpo": "Conjunto formado por cabeça, tronco e membros de uma pessoa.",
     "cabeça": "Parte de cima do corpo, onde ficam os olhos e a boca.",
     "coração": "Órgão que bombeia o sangue; também é o símbolo do amor.",

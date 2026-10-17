@@ -102,8 +102,8 @@ window.INTERLIGADO_TEMAS.natureza = {
         ["céu","nuvem"],
         ["raio","nuvem"],
         ["raio","tempestade"],
-        ["ressaca","tempestade"],
-        ["ressaca","onda"],
+        ["furacão","tempestade"],
+        ["furacão","onda"],
         ["surfe","onda"],
         ["surfe","praia"],
         ["pescador","praia"],
@@ -116,14 +116,16 @@ window.INTERLIGADO_TEMAS.natureza = {
         ["relâmpago","raio"],
         ["mato","trilha"],
         ["mato","verde"],
-        ["turismo","Pantanal"],
-        ["turismo","trilha"],
+        ["onça","Pantanal"],
+        ["onça","mato"],
         ["primavera","borboleta"],
         ["primavera","pólen"]
       ]
     }
   },
   pistas: {
+    "furacão": "Tempestade gigante que gira com ventos fortíssimos e levanta ondas enormes.",
+    "onça": "Felino pintado que vive no mato e é a estrela do Pantanal.",
     "natureza": "Tudo o que existe no mundo sem ter sido feito pelas pessoas.",
     "árvore": "Planta grande com tronco, galhos e copa.",
     "flor": "Parte colorida e perfumada da planta.",

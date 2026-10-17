@@ -107,8 +107,8 @@ window.INTERLIGADO_TEMAS.comida = {
         ["salada","sal"],
         ["salada","limão"],
         ["laranja","limão"],
-        ["laranja","Brasil"],
-        ["farofa","Brasil"],
+        ["feijoada","torresmo"],
+        ["farofa","torresmo"],
         ["grelha","fogo"],
         ["chapa","fogo"],
         ["chapa","queijo"],
@@ -121,6 +121,7 @@ window.INTERLIGADO_TEMAS.comida = {
     }
   },
   pistas: {
+    "torresmo": "Pele de porco frita e crocante que acompanha a feijoada.",
     "comida": "Tudo aquilo que se come para matar a fome e nutrir o corpo.",
     "arroz": "Grão branco que acompanha o feijão no prato do dia a dia.",
     "feijão": "Grão cozido em caldo, par inseparável do arroz no prato brasileiro.",
