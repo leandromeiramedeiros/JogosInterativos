@@ -231,6 +231,7 @@ body.touch #bQ{display:flex;width:48px;height:48px;right:158px;bottom:132px;left
       <ul>
         <li><b>Mover:</b> <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> ou setas (no celular: arraste na metade esquerda da tela e use os botões da direita). <b>Atacar:</b> <kbd>J</kbd> ou <kbd>Espaço</kbd>, a mira é automática.</li>
         <li><b>Habilidades:</b> <kbd>K</kbd> <kbd>L</kbd> <kbd>I</kbd> (têm recarga). <b>Poção:</b> <kbd>Q</kbd>. <b>Pausa:</b> <kbd>P</kbd>.</li>
+        <li><b>Controle:</b> analógico move · A ataca · X Y B habilidades · LB poção · Start pausa. Nos menus: direcional e A.</li>
         <li>Ache a escada de cada andar. A cada 3 andares um <b>chefe</b> sela a escada. Abra baús, pegue equipamentos e suba de nível.</li>
         <li>O relógio não perdoa: são 5 minutos, ou até você cair!</li>
       </ul></div>
@@ -244,6 +245,7 @@ body.touch #bQ{display:flex;width:48px;height:48px;right:158px;bottom:132px;left
 
 <section id="fim" class="tela oculto"><div class="pn" id="fimC"></div></section>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 'use strict';
@@ -2044,6 +2046,12 @@ buildSprites();resize();drawSnd();
 L=montaNivel(1,(Math.random()*2147483647)>>>0);L.mapCv=bakeMap(L);
 refreshMenu();
 requestAnimationFrame(frame);
+/* controle: telas viram menu navegável; na partida os botões viram as teclas do jogo */
+if(window.Controle){
+  const tela=()=>['menu','lvl','pausa','fim'].map($).find(e=>e&&!e.classList.contains('oculto'));
+  Controle.navegar({ativo:()=>!!tela(),raiz:tela,voltar:()=>{const p=$('pausa');if(!p.classList.contains('oculto'))$('pCont').click()}});
+  Controle.teclas({a:'KeyJ',rt:'KeyJ',x:'KeyK',y:'KeyL',b:'KeyI',lb:'KeyQ',rb:'KeyQ',start:'KeyP',cima:'ArrowUp',baixo:'ArrowDown',esquerda:'ArrowLeft',direita:'ArrowRight'},{ativo:()=>!tela()});
+}
 })();
 </script>
 </body>

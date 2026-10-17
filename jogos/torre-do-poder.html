@@ -81,10 +81,11 @@ body{display:flex;justify-content:center;align-items:center}
     <div class="chip"><small>PONTOS</small><span id="hudS">0</span></div>
     <button class="rbtn" id="rst" title="Reiniciar torre" aria-label="Reiniciar torre">&#8635;</button>
   </div>
-  <div id="hint">Limpe todos os quartos. Escolha a ordem certa!</div>
+  <div id="hint">Limpe todos os quartos. Escolha a ordem certa! Controle: direcional move · A entra · B reinicia</div>
   <div id="stage"></div>
   <div id="ov"></div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -373,6 +374,10 @@ window.addEventListener('resize',function(){placeHome()});
 window.__torre.tap=tap;window.__torre.state=function(){return {lvl:lvl,hero:hero,towers:towers,busy:busy,over:over,score:score}};
 loadLevel();
 start();
+/* controle: foco nos quartos, botão de reiniciar e telas; A entra no quarto, B reinicia a torre */
+if(window.Controle){
+  Controle.navegar({seletor:'.room[data-t],#rst,#ov button',voltar:function(){$('#rst').click()}});
+}
 })();
 </script>
 </body>

@@ -299,6 +299,7 @@ bb|Barbados|Barbados|
 `};
 
 </script>
+<script src="controle.js?v=1"></script>
 <script>
 const LEVELS={
   facil:{name:"Fácil",desc:"Bandeiras que aparecem em toda Copa do Mundo.",mult:1,time:30},
@@ -450,7 +451,7 @@ function home(){
        <span class="mini" aria-hidden="true">${s.map(c=>`<img src="${img(c.code)}" alt="">`).join("")}</span>
        <b>${l.name}</b><span>${l.desc}</span><i>${BYLV[k].length} países · pontos ×${l.mult} · recorde ${best(k)}</i>
      </button>`}).join("")}</div>
-   <div class="chips"><span>🎯 10 rodadas</span><span>⏱️ Tempo por bandeira: 30s, 22s, 16s ou 12s</span><span>💡 Dica: mostra as letras (vale metade)</span><span>🔥 3 acertos seguidos dobram os pontos</span><span>⌨️ Enter para responder e avançar</span></div>`;
+   <div class="chips"><span>🎯 10 rodadas</span><span>⏱️ Tempo por bandeira: 30s, 22s, 16s ou 12s</span><span>💡 Dica: mostra as letras (vale metade)</span><span>🔥 3 acertos seguidos dobram os pontos</span><span>⌨️ Enter para responder e avançar</span><span>🎮 Controle: A digita · Start responde · LB dica · RB pular</span></div>`;
   app.querySelectorAll(".level").forEach(b=>b.onclick=()=>{SFX.start();start(b.dataset.lv)});
 }
 
@@ -547,6 +548,27 @@ function end(){
   if(h>=6){SFX.win();confetti()}else SFX.lose();
 }
 home();
+/* controle: direcional/A navegam, teclado na tela abre sozinho na rodada, Start responde, LB dica, RB pular */
+if(window.Controle){
+  Controle.navegar({voltar:()=>{ const m=document.getElementById("menu"); if(m) m.click(); }});
+  let sig="",tela=null;
+  const rodando=()=>G&&!G.done&&document.getElementById("ans");
+  const alvo=()=>!G?app.querySelector(".level"):document.getElementById("again")||(G.done?document.querySelector("#f .btn"):document.getElementById("ans"));
+  Controle.on("botao",()=>{ if(!Controle.tecladoAberto()&&!rodando()){ const el=alvo(); if(el) Controle.focar(el) } });
+  Controle.on("quadro",()=>{
+    if(tela&&(!G||G.done||!tela.box.isConnected)){ if(tela.box.isConnected) tela.fechar(true); tela=null }
+    if(G&&!G.done){
+      if(Controle.apertou(-1,"lb")) showHint();
+      if(Controle.apertou(-1,"rb")) document.getElementById("skip").click();
+    }
+    if(Controle.tecladoAberto()||!Controle.usado) return;
+    const novo=G?G.i+":"+G.done+(document.getElementById("again")?"E":""):"home";
+    if(novo===sig) return; sig=novo;
+    const el=alvo(); if(!el) return;
+    Controle.focar(el);
+    if(rodando()){ tela=Controle.tecladoVirtual({campo:el}); Controle.dica("LB dica · RB pular",3500) }
+  });
+}
 </script>
 
 </body></html>

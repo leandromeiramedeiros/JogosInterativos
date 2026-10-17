@@ -297,6 +297,7 @@ addEventListener("message",e=>{
   board.scrollTop=0;
   abrirPlacar(true);
   if(matchMedia("(min-width:900px)").matches) nomeInp.focus({preventScroll:true});
+  if(padUsado()){ noPlacar=true; if(window.Controle) Controle.focar(nomeInp) }
 });
 
 sendForm.addEventListener("submit",async e=>{
@@ -409,4 +410,37 @@ frame.addEventListener("load",()=>{
   for(const ev of ["touchend","pointerup","keydown"]) doc.addEventListener(ev,()=>{ abrirFab(false); telaCheiaAoTocar() },{capture:true,passive:true});
 });
 addEventListener("hashchange",route);
+
+/* ================= Controle (gamepad) =================
+   Na grade: direcional escolhe, A abre. Dentro do jogo o controle é do jogo;
+   Select + Start volta para a grade. No fim da partida o placar recebe o controle
+   (A no nome abre o teclado na tela, B volta para o jogo). */
+let noPlacar=false;
+function padUsado(){
+  if(!window.Controle) return false;
+  let w=null; try{ w=frame.contentWindow }catch(e){}
+  try{ return Controle.usado||!!(w&&w.Controle&&w.Controle.usado) }catch(e){ return Controle.usado }
+}
+if(window.Controle){
+  const celebraAberta=()=>!$("celebra").hidden;
+  Controle.navegar({
+    ativo:()=>!atual||celebraAberta()||noPlacar||recent.open,
+    raiz:()=>recent.open?recent:celebraAberta()?$("celebra"):(atual?board:document),
+    voltar:()=>{
+      if(recent.open){ recent.close?recent.close():recent.removeAttribute("open"); return }
+      if(celebraAberta()){ fecharCelebra(); return }
+      if(noPlacar){ noPlacar=false; if(!matchMedia("(min-width:900px)").matches) abrirPlacar(false); frame.focus() }
+    }
+  });
+  let avisado=false;
+  Controle.on("quadro",()=>{
+    if(atual&&Controle.segurando(-1,"select")&&Controle.segurando(-1,"start")&&(Controle.apertou(-1,"select")||Controle.apertou(-1,"start"))){
+      noPlacar=false; fechar(); return;
+    }
+    if(atual&&!avisado&&padUsado()){ avisado=true; Controle.dica("Select + Start: voltar para os jogos",3500) }
+    let w=null; try{ w=frame.contentWindow }catch(e){}
+    try{ if(w&&w.Controle) w.Controle.pausado=!!atual&&(celebraAberta()||noPlacar||!!recent.open) }catch(e){}
+  });
+}
+addEventListener("hashchange",()=>{ if(!atual) noPlacar=false });
 route();

@@ -140,10 +140,12 @@ dialog p{margin:8px 0;font-size:14.5px}
   <div class="ex"><div class="t">F</div><div class="t">I</div><div class="t no">T</div><div class="t">A</div></div>
   <p><b>Cinza:</b> a letra não está na palavra.</p>
   <p>Acentos e cedilha são preenchidos sozinhos: digite <b>MACA</b> e o jogo entende <b>MAÇÃ</b>. Há uma palavra nova por dia em cada nível: Fácil tem 4 letras, Médio 5 e Difícil 6.</p>
+  <p>Controle: direcional move o foco · A escolhe · X apaga · Y envia · LB/RB trocam de casa · B volta.</p>
   <form method="dialog"><button class="btn pri">Entendi</button></form>
 </dialog>
 
 <script src="palpite/palavras.js?v=1"></script>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -265,7 +267,7 @@ function moverCur(i){G.cur=Math.max(0,Math.min(G.n-1,i));pintarAtual(!!(document
 function pintarTeclado(){
   const melhor={}, rank={no:1,has:2,ok:3};
   G.tent.forEach(p=>avaliar(p,G.chave).forEach((c,i)=>{const l=p[i];if(!melhor[l]||rank[c]>rank[melhor[l]])melhor[l]=c}));
-  $("teclas").querySelectorAll("button[data-k]").forEach(b=>{const k=b.dataset.k;if(k.length===1){b.className=melhor[k]||"";}});
+  $("teclas").querySelectorAll("button[data-k]").forEach(b=>{const k=b.dataset.k;if(k.length===1){b.className=(melhor[k]||"")+(b.classList.contains("pad-foco")?" pad-foco":"");}});
 }
 function tecla(k){
   if(!G||G.fim||ocupado) return;
@@ -363,6 +365,20 @@ document.addEventListener("keydown",e=>{
 });
 $("comojogar").onclick=()=>$("regras").showModal();
 if(!LS.get("palpite:viu-regras",false)){LS.set("palpite:viu-regras",true);setTimeout(()=>{try{$("regras").showModal()}catch(e){}},300)}
+
+/* Controle: navega por níveis, teclas e botões; X apaga, Y envia, LB/RB trocam de casa, B volta */
+if(window.Controle){
+  const dlg=$("regras"); let ultG=null;
+  Controle.navegar({seletor:"button",raiz:()=>dlg.open?dlg:document,voltar:()=>{ if(dlg.open) dlg.close(); else if(G) telaInicio(); }});
+  Controle.on("quadro",()=>{
+    if(G!==ultG){ ultG=G; if(G&&!G.fim) Controle.focar(document.querySelector(".teclas button")); return; }
+    if(dlg.open||!G) return;
+    if(Controle.apertou(-1,"x")) tecla("apaga");
+    if(Controle.apertou(-1,"y")) tecla("enter");
+    if(Controle.apertou(-1,"lb")) tecla("esq");
+    if(Controle.apertou(-1,"rb")) tecla("dir");
+  });
+}
 
 telaInicio();
 })();

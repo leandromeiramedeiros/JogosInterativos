@@ -38,6 +38,7 @@ button.sec{font-size:16px;background:#fff3c4;box-shadow:0 4px 0 #c9b070;padding:
     <div class="ov on" id="ov"></div>
   </div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -116,7 +117,7 @@ function hideOv(){ov.classList.remove('on')}
 function menu(){
   st='menu';loadLevel(0);redoBtn.classList.remove('on');
   var b=loadBest();
-  showOv('<h1>Salve o<br>Cachorro!</h1><p>Proteja o cachorro das abelhas com <b>uma linha só</b>. Ela ganha peso e cai quando você solta o dedo.</p><p>Não dá para desenhar no círculo vermelho e a tinta é pouca: use o cenário, tampe buracos ou prenda as abelhas na colmeia. Aguente 10 segundos!</p>'+
+  showOv('<h1>Salve o<br>Cachorro!</h1><p>Proteja o cachorro das abelhas com <b>uma linha só</b>. Ela ganha peso e cai quando você solta o dedo.</p><p>Não dá para desenhar no círculo vermelho e a tinta é pouca: use o cenário, tampe buracos ou prenda as abelhas na colmeia. Aguente 10 segundos!</p><p>Controle: analógico move · segure A para desenhar · Y reinicia</p>'+
     '<button data-act="play">Jogar</button>'+(b?'<p>Melhor fase: '+b+'</p>':''));
 }
 function startRun(from){
@@ -619,6 +620,12 @@ function frame(ts){
 menu();
 requestAnimationFrame(function(ts){last=ts;requestAnimationFrame(frame)});
 window.__game={get st(){return st},get score(){return score},get lvl(){return lvl},get ink(){return inkUsed},go:function(i){startRun(i)}};
+/* controle: A segurado desenha (cursor), menus por foco, Y reinicia a fase */
+if(window.Controle){
+  Controle.navegar({ativo:function(){return ov.classList.contains('on')},raiz:function(){return stage}});
+  Controle.cursor({velocidade:380,ativo:function(){return !ov.classList.contains('on')}});
+  Controle.on('botao',function(i,n){if(n==='y'&&!ov.classList.contains('on')&&redoBtn.classList.contains('on'))redoBtn.click()});
+}
 })();
 </script>
 </body>

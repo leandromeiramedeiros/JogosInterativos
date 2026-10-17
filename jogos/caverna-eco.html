@@ -56,7 +56,7 @@ body.touch #touch{display:block}
 <div class="ov" id="pTitle"><div class="card">
  <h1>Caverna Eco</h1>
  <p>Lume, a pequena exploradora do capacete brilhante, desce a uma caverna viva. Encontre habilidades, derrote os guardi&otilde;es e descubra o Cora&ccedil;&atilde;o da Montanha.</p>
- <div class="keys kb"><span><b>&larr; &rarr; / A D</b> mover</span><span><b>Z / Espa&ccedil;o / K</b> pular</span><span><b>X / J</b> atacar (&uarr; ataca para cima)</span><span><b>C / L</b> investida</span><span><b>V / Shift</b> disparo de eco</span><span><b>M</b> mapa &nbsp; <b>Esc</b> menu</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span></div>
+ <div class="keys kb"><span><b>&larr; &rarr; / A D</b> mover</span><span><b>Z / Espa&ccedil;o / K</b> pular</span><span><b>X / J</b> atacar (&uarr; ataca para cima)</span><span><b>C / L</b> investida</span><span><b>V / Shift</b> disparo de eco</span><span><b>M</b> mapa &nbsp; <b>Esc</b> menu</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span><span><b>Controle</b> direcional move · A pula · X ataca · B investida · Y eco · Start pausa · Select mapa</span></div>
  <div class="keys tc"><span><b>Direcional</b> mover e (&uarr;) atacar para cima</span><span><b>PULO</b> pular, duas vezes no ar com a habilidade</span><span><b>ATAQUE</b> golpe de espada</span><span><b>DASH / ECO</b> aparecem ao achar as habilidades</span><span><b>MAPA / PAUSA</b> no canto da tela</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span></div>
  <button class="b" id="bPlay">Jogar</button><button class="b s" id="bNew" style="display:none">Novo jogo</button>
  <p id="tBest" style="font-size:12px"></p>
@@ -76,6 +76,7 @@ body.touch #touch{display:block}
  <button class="b" id="eAgain">Jogar de novo</button><button class="b s" id="eMenu">Menu principal</button>
 </div></div>
 
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 'use strict';
@@ -1173,6 +1174,16 @@ function showTitle(){
   showTitle();
   requestAnimationFrame(loop);
 })();
+  /* controle: jogo com teclas seguradas; menus (títulos, pausa, fim) pelo foco com o direcional e A/Start */
+  if(window.Controle){
+    Controle.teclas({cima:'ArrowUp',baixo:'ArrowDown',esquerda:'ArrowLeft',direita:'ArrowRight',a:'KeyZ',x:'KeyX',b:'KeyC',y:'KeyV'},{ativo:()=>state==='play'||state==='banner'});
+    const ovAberto=()=>['pTitle','pPause','pEndS'].map(id=>document.getElementById(id)).find(el=>el&&el.style.display==='flex');
+    Controle.navegar({ativo:()=>!!ovAberto(),raiz:()=>ovAberto()||document.body,voltar:()=>{if(state==='pause')togglePause()}});
+    Controle.on('quadro',()=>{
+      if(Controle.apertou(-1,'start')&&(state==='play'||state==='map'))togglePause();
+      if(Controle.apertou(-1,'select')&&(state==='play'||state==='map'))toggleMap();
+    });
+  }
 })();
 </script>
 </body>

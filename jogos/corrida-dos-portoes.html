@@ -29,7 +29,7 @@ canvas{position:absolute;left:0;top:0;width:360px;height:640px;display:block;tou
   <canvas id="c"></canvas>
   <div class="ov on" id="ovStart">
     <h1>Corrida<br>dos Portões</h1>
-    <p>Arraste (ou use as setas / A-D) para guiar a multidão pelos portões verdes, desviar das serras e vencer o exército inimigo!</p>
+    <p>Arraste (ou use as setas / A-D, ou o analógico do controle) para guiar a multidão pelos portões verdes, desviar das serras e vencer o exército inimigo!</p>
     <p class="small" id="bestS"></p>
     <button class="btn" id="bPlay">Jogar</button>
   </div>
@@ -48,6 +48,7 @@ canvas{position:absolute;left:0;top:0;width:360px;height:640px;display:block;tou
     <button class="btn" id="bAgain">Jogar de novo</button>
   </div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -175,6 +176,18 @@ cv.addEventListener('pointermove',e=>{
 const endDrag=()=>{dragging=false};
 cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
 
+// analógico esquerdo (ou direcional) do controle, proporcional; somado às setas no update
+function eixoPad(){
+  if(!window.Controle) return 0;
+  let v=0;
+  for(let i=0;i<4;i++){
+    const p=Controle.pad(i); if(!p.conectado) continue;
+    const x=p.lx||(p.direita?1:p.esquerda?-1:0);
+    if(Math.abs(x)>Math.abs(v)) v=x;
+  }
+  return v;
+}
+
 // ---------- update ----------
 function crowdRX(){return 7.4*Math.sqrt(Math.min(G.n,90))/HW}
 function addFloater(txt,col){floaters.push({x:180+G.cx*HW*0.77,y:projY(CAMBACK)-70,txt,col,life:1})}
@@ -194,7 +207,7 @@ function update(dt){
   }
   if(G.phase==='run'){
     const sp=190+Math.min(60,G.level*4);
-    const k=((keys.has('ArrowRight')||keys.has('d')||keys.has('D'))?1:0)-((keys.has('ArrowLeft')||keys.has('a')||keys.has('A'))?1:0);
+    const k=Math.max(-1,Math.min(1,((keys.has('ArrowRight')||keys.has('d')||keys.has('D'))?1:0)-((keys.has('ArrowLeft')||keys.has('a')||keys.has('A'))?1:0)+eixoPad()));
     G.cx+=k*1.9*dt;
     G.cx=Math.max(-0.92,Math.min(0.92,G.cx));
     G.prevZ=G.z;G.z+=sp*dt;
@@ -437,6 +450,10 @@ function frame(now){
 requestAnimationFrame(frame);
 // expose for tests
 window.__jogo={G:()=>G};
+  // controle: A escolhe o botão dos menus (navegar); na corrida o analógico/direcional guia (eixoPad)
+  if(window.Controle){
+    Controle.navegar({raiz:()=>document.querySelector('.ov.on'),ativo:()=>!!document.querySelector('.ov.on')});
+  }
 })();
 </script>
 </body>

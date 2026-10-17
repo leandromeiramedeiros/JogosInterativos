@@ -21,6 +21,7 @@ canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display
 <body>
 <canvas id="c" tabindex="0"></canvas>
 <div class="btns"><button id="bp" title="Pausar">&#10074;&#10074;</button><button id="bm" title="Som">&#128266;</button></div>
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 'use strict';
@@ -177,7 +178,7 @@ function drawDeco(tx,ty,px,py,stone){
 let state='menu',uiT=0,fr=0,best=0,winFlag=false,score=0,newBest=false,bonus=0,sel=0,lvKind='level';
 try{best=+localStorage.getItem('horda_best')||0}catch(e){}
 let P,enemies,gems,parts,texts,projs,chests,foods,bolts,kills,t,level,xp,xpNeed,pending,chestP,weps,pas,cam,shake,spawnT,bossIdx,banner,bannerT,eid,ringT,lineT,choices,hitSnd,godMode=false,bossE=null,joy={id:null,ox:0,oy:0,dx:0,dy:0};
-const keys={};
+const keys={},stick={x:0,y:0};
 const need=l=>Math.floor(4+l*5+l*l*0.3);
 const WORDER=['faca','varinha','alho','machado','raio','livro'],PORDER=['speed','hp','magnet','cool','area'];
 const WN={
@@ -435,6 +436,7 @@ function updatePlay(){
   let mx=0,my=0;
   if(keys.KeyA||keys.ArrowLeft)mx--;if(keys.KeyD||keys.ArrowRight)mx++;if(keys.KeyW||keys.ArrowUp)my--;if(keys.KeyS||keys.ArrowDown)my++;
   if(joy.id!==null){const m=Math.hypot(joy.dx,joy.dy)/45;if(m>0.12){const k=Math.min(1,m)/Math.hypot(joy.dx,joy.dy);mx=joy.dx*k;my=joy.dy*k}}
+  if(stick.x||stick.y){mx=stick.x;my=stick.y}/* controle analógico */
   let len=Math.hypot(mx,my);if(len>1){mx/=len;my/=len;len=1}
   const sp=150*(1+0.1*pas.speed);
   P.x+=mx*sp*DT;P.y+=my*sp*DT;
@@ -687,7 +689,7 @@ function drawMenu(){
   txt('HORDA',W/2,122+by,104,'#ffc23c','center',FD,null);
   txt('Sobreviva 10 minutos contra a horda!',W/2,168,24,'#fff','center',FB,'#000',4);
   ctx.fillStyle='rgba(0,0,0,.55)';rr(W/2-300,196,600,200,18);ctx.fill();
-  const L=[['Mover','WASD / setas  ou  arraste o dedo na tela'],['Armas','Atacam sozinhas. Só desvie da horda!'],['Gemas','Colete para subir de nível e escolher melhorias'],['Chefes','A cada 3 minutos. Derrote-os e pegue o baú'],['Pausar','P ou Esc  (M liga/desliga o som)']];
+  const L=[['Mover','WASD / setas / analógico  ou  arraste o dedo'],['Armas','Atacam sozinhas. Só desvie da horda!'],['Gemas','Colete para subir de nível e escolher melhorias'],['Chefes','A cada 3 minutos. Derrote-os e pegue o baú'],['Pausar','P, Esc ou Start  (M liga/desliga o som)']];
   L.forEach((l,i)=>{txt(l[0],W/2-278,232+i*34,20,'#ffd84a','left',FD,'#000',3);ctx.font='700 17px '+FB;ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(l[1],W/2-178,231+i*34)});
   drawButton('Jogar',BTN);
   txt('Recorde: '+best,W/2,520,20,'#cfe6d4','center',FB,'#000',4);
@@ -711,7 +713,7 @@ function drawLevelUp(){
   ctx.fillStyle='rgba(5,10,20,.72)';ctx.fillRect(0,0,W,H);
   const pop=Math.min(1,uiT/14),e=1-Math.pow(1-pop,3);
   txt(lvKind==='chest'?'BAÚ DO CHEFE!':'SUBIU DE NÍVEL!',W/2,92,56*e+10,lvKind==='chest'?'#ffd84a':'#7ddcff','center',FD,'#02122a',8);
-  txt('Escolha uma melhoria (1, 2, 3 ou toque)',W/2,126,18,'#dfe9f0','center',FB,'#000',3);
+  txt('Escolha uma melhoria (1, 2, 3, toque ou controle)',W/2,126,18,'#dfe9f0','center',FB,'#000',3);
   choices.forEach((c,i)=>{
     const r=cardRect(i),ap=clamp((uiT-i*4)/12,0,1),ee=1-Math.pow(1-ap,3);
     ctx.save();ctx.translate(r.x+r.w/2,r.y+r.h/2+(1-ee)*60);const sc=(sel===i?1.04:1)*(0.6+0.4*ee);ctx.scale(sc,sc);ctx.globalAlpha=ee;
@@ -736,7 +738,7 @@ function drawLevelUp(){
 function drawPause(){
   ctx.fillStyle='rgba(5,10,8,.65)';ctx.fillRect(0,0,W,H);
   txt('PAUSADO',W/2,260,80,'#fff','center',FD,'#000',8);
-  txt('Toque ou pressione P para continuar',W/2,310,22,'#cfe6d4','center',FB,'#000',4);
+  txt('Toque, P ou Start para continuar',W/2,310,22,'#cfe6d4','center',FB,'#000',4);
 }
 
 function render(){
@@ -807,6 +809,15 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='p
 function toggleMute(){muted=!muted;document.getElementById('bm').innerHTML=muted?'&#128263;':'&#128266;'}
 document.getElementById('bm').addEventListener('click',e=>{ac();toggleMute();e.target.blur()});
 document.getElementById('bp').addEventListener('click',e=>{ac();togglePause();e.target.blur()});
+/* controle: analógico/direcional anda, Start ou B pausa, A começa e escolhe melhorias */
+if(window.Controle){
+  Controle.on('quadro',()=>{const p=[0,1,2,3].map(i=>Controle.pad(i)).find(q=>q.conectado);stick.x=p?p.lx:0;stick.y=p?p.ly:0});
+  Controle.teclas({cima:'ArrowUp',baixo:'ArrowDown',esquerda:'ArrowLeft',direita:'ArrowRight'},{ativo:()=>state==='play'});
+  /* um mapa só para play/pausa: dois mapas com a mesma tecla disparariam duas vezes na troca de estado */
+  Controle.teclas({a:['Enter','Space'],b:'Escape',start:'KeyP'},{ativo:()=>state==='play'||state==='paused'});
+  Controle.teclas({a:['Enter','Space'],start:'Enter'},{ativo:()=>state==='menu'||state==='over'});
+  Controle.teclas({esquerda:'ArrowLeft',direita:'ArrowRight',lb:'ArrowLeft',rb:'ArrowRight',a:['Enter','Space']},{ativo:()=>state==='levelup'});
+}
 window.__h={info:()=>({state,t,level,kills,n:enemies.length,gems:gems.length,hp:P.hp,fr,weps:weps.map(w=>w.id+w.lv)}),skip:s=>{t+=s},god:()=>{godMode=true},xp:v=>gainXp(v),pick:i=>choose(i),setState:s=>{state=s}};
 })();
 </script>

@@ -376,5 +376,8 @@ document.addEventListener("keydown", function(e){
   }
 });
 
+/* controle: direcional escolhe, A confirma, B volta ao menu */
+if(window.Controle) Controle.navegar({ voltar: function(){ var b = document.getElementById("menu") || document.getElementById("back"); if(b) b.click(); } });
+
 home();
 })();

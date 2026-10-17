@@ -184,6 +184,8 @@ dialog p,dialog li{font-size:14.5px}
 dialog ul{padding-left:20px;margin:8px 0}
 dialog li{margin:5px 0}
 dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.no.pad-foco rect.p{stroke:#ffb400!important;stroke-width:4!important;stroke-dasharray:none!important}
+.no.pad-foco{filter:drop-shadow(0 0 4px #ffb400)}
 @media (max-width:420px){
   .acoes .btn .t{display:none}
   .topo .tit b{font-size:17px}
@@ -201,7 +203,7 @@ dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
     </div>
     <button class="ib" id="ajuda1" aria-label="Como jogar"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.2 6.2a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r=".9" fill="currentColor"/></svg></button>
   </header>
-  <p class="intro">Cada palavra está ligada a outras por algum tipo de associação. Comece pela palavra do tema e vá descobrindo as vizinhas. Arraste as palavras e os fios para arrumar o mapa do seu jeito.</p>
+  <p class="intro">Cada palavra está ligada a outras por algum tipo de associação. Comece pela palavra do tema e vá descobrindo as vizinhas. Arraste as palavras e os fios para arrumar o mapa do seu jeito. Controle: direcional move, A escolhe, B volta.</p>
   <div class="temas" id="temas"></div>
 </div>
 
@@ -259,6 +261,7 @@ dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
     <li>Toque numa palavra para destacar os fios dela.</li>
     <li>Travou? Toque em <b>Dica</b> e escolha uma palavra escondida: aparece uma pista sobre ela, como “propriedade de todos os seres vivos” para <i>vida</i>. A pista fica guardada na palavra.</li>
     <li>Arraste as palavras para onde quiser: os fios puxam as vizinhas e as outras abrem espaço. Arraste um fio para levar as duas pontas juntas. Use dois dedos ou a roda do mouse para dar zoom.</li>
+    <li><b>Controle:</b> direcional move o foco, A escolhe (no campo, abre o teclado na tela), B volta, X dica, Y sacudir, LB/RB zoom, analógico direito move o mapa.</li>
     <li><b>Sacudir</b> organiza o mapa: desembaraça os fios, aproxima as palavras ligadas entre si e deixa as ligações fáceis de enxergar.</li>
   </ul>
   <p>Quanto mais rápido e com menos dicas, mais pontos.</p>
@@ -287,6 +290,7 @@ dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
 <script src="interligado/temas/viagem.js?v=3"></script>
 <script src="interligado/temas/fazenda.js?v=3"></script>
 <script src="interligado/temas/guaratingueta.js?v=3"></script>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -1080,6 +1084,39 @@ Promise.race([pronto,new Promise(r=>setTimeout(r,1500))]).then(()=>{
   if(m.length===2&&TEMAS[m[0]]&&NIVEIS[m[1]]) abrir(m[0],m[1]); else telaInicio();
   if(!LS.get("interligado:viu-regras",false)){LS.set("interligado:viu-regras",true);setTimeout(()=>{try{$("regras").showModal()}catch(e){}},300)}
 });
+
+/* controle: foco em temas, peças, botões e campo (A abre o teclado na tela); X dica, Y sacudir, LB/RB zoom, analógico direito move o mapa */
+if(window.Controle){
+  if(!SVGElement.prototype.click) SVGElement.prototype.click=function(){this.dispatchEvent(new MouseEvent("click",{bubbles:true,cancelable:true,view:window}))};
+  const dlg=()=>document.querySelector("dialog[open]");
+  const noJogo=()=>J&&!$("jogo").hidden&&$("fim").hidden&&!dlg();
+  Controle.navegar({seletor:"button,input:not([type=hidden]),.no",
+    raiz:()=>dlg()||(!$("fim").hidden?$("fim"):!$("jogo").hidden?$("jogo"):$("inicio")),
+    voltar:()=>{
+      const d=dlg(); if(d) return d.close();
+      if(!$("fim").hidden) return $("fVer").click();
+      if(!noJogo()) return;
+      if(J.modoDica||J.sel>=0){J.modoDica=false;selecionar(-1);return}
+      $("voltar").click();
+    }});
+  Controle.on("botao",(i,b)=>{
+    if(!noJogo()||Controle.tecladoAberto()) return;
+    if(b==="x") $("bDica").click(); else if(b==="y") $("bSacudir").click();
+    else if(b==="rb") $("zMais").click(); else if(b==="lb") $("zMenos").click(); else if(b==="r3") $("zAjusta").click();
+  });
+  let tela=null;
+  Controle.on("quadro",dt=>{
+    const t=dlg()||(!$("fim").hidden?$("fim"):null);
+    if(t!==tela){ // ao abrir diálogo ou fim, o foco vai para o botão principal
+      tela=t; if(!Controle.usado) return;
+      const bs=t&&t.querySelectorAll("button");
+      Controle.focar(t?(t.id==="confDesiste"?bs[0]:t.querySelector("button.pri")||bs[0]):null);
+    }
+    if(!noJogo()||Controle.tecladoAberto()) return;
+    let rx=0,ry=0; for(let i=0;i<4;i++){const p=Controle.pad(i); if(p.conectado){rx+=p.rx||0;ry+=p.ry||0}}
+    if(rx||ry){cancelAnimationFrame(camRaf);V.tx-=rx*dt*700;V.ty-=ry*dt*700;aplicarV()}
+  });
+}
 })();
 </script>
 </body>

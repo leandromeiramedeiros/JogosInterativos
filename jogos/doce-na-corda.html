@@ -62,6 +62,7 @@ h2{font-size:10cqw;text-shadow:0 .6cqw 0 #8a5a2b}
         <li>🫧 A <b>bolha</b> faz o doce flutuar. <b>Toque no doce</b> para estourá-la.</li>
         <li>☠️ Fuja dos <b>espinhos</b> e não deixe o doce cair.</li>
         <li>📍 Alguns <b>pinos</b> prendem uma corda nova no doce.</li>
+        <li>🎮 Controle: ◀ ▶ ou LB/RB escolhem a corda · A corta · X estoura a bolha · Y reinicia</li>
       </ul>
       <button class="btn" id="btnJogar" type="button">Jogar</button>
       <button class="btn sec" id="btnContinuar" type="button" hidden>Continuar</button>
@@ -97,6 +98,7 @@ h2{font-size:10cqw;text-shadow:0 .6cqw 0 #8a5a2b}
   </div>
 </div>
 
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -295,7 +297,7 @@ $('btnDeNovo').onclick=function(){startRun(0)};
 $('btnReiniciar').onclick=function(){if(mode==='play'||mode==='eat'||mode==='lose'){load(li);mode='play';show(null)}};
 
 /* ---------- Entrada ---------- */
-var drag=null;
+var drag=null,padSel=null;
 function pos(e){var r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 cv.addEventListener('pointerdown',function(e){
   if(mode!=='play')return;
@@ -471,6 +473,7 @@ function render(now){
   S.bubbles.forEach(function(b){if(!b.used&&!b.gone)drawBubble(b.x,b.y+Math.sin(t*2+b.x)*3,b.r,1)});
   // cordas
   S.ropes.forEach(drawRope);
+  if(padSel)padSel(t);
   // doce
   var c=S.candy;
   if(mode==='eat'){
@@ -529,6 +532,37 @@ window.__doce={
   load:function(i){load(i);mode='play'},step:step,cutRope:cutRope,tap:tap,
   setMode:function(m){mode=m}
 };
+// controle: ◀▶/LB/RB escolhem a corda (destacada), A corta, X estoura a bolha, Y reinicia
+if(window.Controle){
+  var selR=null;
+  function cortaveis(){
+    if(mode!=='play'||!S)return[];
+    return S.ropes.filter(function(r){return r.cut&&r.hasCandy&&r.pinned}).sort(function(a,b){return a.pts[0].x-b.pts[0].x||a.pts[0].y-b.pts[0].y});
+  }
+  function atual(){var l=cortaveis();if(selR&&l.indexOf(selR)<0)selR=null;if(!selR)selR=l[0]||null;return l}
+  padSel=function(t){
+    if(!Controle.usado)return;atual();if(!selR)return;
+    var p=selR.pts;
+    ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.globalAlpha=.55+.25*Math.sin(t*8);ctx.strokeStyle='#ffe14a';ctx.lineWidth=10;
+    ctx.beginPath();ctx.moveTo(p[0].x,p[0].y);for(var i=1;i<p.length;i++)ctx.lineTo(p[i].x,p[i].y);ctx.stroke();
+    var m=p[p.length>>1];ctx.globalAlpha=1;ctx.fillStyle='#fff6e4';ctx.strokeStyle='#6b3f17';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.arc(m.x,m.y,13,0,7);ctx.fill();ctx.stroke();
+    ctx.font='16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#000';ctx.fillText('✂',m.x,m.y+1);
+    ctx.restore();
+  };
+  Controle.navegar({ativo:function(){return mode!=='play'&&mode!=='eat'},raiz:function(){return $('stage')}});
+  Controle.on('botao',function(i,n){
+    if(n==='y'){if(!$('btnReiniciar').hidden)$('btnReiniciar').click();return}
+    if(mode!=='play'||!S)return;
+    var l=atual();
+    if(n==='esquerda'||n==='cima'||n==='lb'||n==='direita'||n==='baixo'||n==='rb'){
+      if(l.length>1){var k=l.indexOf(selR),d=(n==='esquerda'||n==='cima'||n==='lb')?-1:1;selR=l[(k+d+l.length)%l.length]}
+    }else if(n==='a'){
+      if(selR){cutRope(selR,(selR.pts.length-2)>>1);selR=null;Controle.vibrar(i,60,.3,.3)}
+    }else if(n==='x'||n==='b')tap(S.candy.x,S.candy.y);
+  });
+}
 })();
 </script>
 </body>

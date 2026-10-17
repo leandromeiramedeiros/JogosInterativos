@@ -14,6 +14,7 @@ canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display
 </head>
 <body>
 <canvas id="c" width="960" height="540"></canvas>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -168,6 +169,7 @@ let state='menu',sel=0,track=null,karts=[],player=null,boxes=[],oils=[],missiles
 let raceT=0,animT=0,shake=0,cam={x:0,y:0},finishTimer=0,resultsT=0,result=null,banner=null,paused=false,lastCount=4,order=[];
 let touchMode=(navigator.maxTouchPoints|0)>0,autoGas=true;
 const keys={left:0,right:0,up:0,down:0,drift:0};
+let padSt=0,padGas=0,padBr=0,padDr=0;
 const touch={left:0,right:0,gas:0,brake:0,drift:0};
 const ptrs=new Map(),ui=[];
 let best={};try{best=JSON.parse(localStorage.getItem('kartturbo_best')||'{}')||{};}catch(e){best={};}
@@ -311,8 +313,8 @@ function stepKart(k,inp,dt,racing){
 
 function playerInput(){
   const l=keys.left||touch.left,r=keys.right||touch.right;
-  const br=keys.down||touch.brake;
-  return{steer:(r?1:0)-(l?1:0),gas:keys.up||touch.gas||(touchMode&&autoGas&&!br)?1:0,brake:br?1:0,drift:!!(keys.drift||touch.drift)};
+  const br=keys.down||touch.brake||padBr;
+  return{steer:(r?1:0)-(l?1:0)||padSt,gas:keys.up||touch.gas||padGas||(touchMode&&autoGas&&!br)?1:0,brake:br?1:0,drift:!!(keys.drift||touch.drift||padDr)};
 }
 function aiInput(k,dt){
   const T=track,N=T.N,a=k.ai;a.t+=dt;
@@ -652,6 +654,7 @@ function drawMenu(){
   txt('Setas / WASD: dirigir   ·   Espaço / Shift: derrapar (solte após 0,8s = mini turbo)   ·   E / Enter: usar item',VW/2,hy,14,'#cfd6e6','center',BF);
   txt('Pegue caixas ? : Turbo, Óleo (faz rivais girarem) e Míssil (persegue o carro à frente). Grama desacelera!',VW/2,hy+22,14,'#9fb0d8','center',BF);
   txt('Toque: botões na tela (◀ ▶ à esquerda; GÁS, FREIO, DERRAPA e ITEM à direita)  ·  ← → escolhe a pista  ·  M: som',VW/2,hy+44,14,'#9fb0d8','center',BF);
+  txt('Controle: analógico dirige · RT/A acelera · LT/B freia · RB/X derrapa · Y/LB item · Start pausa · ◀ ▶ pista, A joga',VW/2,hy+66,14,'#9fb0d8','center',BF);
   btn(VW-62,12,48,40,muted?'🔇':'🔊',()=>{muted=!muted;},{size:20,c1:'#8fa4d8',c2:'#5a6fa8',tc:'#fff'});
 }
 
@@ -724,6 +727,31 @@ function frame(ts){
 }
 document.addEventListener('visibilitychange',()=>{last=0;acc=0;});
 requestAnimationFrame(frame);
+
+/* controle: analógico dirige, RT/A acelera, LT/B freia, RB/X derrapa, Y/LB item, Start pausa (pausado: B sai) */
+if(window.Controle){
+  const C=Controle,hit=n=>C.apertou(-1,n);
+  C.on('quadro',()=>{
+    padSt=padGas=padBr=padDr=0;
+    for(const p of C.pads){
+      if(!p.conectado)continue;
+      const g=p.gp.buttons,d=(g[15]&&g[15].pressed?1:0)-(g[14]&&g[14].pressed?1:0),s=p.lx||d;
+      if(Math.abs(s)>Math.abs(padSt))padSt=s;
+      if(p.rt||p.a)padGas=1;if(p.lt||p.b)padBr=1;if(p.rb||p.x)padDr=1;
+    }
+    if(state==='menu'){
+      if(hit('esquerda'))sel=(sel+2)%3;else if(hit('direita'))sel=(sel+1)%3;
+      else if(hit('a')||hit('start'))startRace(sel);
+    }else if(state==='race'){
+      if(paused){if(hit('b')){paused=false;toMenu();}else if(hit('a')||hit('start'))paused=false;}
+      else if(hit('start'))paused=true;
+      else if(hit('y')||hit('lb'))tryItem();
+    }else if(state==='results'){
+      if((hit('a')||hit('start'))&&resultsT>.6)startRace(sel);
+      else if(hit('b'))toMenu();
+    }
+  });
+}
 })();
 </script>
 </body>

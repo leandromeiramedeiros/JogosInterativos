@@ -181,6 +181,7 @@ button:focus-visible,.cell:focus-visible{outline:3px solid var(--accent);outline
 
 <script src="palavras-cruzadas/pistas.js?v=1"></script>
 <script src="palavras-cruzadas/grades.js?v=1"></script>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -376,7 +377,8 @@ function telaInicio(){
       ${seq>1?`<p>Sequência: <b>${seq} dias</b></p>`:""}
       ${est}
     </button>`}).join("")}</div>
-  <p class="dica">Toque numa casa para escolher a palavra; toque de novo para trocar entre horizontal e vertical. No computador, use as setas, <b>Tab</b> para a próxima pista e <b>Espaço</b> para virar a direção. Quanto mais rápido e com menos ajudas, mais pontos.</p>`;
+  <p class="dica">Toque numa casa para escolher a palavra; toque de novo para trocar entre horizontal e vertical. No computador, use as setas, <b>Tab</b> para a próxima pista e <b>Espaço</b> para virar a direção. Quanto mais rápido e com menos ajudas, mais pontos.</p>
+  <p class="dica">Controle: direcional anda pela grade · A abre o teclado · B apaga · X vira a direção · LB/RB trocam de pista · Y alterna entre grade e botões.</p>`;
   app.querySelectorAll(".nivel").forEach(b=>b.onclick=()=>abrir(b.dataset.nv));
 }
 
@@ -706,6 +708,33 @@ document.addEventListener("keydown",e=>{
   else if(k===" "&&!naBtn){e.preventDefault();virar()}
 });
 document.addEventListener("visibilitychange",()=>{ if(document.hidden&&J&&!J.fim) salvar(); });
+
+/* Controle: direcional anda na grade; A teclado, B apaga, X vira, LB/RB pista; Y alterna grade e botões (navegar) */
+if(window.Controle){
+  let botoes=false,ultJ=null,tvAntes=false,tvRef=null,pulo=false;
+  const jogando=()=>!!J&&!J.fim, grade=()=>jogando()&&!botoes;
+  Controle.teclas({cima:"ArrowUp",baixo:"ArrowDown",esquerda:"ArrowLeft",direita:"ArrowRight"},{ativo:grade});
+  Controle.navegar({ativo:()=>!grade(),voltar:()=>{ if(jogando()){botoes=false;pulo=true} else if(J) $("voltar").click(); }});
+  Controle.on("quadro",()=>{
+    const tv=Controle.tecladoAberto(), ign=tvAntes||tv; tvAntes=tv;
+    if(tv&&!jogando()&&tvRef) tvRef.fechar(false);
+    if(J!==ultJ){ ultJ=J; botoes=false; return; }
+    if(!jogando()){ botoes=false; return; }
+    if(ign||pulo){ pulo=false; return; }
+    if(Controle.apertou(-1,"y")){ botoes=!botoes; if(botoes) Controle.focar($("bl")); return; }
+    if(botoes){
+      const a=document.activeElement;
+      if((Controle.apertou(-1,"a")||Controle.apertou(-1,"start"))&&a&&a.closest&&a.closest("#listas")) botoes=false;
+      return;
+    }
+    if(document.activeElement&&document.activeElement.tagName==="BUTTON") document.activeElement.blur();
+    if(Controle.apertou(-1,"a")) tvRef=Controle.tecladoVirtual({});
+    if(Controle.apertou(-1,"b")) apagar();
+    if(Controle.apertou(-1,"x")) virar();
+    if(Controle.apertou(-1,"lb")) pular(-1);
+    if(Controle.apertou(-1,"rb")) pular(1);
+  });
+}
 
 telaInicio();
 })();

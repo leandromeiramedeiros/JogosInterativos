@@ -15,6 +15,7 @@ canvas{display:block;touch-action:none;background:#0b2a4a}
 </head>
 <body>
 <canvas id="c"></canvas>
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 'use strict';
@@ -904,7 +905,7 @@ function render(){
     if(phase==='clear'&&clearT<190){
       txt('FASE CONCLUÍDA!',W/2,230,36,'#7dff9a','center',FT,['#063',6]);
     }
-    if(paused){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,H);txt('PAUSADO',W/2,300,40,'#fff','center',FT);txt('Toque ou pressione P para continuar',W/2,340,14,'#cfe','center',FB)}
+    if(paused){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,H);txt('PAUSADO',W/2,300,40,'#fff','center',FT);txt('Toque, P ou Start para continuar',W/2,340,14,'#cfe','center',FB)}
   }
   if(fade>0){ctx.fillStyle='rgba(0,0,0,'+fade+')';ctx.fillRect(0,0,W,H)}
   if(state==='menu')drawMenu();
@@ -917,7 +918,7 @@ function drawMenu(){
   ctx.restore();
   txt('Defenda os céus em 3 fases',W/2,140,15,'#fff','center',FB);
   ctx.fillStyle='rgba(4,14,34,.7)';ctx.beginPath();ctx.roundRect?ctx.roundRect(24,386,312,150,14):ctx.rect(24,386,312,150);ctx.fill();
-  const L=[['Arraste','dedo ou mouse para pilotar'],['Tiro','automático, sempre ligado'],['BOMBA / X','limpa os tiros inimigos'],['Setas / WASD','mover (Shift = preciso)'],['P','pausar · M som']];
+  const L=[['Arraste','dedo ou mouse para pilotar'],['Tiro','automático, sempre ligado'],['BOMBA / X','limpa os tiros inimigos'],['Setas / WASD','mover (Shift = preciso)'],['P','pausar · M som'],['Controle','analógico · B bomba · Start']];
   L.forEach((l,i)=>{txt(l[0],38,404+i*24,13,'#ffb02e','left',FT);txt(l[1],138,404+i*24,12,'#fff','left',FB)});
   txt('Pegue P (arma), B (bomba), ♥ (vida) e medalhas!',W/2,556,11.5,'#bfe0ff','center',FB);
   btn(90,572,180,52,'JOGAR');
@@ -998,6 +999,12 @@ window.__esq={
   killBoss(){if(bossObj){for(const p of bossObj.parts)if(p.hp>0)damagePart(bossObj,p,9999);damageBody(bossObj,99999)}},
   start:startGame
 };
+
+/* controle: jogo usa setas/Space/X/P; menus usam A/Start para começar e recomeçar */
+if(window.Controle){
+  Controle.teclas({cima:'ArrowUp',baixo:'ArrowDown',esquerda:'ArrowLeft',direita:'ArrowRight',lb:'ShiftLeft',a:'Space',b:'KeyX',start:'KeyP'},{ativo:()=>state==='play'});
+  Controle.teclas({a:['Space','Enter'],start:'Enter'},{ativo:()=>state!=='play'});
+}
 })();
 </script>
 </body>

@@ -78,7 +78,7 @@ body.tonly #hud button{min-height:54px;font-size:19px;padding:8px 18px}
     <div class="kb"><h3>1 jogador</h3><p><kbd>WASD</kbd>/<kbd>Setas</kbd> mover</p><p><kbd>Espaço</kbd>/<kbd>J</kbd> chute (segure p/ força)</p><p><kbd>K</kbd> passe · sem a bola: carrinho</p><p><kbd>Shift</kbd>/<kbd>L</kbd> correr · <kbd>Q</kbd> trocar jogador</p></div>
     <div class="kb"><h3>2 jogadores (mesmo teclado)</h3><p>J1: <kbd>WASD</kbd> · chute <kbd>F</kbd> · passe/carrinho <kbd>G</kbd> · correr <kbd>Shift</kbd> esq. · trocar <kbd>Q</kbd></p><p>J2: <kbd>Setas</kbd> · chute <kbd>.</kbd> · passe/carrinho <kbd>/</kbd> · correr <kbd>Shift</kbd> dir. · trocar <kbd>,</kbd></p></div>
     <div class="tc"><h3>No celular</h3><p>Toque e arraste na metade esquerda: joystick</p><p>Botões CHUTE (segure p/ força), PASSE, CORRER e TROCAR à direita</p><p>Sem a bola, PASSE dá o carrinho</p><p>Pausa e som: botões no alto da tela</p></div>
-    <div class="kb"><h3>Outros</h3><p>Pausa: <kbd>P</kbd> ou <kbd>Esc</kbd></p><p>Som: <kbd>M</kbd></p><p>Dois tempos de 2 ou 3 min · pênaltis no mata-mata</p></div>
+    <div class="kb"><h3>Outros</h3><p>Pausa: <kbd>P</kbd> ou <kbd>Esc</kbd></p><p>Som: <kbd>M</kbd></p><p>Controle: analógico move · <kbd>A</kbd> chute (segure) · <kbd>B</kbd> passe · <kbd>X</kbd> carrinho · <kbd>RB</kbd> correr · <kbd>Y</kbd> trocar · Start pausa · 2P: 1º controle = J1, 2º = J2</p><p>Dois tempos de 2 ou 3 min · pênaltis no mata-mata</p></div>
   </div>
   <button class="btn" id="b-play">Jogar</button>
 </div>
@@ -122,6 +122,7 @@ body.tonly #hud button{min-height:54px;font-size:19px;padding:8px 18px}
 </div>
 </div>
 
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 "use strict";
@@ -1063,6 +1064,41 @@ function frame(t){
 }
 bg=mkBG();
 requestAnimationFrame(frame);
+// controle: analógico/direcional move · A chute (segure p/ força) · B passe · X carrinho · RB/RT correr · Y/LB trocar · Start pausa; 1P: qualquer controle, 2P: 1º = J1, 2º = J2
+if(window.Controle){
+ const C=Controle,pv=[{},{}],wr=[0,0];let menuPrev=false,ic=-1;
+ const menu=()=>!!document.querySelector('.scr.on');
+ C.navegar({ativo:menu,raiz:()=>document.querySelector('.scr.on'),seletor:'button,.card',voltar:()=>{
+  const s=document.querySelector('.scr.on'),id=s&&s.id;
+  if(id==='sc-pause')togglePause();else if(id==='sc-teams')$('#b-back').click();else if(id==='sc-end')$('#b-menu').click();else if(id==='sc-mode')showUI('sc-start')}});
+ C.on('quadro',()=>{
+  const m=menu();
+  if(m){ // os cartões de time são redesenhados a cada escolha: devolve o foco ao mesmo cartão
+   const f=document.querySelector('.scr.on'),fo=f.querySelector('.pad-foco'),cs=f.querySelectorAll('.card');
+   if(f.id!=='sc-teams')ic=-1;
+   else if(fo){if(fo.classList.contains('card'))ic=[...cs].indexOf(fo)}
+   else if(ic>=0&&cs[ic])C.focar(cs[ic])}
+  else ic=-1;
+  if(!m&&!menuPrev&&(scr==='match'||scr==='pen')&&!paused&&C.apertou(-1,'start')&&!C.segurando(-1,'select'))togglePause();
+  const jogo=!menu()&&!m&&!menuPrev&&(scr==='match'||scr==='pen')&&!paused,two=!!(ctl[0]&&ctl[1]&&ctl[0]!==ctl[1]);
+  menuPrev=menu();
+  for(let i=0;i<(two?2:1);i++){
+   const I=inputs[i],ps=(two?[C.pad(i)]:C.pads).filter(p=>p.conectado),g=k=>ps.some(p=>p[k]);
+   const eixo=(a,neg,pos)=>{let r=0;for(const p of ps)if(Math.abs(p[a])>Math.abs(r))r=p[a];return r||(g(pos)?1:0)-(g(neg)?1:0)};
+   const ax=eixo('lx','esquerda','direita'),ay=eixo('ly','cima','baixo');
+   const st={a:g('a'),b:g('b'),x:g('x'),y:g('y'),lb:g('lb'),run:g('rb')||g('rt')},pr=k=>st[k]&&!pv[i][k],rl=k=>!st[k]&&pv[i][k];
+   if(!jogo){
+    if(wr[i]){I.ax=I.ay=0;wr[i]=0;I.sprint=false;if(I.shoot){I.shoot=false;I.rel=false}}
+    pv[i]=st;continue}
+   if(ax||ay){I.ax=ax;I.ay=ay;wr[i]=1}else if(I.ax||I.ay){if(wr[i]&&!touch.stick)I.ax=I.ay=0}
+   if(pr('a')&&!I.shoot){I.shoot=true;I.charge=0;I.dn=true;wr[i]=1}
+   if(rl('a')&&I.shoot){I.shoot=false;I.rel=true}
+   if(pr('b')||pr('x'))I.pass=true;
+   if(pr('y')||pr('lb'))I.sw=true;
+   if(pr('run')){I.sprint=true;wr[i]=1}else if(rl('run'))I.sprint=false;
+   pv[i]=st}
+ });
+}
 })();
 </script>
 </body>

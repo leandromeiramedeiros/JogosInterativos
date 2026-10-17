@@ -48,6 +48,7 @@ button{font-family:'Lilita One',sans-serif;cursor:pointer;border:0;color:#fff}
     <svg class="hero" viewBox="0 0 100 100"><circle cx="50" cy="30" r="20" fill="#ffd2a8"/><path d="M30 26 Q50 2 70 26 Q60 16 50 16 Q40 16 30 26Z" fill="#7a4a1e"/><circle cx="43" cy="32" r="3" fill="#222"/><circle cx="57" cy="32" r="3" fill="#222"/><path d="M44 40 Q50 45 56 40" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="27" y="50" width="46" height="38" rx="14" fill="#2f6fe0"/><rect x="34" y="84" width="12" height="12" rx="4" fill="#3a2a1a"/><rect x="54" y="84" width="12" height="12" rx="4" fill="#3a2a1a"/></svg>
     <h1>Puxe o Pino</h1>
     <p>Toque nos pinos para soltar moedas, lava e água. Salve o herói da lava e dos monstros!</p>
+    <p style="font-size:13px;opacity:.85;margin:-6px 0 12px">Controle: direcional/LB/RB escolhe o pino, A puxa, Y reinicia.</p>
     <button class="big" id="play">Jogar</button>
     <div id="chips"></div>
   </div>
@@ -59,6 +60,7 @@ button{font-family:'Lilita One',sans-serif;cursor:pointer;border:0;color:#fff}
     <button class="big alt" id="eB2" style="display:none"></button>
   </div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -123,7 +125,7 @@ var NL=LEVELS.length;
 
 // ---------- state ----------
 var S={state:'menu',lvl:0,balls:[],pins:[],walls:[],hx:180,hy:602,got:0,need:0,hasMon:false,score:0,t:0,endT:0,unlocked:1};
-var segCache=[];
+var segCache=[],padSel=-1,padOn=false;
 
 function loadProgress(){try{var v=parseInt(localStorage.getItem('puxe-o-pino:max')||'1',10);if(v>=1&&v<=NL)S.unlocked=v;}catch(e){}}
 function saveProgress(){try{localStorage.setItem('puxe-o-pino:max',String(S.unlocked));}catch(e){}}
@@ -388,6 +390,7 @@ function draw(){
     ctx.fillStyle=hg;ctx.strokeStyle='#b87400';ctx.lineWidth=2;
     ctx.beginPath();ctx.arc(c.x2,c.y2,9,0,6.3);ctx.fill();ctx.stroke();
     ctx.fillStyle='#fff';ctx.globalAlpha=.55;ctx.beginPath();ctx.arc(c.x2-3,c.y2-3,2.5,0,6.3);ctx.fill();ctx.globalAlpha=1;
+    if(padOn&&i===padSel&&S.state==='play'){var rr=14+Math.sin(Date.now()/130)*1.5;ctx.beginPath();ctx.arc(c.x2,c.y2,rr,0,6.3);ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.stroke();ctx.strokeStyle='#ff3b30';ctx.lineWidth=2;ctx.stroke();}
   }
 }
 // ---------- loop ----------
@@ -410,6 +413,42 @@ loadProgress();buildChips();
 requestAnimationFrame(frame);
 window.__t={S:function(){return S;},load:function(i){S.score=0;show('ovStart',false);show('ovEnd',false);loadLevel(i);},pull:pullPin,
   step:function(n){for(var i=0;i<n;i++)step(1/60);},levels:LEVELS,sols:function(){return LEVELS.map(function(f){return f().sol;});}};
+// controle: direcional/LB/RB escolhe o pino (anel na tela), A puxa, Y reinicia
+if(window.Controle){
+  var ovOn=function(){return !!document.querySelector('.ov.on');},ovAnt=true,pinsRef=null,ult={x:180,y:300};
+  Controle.navegar({ativo:ovOn,raiz:function(){return document.querySelector('.ov.on');}});
+  var perto=function(L,x,y){var r=-1,md=1e9;L.forEach(function(i){var c=pinCur(S.pins[i]),d=Math.hypot(c.x2-x,c.y2-y);if(d<md){md=d;r=i;}});return r;};
+  Controle.on('quadro',function(){
+    padOn=Controle.usado;
+    var v=ovOn();
+    if(v||ovAnt){ovAnt=v;return;}
+    if(S.state!=='play')return;
+    var L=[],i;for(i=0;i<S.pins.length;i++)if(S.pins[i].st===0)L.push(i);
+    if(pinsRef!==S.pins){pinsRef=S.pins;padSel=L.length?L[0]:-1;}
+    if(Controle.apertou(-1,'y')){document.getElementById('rst').click();return;}
+    if(!L.length){padSel=-1;return;}
+    if(padSel<0||S.pins[padSel].st!==0)padSel=perto(L,ult.x,ult.y);
+    var cur=pinCur(S.pins[padSel]);
+    ['cima','baixo','esquerda','direita'].forEach(function(d){
+      if(!Controle.apertou(-1,d))return;
+      var best=-1,mv=1e9;
+      L.forEach(function(j){
+        if(j===padSel)return;
+        var c=pinCur(S.pins[j]),dx=c.x2-cur.x2,dy=c.y2-cur.y2,pr,or;
+        if(d==='cima'){pr=-dy;or=Math.abs(dx);}else if(d==='baixo'){pr=dy;or=Math.abs(dx);}
+        else if(d==='esquerda'){pr=-dx;or=Math.abs(dy);}else{pr=dx;or=Math.abs(dy);}
+        if(pr<=3)return;
+        var sc=pr+or*2.2;if(sc<mv){mv=sc;best=j;}
+      });
+      if(best>=0){padSel=best;cur=pinCur(S.pins[padSel]);}
+    });
+    var k=L.indexOf(padSel);
+    if(Controle.apertou(-1,'lb')){padSel=L[(k+L.length-1)%L.length];}
+    if(Controle.apertou(-1,'rb')){padSel=L[(k+1)%L.length];}
+    cur=pinCur(S.pins[padSel]);ult.x=cur.x2;ult.y=cur.y2;
+    if(Controle.apertou(-1,'a'))pullPin(padSel);
+  });
+}
 })();
 </script>
 </body>

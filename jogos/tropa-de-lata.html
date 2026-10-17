@@ -38,6 +38,7 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
     <p><b>Setas / WASD</b> mover e mirar (cima, diagonais, agachar)</p>
     <p><b>Z / J</b> atirar (faca se o robô estiver colado) &nbsp; <b>X / K / Espaço</b> pular</p>
     <p><b>C / L</b> granada &nbsp; Liberte os prisioneiros: <b>H</b> metralhadora, <b>R</b> foguetes, <b>F</b> lança-chamas</p>
+    <p><b>Controle</b>: direcional/analógico mover e mirar · <b>A</b> pular · <b>X/RT</b> atirar · <b>B</b> granada</p>
     <button id="btnPlay">Jogar</button>
   </div>
   <div class="ov hide" id="ovOver">
@@ -54,6 +55,7 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
   <div class="b d" id="bu" data-a="u">&#9650;</div><div class="b d" id="bl" data-a="l">&#9664;</div><div class="b d" id="br" data-a="r">&#9654;</div><div class="b d" id="bd" data-a="d">&#9660;</div>
   <div class="b" id="bs" data-a="s">ATIRAR</div><div class="b" id="bj" data-a="j">PULAR</div><div class="b" id="bb" data-a="b">BOMBA</div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 "use strict";
 const W=480,H=270;
@@ -940,6 +942,11 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){paused=sta
 addEventListener('focus',()=>{if(!document.hidden&&paused){paused=false;last=0;acc=0}});
 L=buildLevel(1);camX=0;tick=0;pl={x:-999,y:0,face:1,inv:0,dead:true,wp:'P',ammo:0,bombs:0,crouch:false,ax:1,ay:0,flash:0,knife:0,vx:0};en=[];pbul=[];ebul=[];gren=[];parts=[];items=[];pops=[];boss=null;shake=0;banner=null;lockAct=null;lockIdx=0;mc=0;goT=0;
 requestAnimationFrame(frame);
+// controle: botões mapeados para as teclas do jogo; menus (início, fim) navegados com o direcional e A
+if(window.Controle){
+  Controle.teclas({esquerda:'ArrowLeft',direita:'ArrowRight',cima:'ArrowUp',baixo:'ArrowDown',a:'KeyX',x:'KeyZ',rt:'KeyZ',b:'KeyC'});
+  Controle.navegar({raiz:()=>stage,ativo:()=>!!document.querySelector('.ov:not(.hide)')});
+}
 </script>
 </body>
 </html>
