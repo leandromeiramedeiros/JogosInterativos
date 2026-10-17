@@ -486,7 +486,7 @@ function slideHit(p){
   p.nopick=30;
   if(behind&&Math.random()<.7&&match.st==='play'){foul(p,ow);return}
   ow.stun=28;ball.owner=null;ball.vx=p.sdx*5+rnd(-1,1);ball.vy=p.sdy*5+rnd(-1,1);ball.vz=1.5;match.lastTeam=T;match.lastP=p;
-  if(Math.random()<.35+.3*(T.D?T.D.tk-.7:.3)){ball.owner=p;p.slide=Math.min(p.slide,4)}
+  if(Math.random()<.35+.3*((T.D||DP[2]).tk-.7)){ball.owner=p;p.slide=Math.min(p.slide,4)}
   spawnP(ow.x,ow.y,'#fff',8,2.5,20,2.5,0);shake=3;sKick();
  }else if(!ow&&dist(p,ball)<20&&ball.z<12&&p.nopick===0){
   p.nopick=20;ball.vx=p.sdx*7;ball.vy=p.sdy*7;ball.vz=1;match.lastTeam=T;match.lastP=p;sKick();
@@ -505,7 +505,8 @@ function ballStep(M){
   // desarme
   if(M.st==='play')for(const p of o.team.opp.players){
    if(p.stun||p.slide||p.dive||p.nopick>0||p.role==='G'&&dist(p,o)>26)continue;
-   if(dist(p,o)<15){const ch=(.012+p.team.defn/100*.022)*(p.team.D?p.team.D.tk*1.5:1)*(o.sprinting?.8:1);
+   // o time do jogador desarma como no Médio (antes desarmava menos que até a CPU do Fácil)
+   if(dist(p,o)<15){const ch=(.012+p.team.defn/100*.022)*(p.team.D||DP[2]).tk*1.5*(o.sprinting?.8:1);
     if(Math.random()<ch){ball.owner=p;p.hold=0;o.stun=22;o.nopick=30;M.lastTeam=p.team;M.lastP=p;spawnP(o.x,o.y,'#fff',5,2,18,2,0);break}}}
  }else{
   B.x+=B.vx;B.y+=B.vy;B.z+=B.vz;
