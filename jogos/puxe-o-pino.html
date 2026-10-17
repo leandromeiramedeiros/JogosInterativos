@@ -314,7 +314,7 @@ cv.addEventListener('pointerdown',function(e){
     var hd=Math.hypot(q.x-p.x2,q.y-p.y2)-9;
     var sd=segDist(q.x,q.y,p.x1,p.y1,p.x2,p.y2)-4;
     var d=Math.min(hd,sd);
-    if(d<14&&d<bd){bd=d;best=i;}
+    if(d<24&&d<bd){bd=d;best=i;}
   }
   if(best>=0)pullPin(best);
 });
