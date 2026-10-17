@@ -35,7 +35,7 @@ button:active{transform:translateY(.1em);box-shadow:0 .04em 0 #8a2d0e}
 <script>
 (()=>{
 "use strict";
-const W=640,H=360,G=330,GR=900,SUB=3,ITER=10,AX=96,AY=262,MAXD=58,KL=13.5,GRACE=1.0;
+const W=640,H=360,G=330,GR=900,SUB=6,ITER=10,AX=96,AY=262,MAXD=58,KL=13.5,GRACE=1.0;
 const cv=document.getElementById('c'),ctx=cv.getContext('2d'),stage=document.getElementById('stage'),ov=document.getElementById('ov');
 let K=1;
 function fit(){
@@ -133,7 +133,7 @@ function collide(A,B){
   const c=circBox(B,A);return c?[c]:[];
 }
 /* ---------- estado ---------- */
-let bodies=[],parts=[],floats=[],T=0,score=0,lvl=0,birdsLeft=0,state='menu',cur=null,flyT=0,stillT=0,settleT=0,calmT=0,winT=0,drag=null,levelBonus=0,stars=0,blocksBroken=0;
+let bodies=[],parts=[],floats=[],T=0,score=0,score0=0,lvl=0,birdsLeft=0,state='menu',cur=null,flyT=0,stillT=0,settleT=0,calmT=0,winT=0,drag=null,levelBonus=0,stars=0,blocksBroken=0;
 let NOSLEEP=false;
 function wakeAll(){for(const b of bodies){b.sleep=false;b.st=0;}}
 function puff(x,y,n,col,sp){
@@ -292,7 +292,8 @@ function menu(){
   show('<h1>ESTILINGUE</h1><div class="sub">Derrube os porcos-espinho!</div><ul><li>Arraste o passarinho para trás e solte para lançar.</li><li>Toque no ar para dar um impulso extra.</li><li>Destrua todos os porcos-espinho verdes.</li><li>Passarinhos que sobram valem pontos!</li></ul><button id="go">Jogar</button>'+(b?'<div class="best">Melhor fase: '+b+'</div>':''));
   document.getElementById('go').onclick=startRun;
 }
-function startRun(){score=0;lvl=0;blocksBroken=0;hide();load(0);state='ready';}
+function startRun(){score=0;score0=0;lvl=0;blocksBroken=0;hide();load(0);state='ready';}
+function retryLevel(){score=score0;hide();load(lvl);state='ready';}
 function win(){
   levelBonus=birdsLeft*1000;score+=levelBonus;stars=Math.max(1,Math.min(3,1+birdsLeft));
   saveBest(lvl+1);
@@ -304,13 +305,14 @@ function win(){
   }else{
     state='won';
     show('<h2>Fase '+(lvl+1)+' concluída!</h2>'+st+'<div class="info">Passarinhos sobrando: '+birdsLeft+' (+'+levelBonus+')</div><div class="info">Pontos: '+score+'</div><button id="b1">Próxima fase</button>');
-    document.getElementById('b1').onclick=()=>{hide();lvl++;load(lvl);state='ready';};
+    document.getElementById('b1').onclick=()=>{hide();lvl++;score0=score;load(lvl);state='ready';};
   }
 }
 function lose(){
   state='over';sendScore('Fase '+(lvl+1));
-  show('<h2>Acabaram os passarinhos!</h2><div class="sub">Os porcos-espinho resistiram na fase '+(lvl+1)+'.</div><div class="info">Pontos finais: '+score+'</div><button id="b1">Tentar de novo</button>');
-  document.getElementById('b1').onclick=startRun;
+  show('<h2>Acabaram os passarinhos!</h2><div class="sub">Os porcos-espinho resistiram na fase '+(lvl+1)+'.</div><div class="info">Pontos finais: '+score+'</div><button id="b1">Tentar a fase</button>'+(lvl>0?'<button id="b2">Do começo</button>':''));
+  document.getElementById('b1').onclick=retryLevel;
+  if(lvl>0)document.getElementById('b2').onclick=startRun;
 }
 /* ---------- entrada ---------- */
 function pt(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};}
@@ -503,10 +505,13 @@ function draw(){
     const et='Porcos-espinho: '+enemiesLeft();ctx.strokeText(et,W-12,46);ctx.fillText(et,W-12,46);
   }
 }
-let last=0;
+// passo fixo de 1/60 s: com passo maior as pilhas tremem e desabam sozinhas
+let last=0,acc=0;
 function frame(ts){
-  const dt=Math.min(.033,(ts-last)/1000||.016);last=ts;
-  update(dt);draw();requestAnimationFrame(frame);
+  acc+=Math.min(.05,(ts-last)/1000||.016);last=ts;
+  let n=0;while(acc>=1/60&&n<3){update(1/60);acc-=1/60;n++;}
+  if(n===3)acc=0;
+  draw();requestAnimationFrame(frame);
 }
 window.__est={get bodies(){return bodies},get state(){return state},get score(){return score},step:(n,nosleep)=>{NOSLEEP=!!nosleep;for(let i=0;i<n;i++)update(1/60);},load:i=>{lvl=i;load(i);state='ready';hide();},count:()=>LV.length,get birdsLeft(){return birdsLeft}};
 menu();requestAnimationFrame(frame);
