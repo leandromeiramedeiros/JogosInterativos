@@ -15,6 +15,7 @@ canvas{display:block;background:#1b2250;touch-action:none;outline:none}
 </head>
 <body>
 <div id="wrap"><canvas id="c" tabindex="0" aria-label="Arena de Briga"></canvas></div>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -125,6 +126,7 @@ function readPad(gp){
 function pollPads(){
   let list=[];
   try{if(navigator.getGamepads)list=Array.from(navigator.getGamepads()).filter(p=>p&&p.connected);}catch(e){}
+  if(window.Controle&&Controle.pausado)list=[];   /* a página principal está com o controle (placar) */
   padCount=list.length;
   for(let i=0;i<2;i++){
     const prev=pads[i],cur=list[i]?readPad(list[i]):{};

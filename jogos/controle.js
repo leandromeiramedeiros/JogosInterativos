@@ -4,8 +4,9 @@
    Controle.teclas({a:'Space', b:'KeyX', start:'KeyP', cima:'ArrowUp', ...}, {jogador:0, ativo:()=>bool})
      → cada botão "aperta" a tecla: keydown ao apertar, keyup ao soltar. Sem `jogador`, vale qualquer controle.
        Valor pode ser lista: {a:['Space','Enter']}. O analógico esquerdo também conta como cima/baixo/esquerda/direita.
-   Controle.navegar({raiz:()=>el, ativo:()=>bool, voltar:()=>{}, seletor:'button,...'})
-     → direcional/analógico move o foco entre botões visíveis, A clica, B chama `voltar`.
+   Controle.navegar({raiz:()=>el, ativo:()=>bool, voltar:()=>{}, seletor:'button,...', inicio:'#jogar'})
+     → direcional/analógico move o foco entre botões visíveis, A (ou Start) clica, B chama `voltar`.
+       Enquanto um navegar está ativo, teclas e cursor ficam parados. Foco inicial: `inicio` ou o maior botão.
        Em campo de texto, A abre o teclado na tela.
    Controle.cursor({ativo:()=>bool, velocidade:900})
      → analógico/direcional move uma seta na tela; A = toque/clique (segurar A = arrastar).
@@ -182,6 +183,16 @@
     const raiz=(n.raiz&&n.raiz())||document;
     return Array.from(raiz.querySelectorAll(n.seletor||SELETOR)).filter(el=>!el.closest('#pad-teclado')&&visivel(el));
   }
+  /* foco inicial: o `inicio` do jogo, senão o maior botão visível na tela (evita cair no botão de som do cabeçalho) */
+  function inicial(n,cs){
+    if(n.inicio){ const el=typeof n.inicio==='function'?n.inicio():((n.raiz&&n.raiz())||document).querySelector(n.inicio); if(el&&cs.includes(el)) return el }
+    let melhor=cs[0],ma=0;
+    for(const el of cs){
+      const r=el.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) continue;
+      const a=r.width*r.height; if(a>ma*1.15){ ma=a; melhor=el }
+    }
+    return melhor;
+  }
   function centro(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,r} }
   function mover(n,dir){
     const cs=candidatos(n); if(!cs.length) return;
@@ -228,7 +239,7 @@
     if(focoPad&&(!focoPad.isConnected||!visivel(focoPad))){ focoPad.classList.remove('pad-foco'); focoPad=null }
     let cs=null,recem=false;
     /* sem foco ainda: o primeiro aperto só mostra onde o foco está, não clica */
-    if(!focoPad&&C.usado){ cs=candidatos(n); if(cs.length){ marcar(cs.includes(document.activeElement)?document.activeElement:cs[0]); recem=true } }
+    if(!focoPad&&C.usado){ cs=candidatos(n); if(cs.length){ marcar(cs.includes(document.activeElement)?document.activeElement:inicial(n,cs)); recem=true } }
     for(const d of ['cima','baixo','esquerda','direita']) if(n.rep(d,C.segurando(-1,d),agora)) mover(n,d);
     if(!recem&&(C.apertou(-1,'a')||C.apertou(-1,'start'))){
       cs=candidatos(n);
