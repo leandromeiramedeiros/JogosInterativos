@@ -26,13 +26,19 @@ const angDiff=(a,b)=>{let d=a-b;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
 /* ---------- resize ---------- */
+// celular em pé: a pista gira 90 graus para ocupar a tela toda
+let ROT=false;
 function resize(){
   const dpr=Math.min(window.devicePixelRatio||1,2);
-  const s=Math.min(innerWidth/VW,innerHeight/VH);
+  const de=document.documentElement,iw=de.clientWidth||innerWidth,ih=de.clientHeight||innerHeight;
+  ROT=ih>iw*1.1&&iw<900;
+  const aw=ROT?ih:iw,ah=ROT?iw:ih;
+  const s=Math.min(aw/VW,ah/VH);
   cv.style.width=Math.floor(VW*s)+'px';cv.style.height=Math.floor(VH*s)+'px';
+  cv.style.transform='translate(-50%,-50%)'+(ROT?' rotate(90deg)':'');
   cv.width=Math.max(2,Math.round(VW*s*dpr));cv.height=Math.max(2,Math.round(VH*s*dpr));
 }
-addEventListener('resize',resize);resize();
+addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,150));resize();
 
 /* ---------- audio ---------- */
 let AC=null,muted=false;
@@ -47,13 +53,13 @@ function beep(f,d,type,vol,slide){
 
 /* ---------- tracks ---------- */
 const TRACKS=[
- {name:'Circuito Verde',desc:'Fácil · curvas abertas',stars:1,w:170,world:[2600,1800],seed:11,deco:'tree',
+ {name:'Circuito Verde',desc:'Fácil · curvas abertas',stars:1,ai:.88,w:170,world:[2600,1800],seed:11,deco:'tree',
   pts:[[700,300],[1300,260],[1900,300],[2300,500],[2350,900],[2000,1150],[1600,1000],[1250,1150],[1350,1450],[1000,1550],[500,1450],[300,1100],[450,700]],
   th:{out:'#2a6e32',grass:'#4aa84a',asph:'#4b5160',sp1:'#215a29',sp2:'#6cc26a'}},
- {name:'Deserto Rápido',desc:'Médio · longas retas e um cotovelo',stars:2,w:160,world:[3000,2000],seed:23,deco:'cactus',
+ {name:'Deserto Rápido',desc:'Médio · longas retas e um cotovelo',stars:2,ai:.94,w:160,world:[3000,2000],seed:23,deco:'cactus',
   pts:[[500,400],[1100,300],[1700,380],[2000,250],[2500,300],[2750,650],[2500,950],[2000,900],[1900,1240],[2250,1500],[2500,1750],[1900,1850],[1300,1700],[950,1420],[1500,1100],[800,860],[420,1200],[250,900],[300,600]],
   th:{out:'#b98a3e',grass:'#e3bf6f',asph:'#585562',sp1:'#a47831',sp2:'#f0d28a'}},
- {name:'Montanha Maluca',desc:'Difícil · curvas fechadas',stars:3,w:150,world:[3000,2200],seed:37,deco:'pine',
+ {name:'Montanha Maluca',desc:'Difícil · curvas fechadas',stars:3,ai:1,w:150,world:[3000,2200],seed:37,deco:'pine',
   pts:[[400,500],[900,250],[1400,500],[1900,250],[2400,400],[2700,800],[2300,1050],[2650,1400],[2500,1900],[1900,2000],[1500,1700],[1100,2000],[500,1900],[300,1500],[700,1250],[350,950]],
   th:{out:'#1f4d44',grass:'#3f8e78',asph:'#3d4258',sp1:'#173b35',sp2:'#6fbf9f'}}
 ];
@@ -179,7 +185,7 @@ function startRace(ti){
     const s=slot[i],row=s>>1,col=s&1,back=7+row*10+(col?5:0),idx=(N-back)%N,lat=col?40:-40;
     return{id:i,name:d.n,c:d.c,c2:d.c2,isP:i===0,x:T.p[idx].x+T.nx[idx]*lat,y:T.p[idx].y+T.ny[idx]*lat,ang:Math.atan2(T.ty[idx],T.tx[idx]),vx:0,vy:0,steer:0,
       drift:false,driftDir:0,driftT:0,boost:0,spin:0,spinImm:0,item:null,roll:0,itemDelay:0,idx,total:-back,lap:0,lapStart:0,lapTimes:[],finished:false,finishT:0,pos:i+1,
-      cd:0,onGrass:false,stuck:0,spd:0,wob:0,ai:{vmax:VMAX*d.mul,lane:d.lane,ph:Math.random()*6,t:Math.random()*10}};
+      cd:0,onGrass:false,stuck:0,spd:0,wob:0,ai:{vmax:VMAX*d.mul*T.ai,lane:d.lane,ph:Math.random()*6,t:Math.random()*10}};
   });
   player=karts[0];
   for(const k of karts)locate(k);
@@ -682,7 +688,13 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>{if(kmap[e.code]){keys[kmap[e.code]]=0;e.preventDefault();}});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=0;});
-function pt(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*VW,y:(e.clientY-r.top)/r.height*VH};}
+function pt(e){
+  const r=cv.getBoundingClientRect();
+  if(!ROT)return{x:(e.clientX-r.left)/r.width*VW,y:(e.clientY-r.top)/r.height*VH};
+  // girado 90 graus no sentido horário: largura do jogo = altura na tela
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  return{x:(.5+(e.clientY-cy)/r.height)*VW,y:(.5-(e.clientX-cx)/r.width)*VH};
+}
 function updTouch(){
   for(const k in touch)touch[k]=0;
   for(const p of ptrs.values())for(const b of TB){if(b.id!=='item'&&Math.hypot(p.x-b.x,p.y-b.y)<b.r+10)touch[b.id]=1;}
