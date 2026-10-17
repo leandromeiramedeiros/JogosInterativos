@@ -109,6 +109,7 @@ button,input{font:inherit;color:inherit}
 .no text{font-family:var(--sans);font-weight:800;font-size:15px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .no text.l{font-size:12.5px;fill:var(--vaga-ink)}
 .no text.q{fill:var(--muted);font-weight:600;font-size:11px}
+.no text.l.dada{fill:var(--acc);font-size:12px;font-weight:900}
 .no.aberto rect.p{fill:var(--acc);stroke:var(--acc);stroke-dasharray:none}
 .no.aberto text{fill:var(--acc-ink)}
 .no.raiz rect.p{fill:var(--raiz);stroke:var(--raiz)}
@@ -254,10 +255,10 @@ dialog .bts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
   <ul>
     <li>O mapa começa com a <b>palavra do tema</b> aberta e as vizinhas dela como casinhas vazias, uma para cada letra.</li>
     <li>Cada fio liga duas palavras que têm alguma relação: “bola” e “gol”, “rei” e “coroa”. Às vezes a ligação é um trocadilho, como “banco” de reservas e “banco” de dinheiro.</li>
-    <li>Digite qualquer palavra que você acha que está no mapa. Se acertar, ela aparece sozinha. Acentos e maiúsculas não importam.</li>
+    <li>Toda palavra escondida já mostra a <b>primeira letra</b>. Digite qualquer palavra que você acha que está no mapa. Se acertar, ela aparece sozinha. Acentos, maiúsculas, plural e um errinho de digitação não importam.</li>
     <li>Cada palavra que você descobre faz brotar as vizinhas dela no anel seguinte. As palavras mais distantes só aparecem quando você abre o caminho até elas.</li>
     <li>Toque numa palavra para destacar os fios dela.</li>
-    <li>Travou? Toque em <b>Dica</b> e escolha uma palavra escondida: aparece uma pista sobre ela, como “propriedade de todos os seres vivos” para <i>vida</i>. A pista fica guardada na palavra.</li>
+    <li>Travou? Toque em <b>Dica</b> e escolha uma palavra escondida: aparece uma pista sobre ela, como “propriedade de todos os seres vivos” para <i>vida</i>, e mais letras dela se acendem. A pista fica guardada na palavra.</li>
     <li>Arraste as palavras para onde quiser: os fios puxam as vizinhas e as outras abrem espaço. Arraste um fio para levar as duas pontas juntas. Use dois dedos ou a roda do mouse para dar zoom.</li>
     <li><b>Sacudir</b> organiza o mapa: desembaraça os fios, aproxima as palavras ligadas entre si e deixa as ligações fáceis de enxergar.</li>
   </ul>
@@ -300,9 +301,9 @@ const el=(tag,attrs,pai)=>{const e=document.createElementNS(NS,tag);for(const k 
 const TEMAS=window.INTERLIGADO_TEMAS, PISTAS=window.INTERLIGADO_PISTAS||{};
 const pista=n=>(J&&J.T.pistas&&J.T.pistas[n.txt])||PISTAS[n.txt]||""; // pista do próprio tema ou da lista geral
 const NIVEIS={
-  facil:{nome:"Fácil",base:1000,dicas:5},
-  medio:{nome:"Médio",base:2000,dicas:6},
-  dificil:{nome:"Difícil",base:3000,dicas:6}
+  facil:{nome:"Fácil",base:1000,dicas:8},
+  medio:{nome:"Médio",base:2000,dicas:10},
+  dificil:{nome:"Difícil",base:3000,dicas:12}
 };
 const ICONES={
   futebol:`<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#fff"/><path d="M10 6.2l3 2.2-1.1 3.6H8.1L7 8.4z" fill="#1f2226"/><path d="M10 2v4.2M13 8.4l4-1.3M11.9 12l2.4 3.4M8.1 12l-2.4 3.4M7 8.4 3 7.1" stroke="#1f2226" stroke-width="1.1"/></svg>`,
@@ -462,11 +463,12 @@ function pintarNo(i,efeito){
     cls.push(J.rev.has(n.k)?"aberto":"entregue");
     const t=el("text",{x:0,y:1},g); t.textContent=n.txt;
   }else{
-    const vg=n.vg, w=vg.length?vg[vg.length-1].x+LETRA:0, x0=-w/2; let k=0;
+    const vg=n.vg, w=vg.length?vg[vg.length-1].x+LETRA:0, x0=-w/2, dadas=letrasDadas(n); let k=0;
     for(const s of vg){
       if(!s.letra){const t=el("text",{class:"l",x:x0+s.x+LETRA/2,y:1},g);t.textContent=s.c;continue}
       el("rect",{class:"v",x:x0+s.x,y:-9.5,width:LETRA,height:19,rx:3},g);
       if(efeito==="letras"){const t=el("text",{class:"l cai",x:x0+s.x+LETRA/2,y:1,style:`--dl:${k++*45}ms`},g);t.textContent=s.c.toUpperCase()}
+      else if(dadas.has(s.i)){const t=el("text",{class:"l dada",x:x0+s.x+LETRA/2,y:1},g);t.textContent=s.c.toUpperCase()}
     }
     if(n.viz.some(j=>J.rev.has(J.nos[j].k))) cls.push("perto");
     if(J.pistas.has(n.k)){ // selo de lâmpada: esta palavra já tem pista
@@ -478,6 +480,14 @@ function pintarNo(i,efeito){
   if(efeito==="novo"){cls.push("novo");el("rect",{class:"pulso",x:-n.hw,y:-n.hh,width:n.w,height:n.h,rx:n.hh},g)}
   n.el.setAttribute("class",cls.join(" "));
   n.el.setAttribute("aria-label",aberto?n.txt:`Palavra escondida de ${n.vg.filter(s=>s.letra).length} letras`+(J.pistas.has(n.k)?`. Pista: ${pista(n)}`:""));
+}
+/* Letras de graça: a 1ª de cada palavra (de cada parte, nas compostas); com pista, também a última e a do meio */
+function letrasDadas(n){
+  const L=n.vg.filter(s=>s.letra), d=new Set();
+  if(!L.length) return d;
+  n.vg.forEach((s,k)=>{if(s.letra&&(k===0||!n.vg[k-1].letra||/\s/.test(n.txt[s.i-1]||" ")))d.add(s.i)});
+  if(J.pistas.has(n.k)){d.add(L[L.length-1].i); if(L.length>4)d.add(L[Math.floor(L.length/2)].i)}
+  return d;
 }
 function pintarFios(){
   J.fios.forEach(([a,b],i)=>{
@@ -876,9 +886,24 @@ function pintarInfo(){
 /* ---------- Palpites ---------- */
 function procurar(v){
   for(let i=0;i<J.nos.length;i++){const n=J.nos[i];
-    if(n.alts.some(a=>v===a||v===a+"s"||v===a+"es")) return i;
+    if(n.alts.some(a=>v===a||v===a+"s"||v===a+"es"||(a.length>3&&(a===v+"s"||a===v+"es")))) return i;
   }
   return -1;
+}
+function dist1(a,b){ // no máximo 1 letra trocada, sobrando ou faltando
+  if(Math.abs(a.length-b.length)>1) return false;
+  let i=0,j=0,e=0;
+  while(i<a.length&&j<b.length){
+    if(a[i]===b[j]){i++;j++;continue}
+    if(++e>1) return false;
+    if(a.length>b.length) i++; else if(b.length>a.length) j++; else {i++;j++}
+  }
+  return e+(a.length-i)+(b.length-j)<=1;
+}
+function quase(v){ // erro de digitação: só vale se apontar para uma única palavra escondida visível
+  if(v.length<5) return -1;
+  const c=[]; J.nos.forEach((n,i)=>{if(!aberto(i)&&visivel(i)&&n.alts.some(a=>a.length>=5&&dist1(v,a)))c.push(i)});
+  return c.length===1?c[0]:-1;
 }
 const aberto=i=>J.rev.has(J.nos[i].k);
 function ambiguo(v,i){ // outra palavra escondida começa com o que já foi digitado?
@@ -899,7 +924,8 @@ $("form").addEventListener("submit",e=>{
   e.preventDefault(); clearTimeout(esperaT);
   if(!J||J.fim) return;
   const v=norm($("resp").value); if(!v) return;
-  const i=procurar(v);
+  let i=procurar(v);
+  if(i<0||aberto(i)) {const q=quase(v); if(q>=0) i=q}
   if(i>=0&&!aberto(i)&&visivel(i)) return revelar(i);
   if(i>=0&&!aberto(i)){aviso("Essa fica mais para fora: abra o caminho até ela");$("resp").value="";return}
   if(i>=0){aviso(`“${J.nos[i].txt}” já foi descoberta`);destacar(i);$("resp").value="";return}
