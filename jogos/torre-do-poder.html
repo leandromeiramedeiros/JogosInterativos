@@ -321,6 +321,14 @@ async function tap(ti,ri){
     await sleep(250);
     win();return;
   }
+  // sem saída: todo quarto que sobrou derrota o herói
+  if(towers.every(function(t){return t.every(function(q){return q.done||apply(q,hero)<1})})){
+    over=true;
+    await sleep(500);
+    heroEl.classList.add('dead');$('#hp').textContent='☠';
+    await sleep(700);
+    lose('Sem saída: todo quarto que sobrou é mais forte que o herói.');return;
+  }
   var hp=homePos();
   await move(hp.x,hp.y,420,34);
   busy=false;
@@ -349,9 +357,9 @@ function win(){
   show('<h2>Torre vencida!</h2><p>Poder final</p><div class="big">'+hero+'</div><div class="mini">Pontos: '+score+'</div><br><button class="btn" id="nx">Próxima torre</button>');
   $('#nx').onclick=function(){lvl++;loadLevel()};
 }
-function lose(){
+function lose(why){
   endRun(lvl+1);
-  show('<h2>Derrota!</h2><p>O herói foi derrotado na torre '+(lvl+1)+'.</p><div class="mini">PONTOS DA JORNADA</div><div class="big" style="color:#ffcf33">'+(score>0?clampScore():0)+'</div><br><button class="btn" id="retry">Tentar de novo</button><br><button class="btn alt" id="again">Jogar de novo</button>');
+  show('<h2>Derrota!</h2><p>'+(why||'O herói foi derrotado na torre '+(lvl+1)+'.')+'</p><div class="mini">PONTOS DA JORNADA</div><div class="big" style="color:#ffcf33">'+(score>0?clampScore():0)+'</div><br><button class="btn" id="retry">Tentar de novo</button><br><button class="btn alt" id="again">Jogar de novo</button>');
   $('#retry').onclick=function(){score=0;loadLevel()};
   $('#again').onclick=function(){newRun(0)};
 }
