@@ -452,7 +452,10 @@ function hitBig(b,x,y,rad,dmg){
   for(const p of b.parts){if(p.hp<=0)continue;const dx=x-(b.x+p.ox),dy=y-(b.y+p.oy),rr=p.r+rad;
     if(dx*dx+dy*dy<rr*rr){damagePart(b,p,dmg);return true}}
   if(Math.abs(x-b.x-b.bx)<b.hw+rad&&Math.abs(y-b.y-b.by)<b.hh+rad){
-    if(b.lock&&partsAlive(b)>0){spark(x,y);return true}
+    if(b.lock&&partsAlive(b)>0){
+      // tiro na mesma coluna de uma torre passa por cima do casco até ela (antes o casco engolia o tiro e o navio só morria com bomba)
+      if(b.parts.some(p=>p.hp>0&&Math.abs(x-(b.x+p.ox))<p.r+rad))return false;
+      spark(x,y);return true}
     damageBody(b,dmg);return true}
   return false;
 }
