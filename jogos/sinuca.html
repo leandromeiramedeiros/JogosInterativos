@@ -9,7 +9,7 @@
 <style>
 html,body{margin:0;height:100%;background:#0b1a14;overflow:hidden}
 body{display:flex;align-items:center;justify-content:center}
-canvas{display:block;touch-action:none;user-select:none;-webkit-user-select:none;background:#0b1a14}
+canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;touch-action:none;user-select:none;-webkit-user-select:none;background:#0b1a14}
 </style>
 </head>
 <body>
@@ -34,14 +34,18 @@ const FONT_T='"Lilita One","Figtree",system-ui,sans-serif',FONT_B='"Figtree",sys
 
 /* ================= CANVAS ================= */
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
-let scale=1,dpr=1;
+let scale=1,dpr=1,ROT=false;
+// celular em pé: a mesa gira 90 graus para ocupar a tela toda (antes as bolas ficavam com 4 px)
 function resize(){
   dpr=window.devicePixelRatio||1;
-  scale=Math.min(innerWidth/W,innerHeight/H);
+  const de=document.documentElement,iw=de.clientWidth||innerWidth,ih=de.clientHeight||innerHeight;
+  ROT=ih>iw*1.1&&iw<900;
+  scale=ROT?Math.min(ih/W,iw/H):Math.min(iw/W,ih/H);
   cv.style.width=W*scale+'px';cv.style.height=H*scale+'px';
+  cv.style.transform='translate(-50%,-50%)'+(ROT?' rotate(90deg)':'');
   cv.width=Math.round(W*scale*dpr);cv.height=Math.round(H*scale*dpr);
 }
-addEventListener('resize',resize);resize();
+addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,150));resize();
 
 /* ================= AUDIO ================= */
 let actx=null,muted=false;
@@ -351,7 +355,13 @@ function clampD(x,y){
 function placeAt(x,y){const p=clampD(x,y),c=balls[0];c.x=p.x;c.y=p.y;placeValid=validPlace(c.x,c.y)}
 function confirmPlace(){if(!placeValid)return;banner=null;state='aim';wait=0;const vz=vezBall(),c=balls[0];if(vz)aimAng=Math.atan2(vz.y-c.y,vz.x-c.x);power=0}
 
-function toLogical(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
+function toLogical(e){
+  const r=cv.getBoundingClientRect();
+  if(!ROT)return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};
+  // girado 90 graus no sentido horário: largura da mesa = altura na tela
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  return {x:(.5+(e.clientY-cy)/r.height)*W,y:(.5-(e.clientX-cx)/r.width)*H};
+}
 function hitUI(p){for(let i=UI.length-1;i>=0;i--){const b=UI[i];if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h)return b}return null}
 cv.addEventListener('pointerdown',e=>{
   audioInit();const p=toLogical(e);ptr.x=p.x;ptr.y=p.y;ptr.down=true;ptr.type=e.pointerType;ptr.has=true;
