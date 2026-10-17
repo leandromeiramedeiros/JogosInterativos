@@ -55,8 +55,8 @@ window.INTERLIGADO_TEMAS.comida = {
         ["padaria","leite"],
         ["padaria","bolo"],
         ["sobremesa","bolo"],
-        ["sobremesa","garfo"],
-        ["prato","garfo"]
+        ["sobremesa","colher"],
+        ["prato","colher"]
       ]
     },
     dificil: {
@@ -144,7 +144,7 @@ window.INTERLIGADO_TEMAS.comida = {
     "chapa": "Superfície de metal bem quente usada para tostar lanches.",
     "leite": "Bebida branca que vem da ordenha.",
     "bolo": "Massa assada e fofinha, que ganha velas em cima no aniversário.",
-    "garfo": "Talher de dentes usado para espetar e levar a comida à boca.",
+    "colher": "Talher com uma conchinha na ponta, para tomar sopa e comer pudim.",
     "alho": "Tempero de dentes brancos e cheiro forte, refogado com o arroz.",
     "couve": "Verdura de folhas verdes escuras, picadinha e refogada.",
     "suco": "Bebida feita com o líquido espremido das frutas.",
