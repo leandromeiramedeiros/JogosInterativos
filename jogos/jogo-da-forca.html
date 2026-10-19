@@ -195,7 +195,7 @@ dialog .bt{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
     <section class="regras" aria-labelledby="rg">
       <h2 id="rg">Como funciona</h2>
       <ul>
-        <li><b>Letras:</b> clique no teclado da tela ou digite. Sem acento: <b>A</b> revela Á, Â, Ã e À; <b>C</b> revela Ç. Hífens e espaços já aparecem.</li>
+        <li><b>Letras:</b> clique no teclado da tela ou digite. <b>Controle:</b> direcional escolhe, A confirma, X chuta, Y revela, RB elimina 5. Sem acento: <b>A</b> revela Á, Â, Ã e À; <b>C</b> revela Ç. Hífens e espaços já aparecem.</li>
         <li><b>Pontos por palavra:</b> base da dificuldade (100 / 200 / 350) + 15 por erro que sobrou. Quem acerta tudo com <b>Chutar palavra</b> ganha ainda +25 por letra escondida, mas um chute errado custa 2 erros.</li>
         <li><b>Sequência perfeita:</b> palavras seguidas sem nenhum erro (e sem ajuda) multiplicam o ponto: ×1,0, depois ×1,5 e ×2,0.</li>
         <li><b>Ajudas (2 por partida):</b> <b>Revelar letra</b> mostra uma letra escondida, mas a palavra vale metade. <b>Eliminar 5</b> apaga 5 letras erradas do teclado.</li>
@@ -254,8 +254,14 @@ dialog .bt{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
     <div class="bt"><button type="button" class="btn" id="cChute">Cancelar</button><button type="submit" class="btn pri">Chutar</button></div>
   </form>
 </dialog>
+<dialog id="dSair" aria-labelledby="ds">
+  <h3 id="ds">Sair da partida?</h3>
+  <p>O progresso será perdido.</p>
+  <div class="bt"><button type="button" class="btn" id="cSair">Continuar</button><button type="button" class="btn pri" id="oSair">Sair</button></div>
+</dialog>
 <div id="confete" aria-hidden="true"></div>
 
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -427,7 +433,7 @@ function pintarHud(){
   <span class="pill${mult>1?" seq":""}" title="Sequência perfeita">${mult>1?"Sequência perfeita ":"Sequência "}×${mult.toFixed(1).replace(".",",")}</span>
   <span class="pill" aria-label="${M.ajudas} ajudas"><small>Ajudas</small><span class="aj">${Array.from({length:AJUDAS},(_,i)=>`<i class="${i<M.ajudas?"":"v"}"></i>`).join("")}</span></span>
   <button class="pill sair btn" id="sair" style="padding:5px 12px;font-size:13px">Sair</button>`;
-  $("sair").onclick=()=>{ if(confirm("Sair da partida? O progresso será perdido.")) telaInicio(); };
+  $("sair").onclick=()=>{ if(window.Controle&&Controle.usado) $("dSair").showModal(); else if(confirm("Sair da partida? O progresso será perdido.")) telaInicio(); };
 }
 function pintarErros(){
   $("erros").innerHTML=`Erros ${pips(W.E,W.erros)} <span>${W.erros}/${W.E}</span>`;
@@ -659,7 +665,29 @@ document.addEventListener("keydown",e=>{
     letra(norm(e.key));
   }
 });
+$("cSair").onclick=()=>$("dSair").close();
+$("oSair").onclick=()=>{ $("dSair").close(); telaInicio(); };
 telaInicio();
+/* controle: direcional navega, A/Start clica, B volta, X chuta, Y revela, RB elimina 5 */
+if(window.Controle){
+  const dlg=()=>$("dSair").open?$("dSair"):$("dChute").open?$("dChute"):null;
+  Controle.navegar({raiz:()=>dlg()||document,voltar:()=>{ const d=dlg(); if(d) d.close(); else if(!$("jogo").hidden) $("sair").click(); }});
+  let sig="",ja=false;
+  const alvo=()=>{
+    const d=dlg(), t=$("inicio").hidden?$("jogo").hidden?"fim":"jogo":"inicio";
+    return d?d.querySelector("input,.pri"):t==="inicio"?document.querySelector(".nivel"):t==="fim"?$("again"):$("res").hidden?document.querySelector(".teclas button:not([aria-disabled])"):$("prox");
+  };
+  Controle.on("botao",()=>{ if(!ja){ ja=true; const el=alvo(); if(el) Controle.focar(el) } });
+  Controle.on("quadro",()=>{
+    if(Controle.tecladoAberto()) return;
+    const d=dlg(), novo=(d?d.id:$("inicio").hidden?$("jogo").hidden?"fim":"jogo":"inicio")+($("res").hidden?"":"r")+(W?M.i:"");
+    if(novo!==sig){ sig=novo; const el=Controle.usado&&alvo(); if(el) Controle.focar(el) }
+    if(d||$("jogo").hidden||!W) return;
+    if(Controle.apertou(-1,"x")&&!$("bChutar").disabled) abrirChute();
+    if(Controle.apertou(-1,"y")) ajudaRevelar();
+    if(Controle.apertou(-1,"rb")) ajudaEliminar();
+  });
+}
 })();
 </script>
 </body>

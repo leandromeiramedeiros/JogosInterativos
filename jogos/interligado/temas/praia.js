@@ -103,10 +103,10 @@ window.INTERLIGADO_TEMAS.praia = {
         ["pescador","camarão"],
         ["pescador","jangada"],
         ["remar","jangada"],
-        ["remar","fôlego"],
-        ["caldo","fôlego"],
-        ["pá","infância"],
-        ["férias","infância"],
+        ["remar","prancha"],
+        ["caldo","prancha"],
+        ["pá","criança"],
+        ["férias","criança"],
         ["férias","marquinha"],
         ["pele","marquinha"],
         ["pele","babosa"],
@@ -119,6 +119,8 @@ window.INTERLIGADO_TEMAS.praia = {
     }
   },
   pistas: {
+    "criança": "Quem brinca de pá e balde na areia e mais curte as férias.",
+    "prancha": "Tábua usada para remar e pegar onda.",
     "praia": "Faixa de areia à beira-mar onde se toma sol e banho de mar.",
     "mar": "Imensidão de água salgada que cobre boa parte do planeta.",
     "onda": "Movimento da água do mar que quebra na beira.",

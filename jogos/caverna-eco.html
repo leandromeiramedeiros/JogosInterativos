@@ -30,7 +30,7 @@ body.touch .kb,body:not(.touch) .tc{display:none!important}
 body.touch #touch{display:block}
 .tb{position:absolute;pointer-events:auto;border-radius:50%;background:#0d1c2c99;border:2px solid #7fe7ff77;color:#dff6ff;font:700 12px Figtree,sans-serif;display:flex;align-items:center;justify-content:center;touch-action:none}
 .tb.on{background:#3fd0ff88}.tb.off{opacity:.35}
-#dp{left:max(10px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:150px;height:150px}
+#dp{pointer-events:auto;touch-action:none;left:max(10px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:150px;height:150px}
 #dp .tb{width:50px;height:50px;border-radius:12px;font-size:20px}
 #bt .tb{width:62px;height:62px}
 </style>
@@ -56,7 +56,7 @@ body.touch #touch{display:block}
 <div class="ov" id="pTitle"><div class="card">
  <h1>Caverna Eco</h1>
  <p>Lume, a pequena exploradora do capacete brilhante, desce a uma caverna viva. Encontre habilidades, derrote os guardi&otilde;es e descubra o Cora&ccedil;&atilde;o da Montanha.</p>
- <div class="keys kb"><span><b>&larr; &rarr; / A D</b> mover</span><span><b>Z / Espa&ccedil;o / K</b> pular</span><span><b>X / J</b> atacar (&uarr; ataca para cima)</span><span><b>C / L</b> investida</span><span><b>V / Shift</b> disparo de eco</span><span><b>M</b> mapa &nbsp; <b>Esc</b> menu</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span></div>
+ <div class="keys kb"><span><b>&larr; &rarr; / A D</b> mover</span><span><b>Z / Espa&ccedil;o / K</b> pular</span><span><b>X / J</b> atacar (&uarr; ataca para cima)</span><span><b>C / L</b> investida</span><span><b>V / Shift</b> disparo de eco</span><span><b>M</b> mapa &nbsp; <b>Esc</b> menu</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span><span><b>Controle</b> direcional move · A pula · X ataca · B investida · Y eco · Start pausa · Select mapa</span></div>
  <div class="keys tc"><span><b>Direcional</b> mover e (&uarr;) atacar para cima</span><span><b>PULO</b> pular, duas vezes no ar com a habilidade</span><span><b>ATAQUE</b> golpe de espada</span><span><b>DASH / ECO</b> aparecem ao achar as habilidades</span><span><b>MAPA / PAUSA</b> no canto da tela</span><span><b>&uarr; / &darr;</b> no cristal: descansar e salvar</span></div>
  <button class="b" id="bPlay">Jogar</button><button class="b s" id="bNew" style="display:none">Novo jogo</button>
  <p id="tBest" style="font-size:12px"></p>
@@ -76,6 +76,7 @@ body.touch #touch{display:block}
  <button class="b" id="eAgain">Jogar de novo</button><button class="b s" id="eMenu">Menu principal</button>
 </div></div>
 
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 'use strict';
@@ -221,12 +222,24 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>{if(MAPK[e.code]){setAct(MAPK[e.code],false);if(!(e.target&&e.target.tagName==='BUTTON'&&state!=='play'))e.preventDefault()}});
 addEventListener('blur',()=>{for(const k in held)held[k]=false});
-document.querySelectorAll('.tb').forEach(b=>{
+document.querySelectorAll('#bt .tb').forEach(b=>{
   const a=b.dataset.a;
   const dn=e=>{e.preventDefault();b.setPointerCapture&&b.setPointerCapture(e.pointerId);setAct(a,true);b.classList.add('on')};
   const up=e=>{e.preventDefault();setAct(a,false);b.classList.remove('on')};
   b.addEventListener('pointerdown',dn);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
 });
+/* direcional numa peça só: dá para deslizar o dedo de ◀ para ▶ (e para as diagonais) sem levantar; antes cada seta prendia o toque */
+{
+  const dp=document.getElementById('dp'),bs={};let id=null;
+  dp.querySelectorAll('.tb').forEach(b=>{bs[b.dataset.a]=b});
+  const set=on=>{for(const a in bs){setAct(a,!!on[a]);bs[a].classList.toggle('on',!!on[a])}};
+  const at=e=>{const r=dp.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,ax=Math.abs(x),ay=Math.abs(y);
+    set({L:x<-14&&ax>ay*.5,R:x>14&&ax>ay*.5,U:y<-14&&ay>ax*.5,D:y>14&&ay>ax*.5})};
+  dp.addEventListener('pointerdown',e=>{e.preventDefault();if(id!==null)return;id=e.pointerId;try{dp.setPointerCapture(id)}catch(_){}at(e)});
+  dp.addEventListener('pointermove',e=>{if(e.pointerId===id){e.preventDefault();at(e)}});
+  const up=e=>{if(e.pointerId===id){id=null;set({})}};
+  dp.addEventListener('pointerup',up);dp.addEventListener('pointercancel',up);dp.addEventListener('lostpointercapture',up);
+}
 addEventListener('touchstart',()=>document.body.classList.add('touch'),{passive:true});
 if(matchMedia&&matchMedia('(pointer:coarse)').matches)document.body.classList.add('touch');
 addEventListener('contextmenu',e=>e.preventDefault());
@@ -1161,6 +1174,16 @@ function showTitle(){
   showTitle();
   requestAnimationFrame(loop);
 })();
+  /* controle: jogo com teclas seguradas; menus (títulos, pausa, fim) pelo foco com o direcional e A/Start */
+  if(window.Controle){
+    Controle.teclas({cima:'ArrowUp',baixo:'ArrowDown',esquerda:'ArrowLeft',direita:'ArrowRight',a:'KeyZ',x:'KeyX',b:'KeyC',y:'KeyV'},{ativo:()=>state==='play'||state==='banner'});
+    const ovAberto=()=>['pTitle','pPause','pEndS'].map(id=>document.getElementById(id)).find(el=>el&&el.style.display==='flex');
+    Controle.navegar({ativo:()=>!!ovAberto(),raiz:()=>ovAberto()||document.body,voltar:()=>{if(state==='pause')togglePause()}});
+    Controle.on('quadro',()=>{
+      if(Controle.apertou(-1,'start')&&(state==='play'||state==='map'))togglePause();
+      if(Controle.apertou(-1,'select')&&(state==='play'||state==='map'))toggleMap();
+    });
+  }
 })();
 </script>
 </body>

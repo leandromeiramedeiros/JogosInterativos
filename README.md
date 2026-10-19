@@ -22,7 +22,7 @@ Uma prateleira de jogos para jogar no navegador.
 | [Salve o Cachorro](https://leandromeiramedeiros.github.io/JogosInterativos/#salve-o-cachorro) | Desenhe uma linha para proteger o cachorro das abelhas por 10 segundos. A tinta é pouca. |
 | [Estilingue](https://leandromeiramedeiros.github.io/JogosInterativos/#estilingue) | Estique o estilingue, mire e derrube as torres de madeira, pedra e vidro até não sobrar nenhum inimigo. |
 | [Doce na Corda](https://leandromeiramedeiros.github.io/JogosInterativos/#doce-na-corda) | Corte as cordas na hora certa para o doce pegar as estrelas e cair na boca do sapinho. |
-| [Arena de Briga](https://leandromeiramedeiros.github.io/JogosInterativos/#arena-de-briga) | Luta de plataforma para 2 jogadores no mesmo teclado (ou contra a CPU). Jogue o rival para fora da arena. |
+| [Arena de Briga](https://leandromeiramedeiros.github.io/JogosInterativos/#arena-de-briga) | Luta de plataforma para 2 jogadores no mesmo teclado ou com dois controles (ou contra a CPU). Jogue o rival para fora da arena. |
 | [Kart Turbo](https://leandromeiramedeiros.github.io/JogosInterativos/#kart-turbo) | Corrida de kart vista de cima: derrape nas curvas, pegue turbos e mísseis e chegue em 1º em 3 pistas. |
 | [Voa Voa](https://leandromeiramedeiros.github.io/JogosInterativos/#voa-voa) | Toque para o tucano Tuca bater as asas e passar entre os troncos. Um toque, recorde infinito. |
 | [Pulo do Zé](https://leandromeiramedeiros.github.io/JogosInterativos/#pulo-do-ze) | Plataforma clássica: Zé, o faz-tudo de bigode, pula em mangas bravas, quebra tijolos e chega na bandeira em 4 fases. |
@@ -38,6 +38,12 @@ Uma prateleira de jogos para jogar no navegador.
 | [Masmorra Relâmpago](https://leandromeiramedeiros.github.io/JogosInterativos/#masmorra-relampago) | RPG de ação em masmorras aleatórias: classe, habilidades, equipamentos e chefes em 5 minutos. |
 | [Quati Maluco](https://leandromeiramedeiros.github.io/JogosInterativos/#quati-maluco) | Plataforma em 3D: gire para quebrar caixas, cuidado com TNT e Nitro, fuja da pedra gigante e ganhe joias e relíquias em 4 fases. |
 | [Operação Ômega](https://leandromeiramedeiros.github.io/JogosInterativos/#operacao-omega) | Tiro em primeira pessoa em 3D: segure um complexo militar por 6 ondas com pistola, fuzil, escopeta e granadas. |
+
+## Controle
+
+Todos os jogos aceitam controle (Xbox, PlayStation ou qualquer um no padrão do navegador). Na grade, o direcional escolhe o jogo e **A** abre; dentro do jogo, **Select + Start** juntos voltam para a grade. No fim da partida o controle passa para o placar: **A** no campo do nome abre um teclado na tela.
+
+A parte comum fica em `jogos/controle.js` (instruções no começo do arquivo): mapear botões para as teclas que o jogo já usa, navegar por botões de menu, mover uma seta na tela nos jogos de tocar e arrastar, e o teclado na tela.
 
 ## Placar
 
@@ -60,6 +66,7 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 - `jogos/` — um HTML por jogo. Os quizzes usam o motor em `jogos/quiz/` (veja `jogos/quiz/LEIAME.md`) e guardam perguntas, imagens e tema em `jogos/<id>/`. No fim da partida, o jogo avisa a página com `parent.postMessage({tipo: "jogos:fim", pontos, nivel}, "*")`.
 - `jogos/palavras-cruzadas/pistas.js` e `jogos/palpite/palavras.js` — palavras dos dois jogos diários. O jogo do dia sai da data no próprio navegador (sem servidor nem agendamento): a mesma data dá o mesmo jogo para todo mundo, e o Nº 1 é 15/10/2026. No Palpite, acrescente palavras no fim de `respostas` para não trocar as palavras de dias já sorteados. Nas Palavras Cruzadas, qualquer mudança no banco de pistas redesenha as grades de todos os dias.
 - `jogos/interligado/temas.js`, `temas-2.js` e `pistas.js` — os mapas do Interligado (a primeira palavra das ligações é a do tema) e a pista de cada palavra. Os temas de `temas-2.js` trazem as pistas dentro do próprio tema. Toda palavra nova nos mapas precisa de uma pista.
+- `jogos/controle.js` — suporte a controle (Gamepad API) usado pela grade e pelos jogos.
 - `placar-config.js` — endereço e chave pública do Supabase (vazio = placar só no navegador).
 - `supabase/placar.sql` — criação da tabela do placar e das regras de acesso.
 - `.github/workflows/pages.yml` — publica o site no GitHub Pages a cada push no branch padrão.

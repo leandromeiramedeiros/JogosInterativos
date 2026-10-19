@@ -9,11 +9,12 @@
 <style>
 html,body{margin:0;height:100%;background:#0b1a14;overflow:hidden}
 body{display:flex;align-items:center;justify-content:center}
-canvas{display:block;touch-action:none;user-select:none;-webkit-user-select:none;background:#0b1a14}
+canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;touch-action:none;user-select:none;-webkit-user-select:none;background:#0b1a14}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<script src="controle.js?v=1"></script>
 <script>
 "use strict";
 /* ================= CONSTANTES ================= */
@@ -34,14 +35,18 @@ const FONT_T='"Lilita One","Figtree",system-ui,sans-serif',FONT_B='"Figtree",sys
 
 /* ================= CANVAS ================= */
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
-let scale=1,dpr=1;
+let scale=1,dpr=1,ROT=false;
+// celular em pé: a mesa gira 90 graus para ocupar a tela toda (antes as bolas ficavam com 4 px)
 function resize(){
   dpr=window.devicePixelRatio||1;
-  scale=Math.min(innerWidth/W,innerHeight/H);
+  const de=document.documentElement,iw=de.clientWidth||innerWidth,ih=de.clientHeight||innerHeight;
+  ROT=ih>iw*1.1&&iw<900;
+  scale=ROT?Math.min(ih/W,iw/H):Math.min(iw/W,ih/H);
   cv.style.width=W*scale+'px';cv.style.height=H*scale+'px';
+  cv.style.transform='translate(-50%,-50%)'+(ROT?' rotate(90deg)':'');
   cv.width=Math.round(W*scale*dpr);cv.height=Math.round(H*scale*dpr);
 }
-addEventListener('resize',resize);resize();
+addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,150));resize();
 
 /* ================= AUDIO ================= */
 let actx=null,muted=false;
@@ -351,7 +356,13 @@ function clampD(x,y){
 function placeAt(x,y){const p=clampD(x,y),c=balls[0];c.x=p.x;c.y=p.y;placeValid=validPlace(c.x,c.y)}
 function confirmPlace(){if(!placeValid)return;banner=null;state='aim';wait=0;const vz=vezBall(),c=balls[0];if(vz)aimAng=Math.atan2(vz.y-c.y,vz.x-c.x);power=0}
 
-function toLogical(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
+function toLogical(e){
+  const r=cv.getBoundingClientRect();
+  if(!ROT)return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};
+  // girado 90 graus no sentido horário: largura da mesa = altura na tela
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  return {x:(.5+(e.clientY-cy)/r.height)*W,y:(.5-(e.clientX-cx)/r.width)*H};
+}
 function hitUI(p){for(let i=UI.length-1;i>=0;i--){const b=UI[i];if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h)return b}return null}
 cv.addEventListener('pointerdown',e=>{
   audioInit();const p=toLogical(e);ptr.x=p.x;ptr.y=p.y;ptr.down=true;ptr.type=e.pointerType;ptr.has=true;
@@ -589,8 +600,9 @@ function drawHUD(){
   // dica
   ctx.save();ctx.fillStyle='rgba(220,235,226,.7)';ctx.font='13px '+FONT_B;ctx.textAlign='center';ctx.textBaseline='middle';
   let hint='';
-  if(state==='place')hint=isHuman()?'Bola na mão: mova a branca dentro da meia-lua e clique/solte para confirmar':'CPU está posicionando a branca...';
-  else if(state==='aim')hint=isHuman()?'Arraste para trás a partir da branca (puxar o taco) · ou segure na mesa para mirar e solte · Setas + Espaço':'CPU está pensando...';
+  const pad=window.Controle&&Controle.usado;
+  if(state==='place')hint=isHuman()?(pad?'Controle: analógico move a branca dentro da meia-lua · A confirma':'Bola na mão: mova a branca dentro da meia-lua e clique/solte para confirmar'):'CPU está posicionando a branca...';
+  else if(state==='aim')hint=isHuman()?(pad?'Controle: analógico gira a mira (LB = fino) · X mira na bola · segure A para a força e solte para tacar · B cancela':'Arraste para trás a partir da branca (puxar o taco) · ou segure na mesa para mirar e solte · Setas + Espaço'):'CPU está pensando...';
   ctx.fillText(hint,CX,527);ctx.restore();
 }
 function drawBanner(){
@@ -647,7 +659,8 @@ function drawMenu(){
   }else drawText('Mesmo aparelho, jogadores se alternam',CX,318,'bold 15px '+FONT_B,'#9fb8ab');
   btn(CX-130,372,260,66,'Jogar',()=>{newGame()},false,{big:true});
   btn(CX-90,452,180,42,'Regras',()=>{state='rules'},false);
-  drawText('Enter ou Espaço para jogar'+(mode===1?'  ·  Recorde: '+best:''),CX,516,'13px '+FONT_B,'#8aa699');
+  drawText('Enter ou Espaço para jogar'+(mode===1?'  ·  Recorde: '+best:''),CX,508,'13px '+FONT_B,'#8aa699');
+  drawText('Controle: ◀ ▶ modo · LB/RB dificuldade · A joga · Y regras',CX,526,'13px '+FONT_B,'#8aa699');
 }
 function drawRules(){
   ctx.drawImage(tableCv,0,0,W,H);ctx.fillStyle='rgba(6,14,10,.88)';ctx.fillRect(0,0,W,H);UI=[];
@@ -664,7 +677,8 @@ function drawRules(){
     'Branca na caçapa: o adversário joga com "bola na mão" dentro da meia-lua.',
     'Controles: arraste para trás a partir da branca (distância = força), ou segure na mesa para mirar',
     'e solte na força desejada. Teclado: setas giram a mira (Shift = fino), Espaço segura/solta a força.',
-    'Pontuação no modo vs CPU: pontos x 100 + bônus de vitória (3000 x nível).'
+    'Pontuação no modo vs CPU: pontos x 100 + bônus de vitória (3000 x nível).',
+    'Controle: analógico gira a mira (LB = fino) · segure A para a força e solte para tacar · X mira na bola.'
   ];
   L.forEach((t,i)=>drawText(t,CX,100+i*31,'16px '+FONT_B,i>=9?'#9fd8b4':'#e8f2ec'));
   btn(CX-90,490,180,40,'Voltar',()=>{state='menu'},false);
@@ -717,6 +731,55 @@ function frame(now){
 buildTable();
 resetBalls();
 requestAnimationFrame(frame);
+
+/* controle: analógico gira a mira (LB/analógico direito = fino), X mira na bola, A segura a força e solta tacando, Start 2x sai */
+if(window.Controle){
+  const C=Controle;let padCharge=false,sairT=0;
+  C.on('botao',()=>audioInit());
+  C.on('quadro',dt=>{
+    const l=[];C.pads.forEach((p,i)=>p.conectado&&l.push(i));
+    // 2 jogadores com 2+ controles: o controle da vez joga (na ordem em que foram conectados); senão qualquer um
+    const jogo=state==='place'||state==='aim'||state==='strike'||state==='roll';
+    const ids=jogo&&mode===2&&l.length>1?[l[turn]]:l;
+    const seg=n=>ids.some(i=>C.segurando(i,n)),hit=n=>ids.some(i=>C.apertou(i,n));
+    const ax=k=>ids.reduce((m,i)=>Math.abs(C.pads[i][k])>Math.abs(m)?C.pads[i][k]:m,0);
+    const dp=k=>ids.some(i=>{const b=C.pads[i].gp.buttons[k];return b&&b.pressed})?1:0;
+    if(state==='menu'){
+      if(hit('esquerda'))mode=1;else if(hit('direita'))mode=2;
+      if(mode===1){if(hit('lb'))diff=Math.max(0,diff-1);if(hit('rb'))diff=Math.min(2,diff+1)}
+      if(hit('a')||hit('start'))newGame();else if(hit('y'))state='rules';
+      return;
+    }
+    if(state==='rules'){if(hit('a')||hit('b')||hit('start'))state='menu';return}
+    if(state==='over'){if(hit('a')||hit('start'))newGame();else if(hit('b'))state='menu';return}
+    if(hit('start')){
+      const n=performance.now();
+      if(n-sairT<2500){sairT=0;padCharge=keyCharge=false;power=0;state='menu'}
+      else{sairT=n;C.dica('Start de novo para voltar ao menu')}
+      return;
+    }
+    if(padCharge&&state!=='aim')padCharge=keyCharge=false;
+    const fino=seg('lb')?.2:1,sx=ax('lx')||dp(15)-dp(14),sy=ax('ly')||dp(13)-dp(12);
+    if(state==='place'&&isHuman()){
+      // a mesa gira no celular em pé: o analógico segue a tela
+      if(sx||sy){const c=balls[0];placeAt(c.x+(ROT?sy:sx)*170*fino*dt,c.y+(ROT?-sx:sy)*170*fino*dt)}
+      if(hit('a'))confirmPlace();
+    }else if(state==='aim'&&isHuman()&&wait<=0){
+      const lx=ax('lx'),rx=ax('rx');
+      aimAng+=(Math.sign(lx)*Math.pow(Math.abs(lx),1.6)*2.2+rx*.5+(dp(15)-dp(14))*.3)*fino*dt;
+      if(hit('x')){const v=vezBall(),c=balls[0];if(v)aimAng=Math.atan2(v.y-c.y,v.x-c.x)}
+      if(hit('a')&&!keyCharge&&!drag){keyCharge=padCharge=true;chargeT=0}
+      if(padCharge&&hit('b')){padCharge=keyCharge=false;power=0}
+    }
+    if(padCharge&&!seg('a')){
+      padCharge=false;
+      if(keyCharge){
+        keyCharge=false;
+        if(ids.length&&state==='aim'&&isHuman()){C.vibrar(ids[0],140,power*.8,power*.4);startShot(aimAng,clamp(power,.08,1))}else power=0;
+      }
+    }
+  });
+}
 </script>
 </body>
 </html>

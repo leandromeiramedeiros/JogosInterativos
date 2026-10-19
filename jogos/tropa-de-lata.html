@@ -10,13 +10,15 @@ html,body{margin:0;height:100%;background:#10140c;overflow:hidden;font-family:Fi
 #stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:480px;height:270px;--u:1}
 canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-rendering:pixelated;background:#000;cursor:crosshair}
 .ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(10,14,6,.84);color:#f4f1d8;padding:calc(var(--u)*6px);box-sizing:border-box}
-.ov.hide{display:none}
+.ov.hide,.ov button.hide{display:none}
 .ov h1{font-family:"Lilita One",Impact,sans-serif;font-weight:400;font-size:calc(var(--u)*30px);margin:0;color:#ffd23f;text-shadow:calc(var(--u)*2px) calc(var(--u)*2px) 0 #b3261e,calc(var(--u)*4px) calc(var(--u)*4px) 0 #000;letter-spacing:calc(var(--u)*1px)}
 .ov h2{font-family:"Lilita One",Impact,sans-serif;font-weight:400;font-size:calc(var(--u)*9px);margin:calc(var(--u)*2px) 0 calc(var(--u)*6px);color:#9be564}
 .ov p{margin:calc(var(--u)*2px) 0;font-size:calc(var(--u)*7.5px);line-height:1.3;font-weight:600}
 .ov b{color:#ffd23f}
 .ov button{font-family:"Lilita One",Impact,sans-serif;font-size:calc(var(--u)*12px);margin-top:calc(var(--u)*7px);padding:calc(var(--u)*3px) calc(var(--u)*16px);border:0;border-radius:calc(var(--u)*5px);background:#ffd23f;color:#3b1d00;box-shadow:0 calc(var(--u)*3px) 0 #b3761e;cursor:pointer}
 .ov button:active{transform:translateY(2px)}
+/* celular em pé: a tela do jogo encolhe e os botões ficavam com 16px de altura */
+@media (pointer:coarse){.ov button{min-height:36px;min-width:120px;font-size:max(calc(var(--u)*12px),15px)}}
 #mute{position:fixed;left:50%;transform:translateX(-50%);bottom:4px;z-index:5;background:rgba(0,0,0,.5);color:#fff;border:1px solid #fff5;border-radius:6px;font:700 13px Figtree,sans-serif;padding:4px 8px;cursor:pointer}
 #tc{display:none;position:fixed;left:0;right:0;bottom:0;height:0;z-index:4;pointer-events:none}
 #tc.on{display:block}
@@ -44,6 +46,7 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
     <p class="tq"><b>Roda esquerda</b> mover (para cima pula, para baixo agacha)</p>
     <p class="tq"><b>Roda direita</b> mira em 360° e atira enquanto segurar &nbsp; <b>BOMBA</b> granada</p>
     <p>Faca se o robô estiver colado &nbsp; Prisioneiros: <b>H</b> metralhadora, <b>R</b> foguetes, <b>F</b> lança-chamas</p>
+    <p class="pc"><b>Controle</b>: analógico esquerdo move (cima pula) · <b>direito</b> mira em 360° · <b>A</b> pular · <b>X/RT</b> atirar · <b>B</b> granada</p>
     <button id="btnPlay">Jogar</button>
   </div>
   <div class="ov hide" id="ovOver">
@@ -51,6 +54,7 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
     <h2 id="ovSub"></h2>
     <p>Pontos: <b id="ovScore">0</b></p>
     <p>Recorde: <b id="ovBest">0</b></p>
+    <button id="btnCont">Continuar aqui</button>
     <button id="btnAgain">Jogar de novo</button>
   </div>
 </div>
@@ -59,6 +63,7 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
   <div class="wh" id="wm"><div class="kn"></div><span>MOVER</span></div><div class="wh" id="wa"><div class="kn"></div><span>MIRAR</span></div>
   <div class="b" id="bj" data-a="j">PULAR</div><div class="b" id="bb" data-a="b">BOMBA</div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 "use strict";
 const W=480,H=270;
@@ -69,7 +74,8 @@ const rnd=n=>Math.random()*n, ri=n=>Math.floor(Math.random()*n);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const hash=n=>{const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s)};
 const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h)};
-function resize(){let s=Math.min(innerWidth/W,innerHeight/H);if(s>=2)s=Math.floor(s);stage.style.width=Math.floor(W*s)+'px';stage.style.height=Math.floor(H*s)+'px';stage.style.setProperty('--u',s)}
+// clientWidth em vez de innerWidth: no celular, depois de girar a tela, innerWidth fica maior que a tela e o jogo vaza para fora
+function resize(){const de=document.documentElement;let s=Math.min((de.clientWidth||innerWidth)/W,(de.clientHeight||innerHeight)/H);if(s>=2)s=Math.floor(s);stage.style.width=Math.floor(W*s)+'px';stage.style.height=Math.floor(H*s)+'px';stage.style.setProperty('--u',s)}
 addEventListener('resize',resize);resize();
 
 /* ---------- audio ---------- */
@@ -88,7 +94,7 @@ const rodas={m:{id:null,cx:0,cy:0,x:0,y:0,el:$('wm')},a:{id:null,cx:0,cy:0,x:0,y
 const held=a=>!!td[a]||(a==='s'&&rato.tiro)||Object.keys(kd).some(c=>kd[c]&&KM[c]===a);
 addEventListener('keydown',e=>{
   if(KM[e.code]||e.code==='Enter')e.preventDefault();
-  if(state!=='play'&&(e.code==='Enter'||e.code==='Space')&&!e.repeat){startGame();return}
+  if(state!=='play'&&(e.code==='Enter'||e.code==='Space')&&!e.repeat){if(state==='over'&&!$('btnCont').classList.contains('hide'))continueRun();else startGame();return}
   if(!kd[e.code]&&KM[e.code])edge[KM[e.code]]=true;
   kd[e.code]=true;
 });
@@ -147,7 +153,7 @@ document.querySelectorAll('#tc .b').forEach(el=>{
 function ligaToque(){$('tc').classList.add('on');document.body.classList.add('toque')}
 if(matchMedia('(pointer:coarse)').matches||'ontouchstart' in window)ligaToque();
 addEventListener('touchstart',ligaToque,{passive:true,once:true});
-$('btnPlay').onclick=()=>startGame();$('btnAgain').onclick=()=>startGame();
+$('btnPlay').onclick=()=>startGame();$('btnAgain').onclick=()=>startGame();$('btnCont').onclick=()=>continueRun();
 
 /* ---------- state ---------- */
 let state='menu',paused=false,score=0,lives=3,mission=1,best=0;
@@ -212,9 +218,17 @@ function endRun(win){
   $('ovTitle').textContent=win?'MISSÃO CUMPRIDA!':'FIM DE JOGO';
   $('ovSub').textContent=win?'A Legião Ferrugem foi derrotada!':'A Legião Ferrugem venceu desta vez...';
   $('ovScore').textContent=Math.round(score);$('ovBest').textContent=best;
+  $('btnCont').classList.toggle('hide',win);
   $('ovOver').classList.remove('hide');
   if(!posted){posted=true;const P=clamp(Math.round(score),1,50000);
     if(Math.round(score)>0){try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:P,nivel:"Missão "+mission},"*")}catch(e){}}}
+}
+// continuar: volta no mesmo ponto com 3 vidas (o chefe guarda o dano), mas os pontos recomeçam do zero
+function continueRun(){
+  $('ovOver').classList.add('hide');
+  score=0;lives=3;state='play';posted=false;
+  ebul=[];gren=gren.filter(g=>g.fr==='p');
+  respawn();
 }
 function addScore(n,x,y){score+=n;if(x!==undefined)pops.push({x,y,txt:'+'+n,t:0,c:'#fff'})}
 function pop(x,y,txt,c){pops.push({x,y,txt,t:0,c:c||'#ffd23f'})}
@@ -325,10 +339,13 @@ function updPlayer(){
   P.x=clamp(P.x,camX+9,Math.min(maxX,camX+W-9));
   phys(P);
   if(P.y>L.GY+40){P.y=L.GY;P.vy=0}
-  // mira 360°: roda direita, mouse ou (sem mira) a direção do movimento
+  // mira 360°: roda direita, analógico direito, mouse ou (sem mira) a direção do movimento
   const ch=P.crouch?9:16;
+  const pad=window.Controle?Controle.pads.find(p=>p.conectado&&Math.hypot(p.rx,p.ry)>.35):null; // analógico direito do controle
   if(rodas.a.id!==null)P.aa=rodas.a.a;
+  else if(pad){P.aa=Math.atan2(pad.ry,pad.rx);modoMira='pad'}
   else if(modoMira==='rato'&&rato.ok)P.aa=Math.atan2(rato.y-(P.y-ch),rato.x+camX-P.x);
+  else if(modoMira==='pad'){} // solta o analógico: mantém a última mira
   else if(mv)P.aa=mv>0?0:Math.PI;
   const ca=Math.cos(P.aa);if(Math.abs(ca)>.08)P.face=ca<0?-1:1; // vira para o lado da mira
   if(P.cd>0)P.cd--;
@@ -461,7 +478,8 @@ function updBoss(){
     else if(B.state==='claw'){
       // advance, telegraph, swipe, retreat
       const adv=homeX-150;
-      if(B.st<70){B.x+=(adv-B.x)*.05;B.arm=B.st/70}
+      // avança mais devagar que o jogador corre (1,7): dá para recuar e não ser atropelado
+      if(B.st<70){B.x+=Math.max((adv-B.x)*.05,-1.4);B.arm=B.st/70}
       else if(B.st<100){B.arm=1;B.warn=true}
       else if(B.st<116){B.warn=false;B.swipe=(B.st-100)/16;B.arm=1-B.swipe*2;
         if(B.st===104){shake=Math.max(shake,5);snd(90,.3,'sawtooth',.1,-50)}
@@ -508,11 +526,12 @@ function updBoss(){
 function bossHitTest(x,y,dmg,kind){
   const B=boss;if(!B||B.dead||B.state==='enter')return false;
   if(B.t==='crab'){
-    const inW=B.exposed&&x>B.x-34&&x<B.x+34&&y>B.y-92&&y<B.y-52;
+    // ponto fraco: todo o topo do casco quando aberto (antes só tiro no meio do pulo acertava)
+    const inW=B.exposed&&x>B.x-B.w/2-4&&x<B.x+B.w/2&&y>B.y-92&&y<B.y-50;
     if(inW){bossHurt(dmg*(kind==='r'?5:1));return true}
     if(x>B.x-B.w/2&&x<B.x+B.w/2&&y>B.y-66&&y<B.y-8){spark(x,y,3,'#cfd8dc',2);if(Math.random()<.3)snd(900,.04,'square',.02);return true}
-    // claw arm
-    if(x>B.x-B.w/2-70&&x<B.x-B.w/2&&y>B.y-60&&y<B.y){spark(x,y,2,'#cfd8dc',2);return true}
+    // claw arm: só bloqueia tiros com a garra esticada (recolhida, tirava a chance de mirar o ponto fraco do chão)
+    if(B.state==='claw'&&x>B.x-B.w/2-70&&x<B.x-B.w/2&&y>B.y-60&&y<B.y){spark(x,y,2,'#cfd8dc',2);return true}
     return false;
   }else{
     if(x>B.x-B.w/2&&x<B.x+B.w/2&&y>B.y-B.h&&y<B.y+6){bossHurt(dmg*(kind==='r'?5:1));return true}
@@ -987,6 +1006,11 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){paused=sta
 addEventListener('focus',()=>{if(!document.hidden&&paused){paused=false;last=0;acc=0}});
 L=buildLevel(1);camX=0;tick=0;pl={x:-999,y:0,face:1,inv:0,dead:true,wp:'P',ammo:0,bombs:0,crouch:false,aa:0,flash:0,knife:0,vx:0};en=[];pbul=[];ebul=[];gren=[];parts=[];items=[];pops=[];boss=null;shake=0;banner=null;lockAct=null;lockIdx=0;mc=0;goT=0;
 requestAnimationFrame(frame);
+// controle: botões mapeados para as teclas do jogo; menus (início, fim) navegados com o direcional e A
+if(window.Controle){
+  Controle.teclas({esquerda:'ArrowLeft',direita:'ArrowRight',cima:'ArrowUp',baixo:'ArrowDown',a:'KeyX',x:'KeyZ',rt:'KeyZ',b:'KeyC'});
+  Controle.navegar({raiz:()=>stage,ativo:()=>!!document.querySelector('.ov:not(.hide)')});
+}
 </script>
 </body>
 </html>

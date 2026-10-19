@@ -54,12 +54,12 @@ body{font-family:'Figtree',system-ui,sans-serif;color:#f4f1ff}
       <div class="logo">EMPILHA</div>
       <p class="sub">Solte cada bloco em cima do anterior.</p>
       <ul class="regras">
-        <li><b>Toque</b>, clique ou aperte <b>Espaço</b> para soltar.</li>
+        <li><b>Toque</b>, clique, <b>Espaço</b> ou <b>A</b> do controle para soltar.</li>
         <li>Encaixe certeiro vira <b>PERFEITO!</b> Três seguidos fazem o bloco crescer.</li>
         <li>Cada bloco vale 1 ponto. Cada perfeito, +1 extra.</li>
       </ul>
       <button id="btnJogar" class="btn">Jogar</button>
-      <p class="dica">Enter ou Espaço também começam</p>
+      <p class="dica">Enter, Espaço ou A também começam</p>
     </div>
   </div>
   <div id="ovFim" class="ov fundo oculto">
@@ -74,6 +74,7 @@ body{font-family:'Figtree',system-ui,sans-serif;color:#f4f1ff}
     </div>
   </div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 (() => {
 'use strict';
@@ -461,6 +462,11 @@ redimensiona();
 mundoNovo();
 atualizaSom();
 requestAnimationFrame(frame);
+  // controle: A solta o bloco; nos menus, A ou Start clica no botão da tela
+  if(window.Controle){
+    Controle.navegar({raiz:()=>ovFim.classList.contains('oculto')?ovInicio:ovFim,ativo:()=>estado==='inicio'||estado==='fim'});
+    Controle.teclas({a:'Space'});
+  }
 })();
 </script>
 </body>

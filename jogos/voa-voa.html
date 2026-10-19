@@ -46,7 +46,7 @@ body{background:#0c1430;color:var(--ink);font-family:Figtree,system-ui,sans-seri
         <h1 class="titulo">Voa Voa</h1>
         <p class="sub">Ajude o Tuca a atravessar a mata!</p>
         <div class="ajuda">
-          <p><b>Toque</b>, <b>clique</b> ou aperte <b>Espaço</b> / <b>↑</b> para bater as asas.</p>
+          <p><b>Toque</b>, <b>clique</b>, <b>Espaço</b> / <b>↑</b> ou <b>A</b> do controle para bater as asas.</p>
           <p>Desvie dos troncos e pegue as moedas (+1 cada).</p>
           <p>Medalhas: Bronze 10 · Prata 25 · Ouro 50 · Platina 100.</p>
         </div>
@@ -67,6 +67,7 @@ body{background:#0c1430;color:var(--ink);font-family:Figtree,system-ui,sans-seri
     </div>
   </div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 (function(){
 'use strict';
@@ -571,6 +572,12 @@ for(let i=0;i<5;i++) G.clouds.push({x:Math.random()*W,y:40+Math.random()*200,s:0
 stars();
 resize();
 requestAnimationFrame(frame);
+  // controle: A/B/X batem as asas; menu e tela de fim usam navegar (A ou Start clica no botão)
+  if(window.Controle){
+    const telaBotao=()=>G.state==='menu'||(G.state==='over'&&G.overT>0.6);
+    Controle.navegar({raiz:()=>$(G.state==='menu'?'sMenu':'sOver'),ativo:telaBotao});
+    Controle.teclas({a:'Space',b:'Space',x:'Space',cima:'ArrowUp'});
+  }
 })();
 </script>
 </body>

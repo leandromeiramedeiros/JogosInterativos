@@ -145,6 +145,7 @@ body.toque.jogando #tq{display:block}
       <b>1 2 3 / roda</b><span>pistola, fuzil, escopeta</span>
       <b>G</b><span>granada</span>
       <b>Esc</b><span>pausa</span>
+      <b>Controle</b><span>analógicos andam e miram · RT atira · LT mira fina · A pula · X recarrega · Y arma · RB granada</span>
     </div>
     <div class="ctrl so-toque">
       <b>Esquerda</b><span>arraste para andar (empurre até a borda para correr)</span>
@@ -176,6 +177,7 @@ body.toque.jogando #tq{display:block}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="controle.js?v=1"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -1109,13 +1111,17 @@ function passo(dt){
   if(teclas.KeyW||teclas.ArrowUp)fx+=1; if(teclas.KeyS||teclas.ArrowDown)fx-=1;
   if(teclas.KeyD||teclas.ArrowRight)sx+=1; if(teclas.KeyA||teclas.ArrowLeft)sx-=1;
   fx+=ent.joyY; sx+=ent.joyX;
+  const pad=padAtivo();
+  if(pad){fx-=pad.ly; sx+=pad.lx; olha(pad.rx*Math.abs(pad.rx)*dt,pad.ry*Math.abs(pad.ry)*dt,2.6);}
+  ent.fogoPad=!!(pad&&pad.rt); ent.miraPad=!!(pad&&pad.lt);
+  const fogo=ent.fogo||ent.fogoPad, mirando=ent.mira||ent.miraPad;
   const ml=Math.hypot(fx,sx); if(ml>1){fx/=ml;sx/=ml;}
   J.agach=ent.agachToggle||!!teclas.ControlLeft;
   const quer=J.vivo?(teclas.Space||ent.pularToque):false; ent.pularToque=false;
-  J.correndo=J.vivo&&(teclas.ShiftLeft||teclas.ShiftRight||ent.joyCorre)&&fx>.5&&!J.agach&&!ent.mira&&J.recarregando<=0;
-  if(J.correndo&&(ent.fogo||ent.clique>0))J.correndo=false;
+  J.correndo=J.vivo&&(teclas.ShiftLeft||teclas.ShiftRight||ent.joyCorre||pad&&(pad.l3||-pad.ly>.92))&&fx>.5&&!J.agach&&!mirando&&J.recarregando<=0;
+  if(J.correndo&&(fogo||ent.clique>0))J.correndo=false;
   // movimento
-  const vel=!J.vivo?0:J.agach?2.3:J.correndo?7.6:4.6*(ent.mira?.6:1);
+  const vel=!J.vivo?0:J.agach?2.3:J.correndo?7.6:4.6*(mirando?.6:1);
   const sy=Math.sin(J.yaw),cy=Math.cos(J.yaw);
   const alvoVx=(-sy*fx+cy*sx)*vel, alvoVz=(-cy*fx-sy*sx)*vel;
   const acel=J.chao?14:3;
@@ -1136,20 +1142,20 @@ function passo(dt){
   // armas
   const A=ARMAS[J.arma];
   J.cadencia-=dt; J.granCool-=dt; if(J.lancando>0)J.lancando-=dt;
-  J.dispExtra=Math.max(0,J.dispExtra-dt*(ent.fogo&&A.auto?.02:.09));
-  J.miraK=lerp(J.miraK,ent.mira&&J.vivo&&J.recarregando<=0&&J.troca<=0&&!J.correndo?1:0,Math.min(1,dt*12));
+  J.dispExtra=Math.max(0,J.dispExtra-dt*(fogo&&A.auto?.02:.09));
+  J.miraK=lerp(J.miraK,mirando&&J.vivo&&J.recarregando<=0&&J.troca<=0&&!J.correndo?1:0,Math.min(1,dt*12));
   if(J.troca>0){J.troca-=dt; if(J.troca<=.21&&J.proxArma>=0){J.ultArma=J.arma;J.arma=J.proxArma;J.proxArma=-1;}}
   if(J.recarregando>0){J.recarregando-=dt; if(J.recarregando<=J.recTotal*.45&&!J.recSom&&!A.porCartucho){J.recSom=1;som("pente");} if(J.recarregando<=0)fimRecarga();}
   // um clique rápido entre dois quadros não se perde: fica guardado por 0,2 s
   if(ent.clique>0)ent.clique-=dt;
-  const gatilho=ent.fogo||ent.clique>0;
-  if(gatilho&&J.vivo&&J.troca<=0&&J.cadencia<=0&&!J.correndo&&J.lancando<=0&&(J.recarregando<=0||A.porCartucho)&&(A.auto&&ent.fogo||J.gatilhoSolto||ent.clique>0)){ent.clique=0;atira();if(!ent.fogo)J.gatilhoSolto=true;}
+  const gatilho=fogo||ent.clique>0;
+  if(gatilho&&J.vivo&&J.troca<=0&&J.cadencia<=0&&!J.correndo&&J.lancando<=0&&(J.recarregando<=0||A.porCartucho)&&(A.auto&&fogo||J.gatilhoSolto||ent.clique>0)){ent.clique=0;atira();if(!fogo)J.gatilhoSolto=true;}
   if(J.pente[J.arma]===0&&J.res[J.arma]>0&&J.recarregando<=0&&J.troca<=0&&J.cadencia<=-.25)recarrega();
   if(J.bombaT>0){J.bombaT-=dt; if(J.bombaT<.3&&J.bombaT+dt>=.3&&J.recarregando<=0){som("bomba");ejeta(matCartucho);}}
   // coice volta
   // só 1/4 do coice fica na mira; o resto volta sozinho quando o dedo alivia
   J.pitch+=J.coiceP*dt*14*.25; J.recuoP+=J.coiceP*dt*14*.75; J.recuoY+=J.coiceY*dt*14;
-  const volta=Math.min(1,dt*(ent.fogo&&A.auto?2:6)); J.recuoP=lerp(J.recuoP,0,volta); J.recuoY=lerp(J.recuoY,0,volta);
+  const volta=Math.min(1,dt*(fogo&&A.auto?2:6)); J.recuoP=lerp(J.recuoP,0,volta); J.recuoY=lerp(J.recuoY,0,volta);
   J.coiceP=lerp(J.coiceP,0,Math.min(1,dt*16)); J.coiceY=lerp(J.coiceY,0,Math.min(1,dt*16));
   J.pitch=clamp(J.pitch,-1.5,1.5);
   J.tremor=Math.max(0,J.tremor-dt*1.6);
@@ -1264,6 +1270,23 @@ function quadro(agora){
   if(estado==="jogo"||estado==="pausa"){ren.clearDepth(); ren.render(cenaArma,camArma);}
 }
 requestAnimationFrame(quadro);
+// controle: analógico esquerdo anda, direito mira; RT atira, LT mira fina, A pula, X recarrega,
+// Y troca de arma, RB granada, B agacha, L3 corre, Start pausa. Telas navegadas com o direcional e A.
+function padAtivo(){return window.Controle&&!Controle.pausado?Controle.pads.find(p=>p.conectado)||null:null;}
+if(window.Controle){
+  const telaAberta=()=>document.querySelector(".tela:not(.oculto)");
+  Controle.navegar({raiz:telaAberta,ativo:()=>!!telaAberta(),voltar:()=>{if(estado==="pausa")continua();}});
+  Controle.on("botao",(i,nome)=>{
+    if(estado!=="jogo")return;
+    if(nome==="a")ent.pularToque=true;
+    else if(nome==="x")recarrega();
+    else if(nome==="y")trocaArma((J.arma+1)%3);
+    else if(nome==="rb")lancaGranada();
+    else if(nome==="b")ent.agachToggle=!ent.agachToggle;
+    else if(nome==="start")setTimeout(pausa,0); // no próximo quadro, senão o mesmo Start clica em CONTINUAR
+  });
+  Controle.on("quadro",()=>{if(estado==="jogo"&&Controle.soltou(-1,"rt"))J.gatilhoSolto=true;});
+}
 </script>
 </body>
 </html>

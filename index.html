@@ -746,7 +746,7 @@ const JOGOS=[
     id:"arena-de-briga",
     titulo:"Arena de Briga",
     arquivo:"jogos/arena-de-briga.html",
-    resumo:"Luta de plataforma para 2 jogadores no mesmo teclado (ou contra a CPU). Jogue o rival para fora da arena.",
+    resumo:"Luta de plataforma para 2 jogadores no mesmo teclado ou com dois controles (ou contra a CPU). Jogue o rival para fora da arena.",
     tags:["Luta","2 jogadores","vs CPU"],
     cor:["#ff7a1a","#1a1036"],
     arte:`<div class="label art-arena">
@@ -1361,6 +1361,7 @@ shelf.innerHTML=JOGOS.map(j=>`
     <p>O próximo jogo entra aqui.</p>
   </li>`;
 </script>
+<script src="jogos/controle.js?v=1"></script>
 <script src="hub.js"></script>
 </body>
 </html>

@@ -39,6 +39,7 @@ button.big:active{transform:translateY(3px);box-shadow:0 1px 0 #0a5a14}
   <div class="pad r"><button data-k="run">B<small>correr/fogo</small></button><button data-k="jump">A<small>pular</small></button></div>
 </div>
 <div id="ui"><div class="panel" id="panel"></div></div>
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 "use strict";
@@ -49,7 +50,8 @@ let S=1;
 function resize(){
   const dpr=window.devicePixelRatio||1;
   const raw=Math.min(innerWidth*dpr/W,innerHeight*dpr/H);
-  S=raw>=1?Math.floor(raw):raw;
+  // escala inteira só quando quase não encolhe a tela (no celular ela deixava o jogo minúsculo)
+  S=raw>=1&&Math.floor(raw)/raw>.85?Math.floor(raw):raw;
   cv.width=Math.round(W*S);cv.height=Math.round(H*S);
   cv.style.width=(W*S/dpr)+'px';cv.style.height=(H*S/dpr)+'px';
   ctx.imageSmoothingEnabled=false;
@@ -917,7 +919,7 @@ function titleScreen(){
   showPanel(`<h1>Pulo do Zé</h1><div class="sub">Ajude o Zé, o faz-tudo de boné verde, a atravessar 4 mundos!</div>
   <div class="how"><div><b>◀ ▶</b> ou <b>A/D</b>: andar</div><div><b>Z / Espaço / ↑ / W</b>: pular (segure = mais alto)</div>
   <div><b>X / Shift</b>: correr e atirar fogo</div><div>Pise nas <b>mangas bravas</b>, jabutis e morcegos</div>
-  <div>Bata em <b>?</b>: <b>caju</b> = grande, <b>pimenta</b> = fogo</div><div>100 moedas = vida extra. Derrote o Mangão no castelo!</div></div>
+  <div>Bata em <b>?</b>: <b>caju</b> = grande, <b>pimenta</b> = fogo</div><div>100 moedas = vida extra. Derrote o Mangão no castelo!</div><div style="grid-column:1/-1"><b>Controle</b>: A pula · X/B corre e atira · Start pausa</div></div>
   <button class="big" id="btn">Jogar</button><div class="sub" style="margin-top:8px">Recorde: ${best}</div>`);
 }
 function overScreen(title,sub){
@@ -960,7 +962,10 @@ touchEl.querySelectorAll('button').forEach(b=>{
   const k=b.dataset.k;
   const on=e=>{e.preventDefault();aInit();touch[k]=true;b.classList.add('d');sync()};
   const off=e=>{e.preventDefault();touch[k]=false;b.classList.remove('d');sync()};
-  b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('pointerleave',off);
+  // solta a captura do toque: assim dá para deslizar o dedo de ◀ para ▶ sem levantar
+  b.addEventListener('pointerdown',e=>{try{b.releasePointerCapture(e.pointerId)}catch(_){}on(e)});
+  b.addEventListener('pointerenter',e=>{if(e.pointerType!=='mouse'||e.buttons)on(e)});
+  b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('pointerleave',off);
   b.addEventListener('contextmenu',e=>e.preventDefault());
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(state==='play')paused=true;last=0;for(const k in keys)keys[k]=false;sync()}});
@@ -983,6 +988,11 @@ function loop(t){
 window.__dbg={P,get state(){return state},get lvl(){return lvl},get score(){return score},get lives(){return lives},get time(){return time},get cam(){return cam},get enemies(){return enemies},set time(v){time=v},start:startGame,load(i){loadLevel(i);state='play'},get MW(){return MW},get coins(){return coins},get flagX(){return flagX},keys,sync,setLives(v){lives=v}};
 bgInit();titleScreen();
 requestAnimationFrame(loop);
+// controle: jogo pelos botões mapeados; menus (título, fim, vitória) navegados com o analógico/direcional
+if(window.Controle){
+  Controle.teclas({a:'Space',cima:'ArrowUp',esquerda:'ArrowLeft',direita:'ArrowRight',x:'KeyX',b:'KeyX',start:'KeyP'});
+  Controle.navegar({raiz:()=>panel,ativo:()=>!uiEl.classList.contains('hide')});
+}
 })();
 </script>
 </body>

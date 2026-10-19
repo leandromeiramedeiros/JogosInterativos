@@ -37,6 +37,7 @@ body.touch.playing #touch{display:block}
   <div class="tb" id="bJ">PULO</div>
   <div class="tb" id="bS">ESPECIAL</div>
 </div>
+<script src="controle.js?v=1"></script>
 <script>
 "use strict";
 const W=480,H=270,Y0=184,Y1=254;
@@ -1163,8 +1164,8 @@ function drawMenu(c){
           ['Mover: WASD / setas    Soco: J ou Z    Pulo: K ou X',
            'Especial: Soco + Pulo juntos (gasta um pouco de vida)',
            'Correr: toque duplo na direção    Agarrar: ande em um inimigo atordoado, depois Soco para arremessar',
-           coop?'2 jogadores: P1 WASD + J(soco) X(pulo)   P2 setas + K(soco) L(pulo)':'Enter ou Espaço para jogar   |   P pausa   |   T alterna 1P/2P   |   Quebre barris para itens!'];
-  L.forEach((s,i)=>txt(c,s,W/2,222+i*12,T?9:(i===2?8:9),'#fff','center',false));
+           coop?'2 jogadores: P1 WASD + J(soco) X(pulo)   P2 setas + K(soco) L(pulo)':'Enter ou Espaço para jogar   |   P pausa   |   T alterna 1P/2P   |   Quebre barris para itens!','Controle: direcional move · A soca · B pula · A+B especial · Y 1P/2P · Start jogar/pausa'];
+  L.forEach((s,i)=>txt(c,s,W/2,216+i*12,T?9:(i===2?8:9),'#fff','center',false));
 }
 function drawOver(c){
   c.fillStyle='rgba(8,4,24,'+Math.min(.8,overT/30)+')';c.fillRect(0,0,W,H);
@@ -1189,7 +1190,7 @@ function drawClear(c){
 }
 function drawPause(c){
   c.fillStyle='rgba(0,0,0,.55)';c.fillRect(0,0,W,H);
-  txt(c,'PAUSADO',W/2,108,30,'#fff','center');txt(c,'P ou Esc: continuar    Q: sair para o menu',W/2,126,10,'#cfe','center');
+  txt(c,'PAUSADO',W/2,108,30,'#fff','center');txt(c,'P, Esc ou Start: continuar    Q ou Select: sair para o menu',W/2,126,10,'#cfe','center');
   button(c,130,142,220,28,'Continuar',()=>setPause(false),null,15);
   button(c,130,182,220,28,'Sair para o menu',quitRun,'#3a8bff',15);
 }
@@ -1219,6 +1220,27 @@ function frame(now){
 try{document.fonts.load('16px "Lilita One"')}catch(e){}
 buildStage(0);
 requestAnimationFrame(frame);
+// controle: direcional move, A soca, B pula (A+B especial), Start confirma/pausa, Select volta, Y 1P/2P
+if(window.Controle){
+  Controle.teclas({esquerda:'KeyA',direita:'KeyD',cima:'KeyW',baixo:'KeyS',a:'KeyJ',b:'KeyX'},{jogador:0,ativo:()=>scene==='play'&&!paused});
+  Controle.teclas({esquerda:'ArrowLeft',direita:'ArrowRight',cima:'ArrowUp',baixo:'ArrowDown',a:'KeyK',b:'KeyL'},{jogador:1,ativo:()=>coop&&scene==='play'&&!paused});
+  Controle.on('quadro',()=>{
+    if(Controle.apertou(-1,'start')){
+      if(scene==='menu'||(scene==='over'&&overT>25))startGame();
+      else if(scene==='clear'&&clearT>40)nextStage();
+      else if(scene==='play')setPause(!paused);
+    }
+    if(scene==='menu'){
+      if(Controle.apertou(-1,'esquerda'))sel=0;
+      if(Controle.apertou(-1,'direita'))sel=1;
+      if(Controle.apertou(-1,'y')&&!touchOnly())coop=!coop;
+    }
+    if(Controle.apertou(-1,'select')){
+      if(scene==='over'&&overT>25)scene='menu';
+      else if(scene==='play'&&paused)quitRun();
+    }
+  });
+}
 </script>
 </body>
 </html>

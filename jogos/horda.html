@@ -10,28 +10,36 @@
 <style>
 html,body{margin:0;height:100%;background:#0d1a12;overflow:hidden}
 body{display:flex;align-items:center;justify-content:center}
-canvas{display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;outline:none}
+canvas{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;outline:none}
 .btns{position:fixed;right:8px;bottom:8px;display:flex;gap:6px;z-index:5}
 .btns button{width:38px;height:38px;border-radius:10px;border:2px solid rgba(255,255,255,.35);background:rgba(10,20,14,.6);color:#fff;font-size:18px;cursor:pointer;padding:0}
 .btns button:active{background:rgba(255,255,255,.25)}
+.rot .btns{right:auto;left:8px;flex-direction:column}
+.rot .btns button{transform:rotate(90deg)}
 </style>
 </head>
 <body>
 <canvas id="c" tabindex="0"></canvas>
 <div class="btns"><button id="bp" title="Pausar">&#10074;&#10074;</button><button id="bm" title="Som">&#128266;</button></div>
+<script src="controle.js?v=1"></script>
 <script>
 (()=>{
 'use strict';
 const W=960,H=540,DT=1/60;
 const FD="'Lilita One','Trebuchet MS',sans-serif",FB="Figtree,system-ui,sans-serif";
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+// celular em pé: o jogo gira 90 graus para ocupar a tela toda (antes ficava uma faixa de 1/4 da tela)
+let ROT=false;
 function resize(){
-  const dpr=window.devicePixelRatio||1,w=window.innerWidth,h=window.innerHeight;
+  const dpr=window.devicePixelRatio||1,de=document.documentElement,iw=de.clientWidth||innerWidth,ih=de.clientHeight||innerHeight;
+  ROT=ih>iw*1.1&&iw<900;document.body.classList.toggle('rot',ROT);
+  const w=ROT?ih:iw,h=ROT?iw:ih;
   const sc=Math.min(w/W,h/H);
   cv.style.width=Math.floor(W*sc)+'px';cv.style.height=Math.floor(H*sc)+'px';
+  cv.style.transform='translate(-50%,-50%)'+(ROT?' rotate(90deg)':'');
   cv.width=Math.max(1,Math.floor(W*sc*dpr));cv.height=Math.max(1,Math.floor(H*sc*dpr));
 }
-window.addEventListener('resize',resize);resize();
+window.addEventListener('resize',resize);addEventListener('orientationchange',()=>setTimeout(resize,150));resize();
 
 /* ---------- utils ---------- */
 const rnd=(a,b)=>a+Math.random()*(b-a);
@@ -170,11 +178,11 @@ function drawDeco(tx,ty,px,py,stone){
 let state='menu',uiT=0,fr=0,best=0,winFlag=false,score=0,newBest=false,bonus=0,sel=0,lvKind='level';
 try{best=+localStorage.getItem('horda_best')||0}catch(e){}
 let P,enemies,gems,parts,texts,projs,chests,foods,bolts,kills,t,level,xp,xpNeed,pending,chestP,weps,pas,cam,shake,spawnT,bossIdx,banner,bannerT,eid,ringT,lineT,choices,hitSnd,godMode=false,bossE=null,joy={id:null,ox:0,oy:0,dx:0,dy:0};
-const keys={};
+const keys={},stick={x:0,y:0};
 const need=l=>Math.floor(4+l*5+l*l*0.3);
 const WORDER=['faca','varinha','alho','machado','raio','livro'],PORDER=['speed','hp','magnet','cool','area'];
 const WN={
-  faca:{name:'Faca',desc:'Arremessa facas na direção em que você anda.',up:['','Mais dano e disparo mais rápido.','+1 faca e atravessa mais inimigos.','Mais dano e disparo mais rápido.','+1 faca e mais dano.']},
+  faca:{name:'Faca',desc:'Arremessa facas rápidas no inimigo mais perto.',up:['','Mais dano e disparo mais rápido.','+1 faca e atravessa mais inimigos.','Mais dano e disparo mais rápido.','+1 faca e mais dano.']},
   varinha:{name:'Varinha Mágica',desc:'Dispara orbes que perseguem o inimigo mais próximo.',up:['','Mais dano e recarga menor.','+1 orbe.','Mais dano e recarga menor.','+1 orbe e atravessa inimigos.']},
   alho:{name:'Alho',desc:'Aura que machuca e empurra quem chega perto.',up:['','Aura maior e mais forte.','Aura maior e mais forte.','Aura maior e danos mais rápidos.','Aura enorme e muito mais dano.']},
   machado:{name:'Machado',desc:'Machados sobem em arco e caem atravessando a horda.',up:['','Mais dano e recarga menor.','+1 machado.','Mais dano e recarga menor.','+1 machado e mais dano.']},
@@ -293,7 +301,9 @@ function updWeapons(){
     if(w.id==='faca'){
       w.cd-=DT;
       if(w.cd<=0){
-        w.cd=[1.0,0.9,0.8,0.7,0.6][L]*cm;const n=[1,1,2,2,3][L],base=Math.atan2(P.fy,P.fx),dm=[9,11,11,14,16][L],pr=[1,1,2,2,3][L];
+        // mira no inimigo mais perto (antes ia só para onde você anda: quem fugia da horda nunca acertava nada)
+        const ft=nearest(P.x,P.y,420);
+        w.cd=[1.0,0.9,0.8,0.7,0.6][L]*cm;const n=[1,1,2,2,3][L],base=ft?Math.atan2(ft.y-P.y+6,ft.x-P.x):Math.atan2(P.fy,P.fx),dm=[9,11,11,14,16][L],pr=[1,1,2,2,3][L];
         for(let i=0;i<n;i++){const a=base+(i-(n-1)/2)*0.2;projs.push({k:'knife',x:P.x,y:P.y-6,vx:Math.cos(a)*580,vy:Math.sin(a)*580,ang:a,dmg:dm,pierce:pr,life:0.9,hits:[],r:8})}
         beep(700,0.05,'triangle',0.025,300);
       }
@@ -426,6 +436,7 @@ function updatePlay(){
   let mx=0,my=0;
   if(keys.KeyA||keys.ArrowLeft)mx--;if(keys.KeyD||keys.ArrowRight)mx++;if(keys.KeyW||keys.ArrowUp)my--;if(keys.KeyS||keys.ArrowDown)my++;
   if(joy.id!==null){const m=Math.hypot(joy.dx,joy.dy)/45;if(m>0.12){const k=Math.min(1,m)/Math.hypot(joy.dx,joy.dy);mx=joy.dx*k;my=joy.dy*k}}
+  if(stick.x||stick.y){mx=stick.x;my=stick.y}/* controle analógico */
   let len=Math.hypot(mx,my);if(len>1){mx/=len;my/=len;len=1}
   const sp=150*(1+0.1*pas.speed);
   P.x+=mx*sp*DT;P.y+=my*sp*DT;
@@ -678,7 +689,7 @@ function drawMenu(){
   txt('HORDA',W/2,122+by,104,'#ffc23c','center',FD,null);
   txt('Sobreviva 10 minutos contra a horda!',W/2,168,24,'#fff','center',FB,'#000',4);
   ctx.fillStyle='rgba(0,0,0,.55)';rr(W/2-300,196,600,200,18);ctx.fill();
-  const L=[['Mover','WASD / setas  ou  arraste o dedo na tela'],['Armas','Atacam sozinhas. Só desvie da horda!'],['Gemas','Colete para subir de nível e escolher melhorias'],['Chefes','A cada 3 minutos. Derrote-os e pegue o baú'],['Pausar','P ou Esc  (M liga/desliga o som)']];
+  const L=[['Mover','WASD / setas / analógico  ou  arraste o dedo'],['Armas','Atacam sozinhas. Só desvie da horda!'],['Gemas','Colete para subir de nível e escolher melhorias'],['Chefes','A cada 3 minutos. Derrote-os e pegue o baú'],['Pausar','P, Esc ou Start  (M liga/desliga o som)']];
   L.forEach((l,i)=>{txt(l[0],W/2-278,232+i*34,20,'#ffd84a','left',FD,'#000',3);ctx.font='700 17px '+FB;ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(l[1],W/2-178,231+i*34)});
   drawButton('Jogar',BTN);
   txt('Recorde: '+best,W/2,520,20,'#cfe6d4','center',FB,'#000',4);
@@ -702,7 +713,7 @@ function drawLevelUp(){
   ctx.fillStyle='rgba(5,10,20,.72)';ctx.fillRect(0,0,W,H);
   const pop=Math.min(1,uiT/14),e=1-Math.pow(1-pop,3);
   txt(lvKind==='chest'?'BAÚ DO CHEFE!':'SUBIU DE NÍVEL!',W/2,92,56*e+10,lvKind==='chest'?'#ffd84a':'#7ddcff','center',FD,'#02122a',8);
-  txt('Escolha uma melhoria (1, 2, 3 ou toque)',W/2,126,18,'#dfe9f0','center',FB,'#000',3);
+  txt('Escolha uma melhoria (1, 2, 3, toque ou controle)',W/2,126,18,'#dfe9f0','center',FB,'#000',3);
   choices.forEach((c,i)=>{
     const r=cardRect(i),ap=clamp((uiT-i*4)/12,0,1),ee=1-Math.pow(1-ap,3);
     ctx.save();ctx.translate(r.x+r.w/2,r.y+r.h/2+(1-ee)*60);const sc=(sel===i?1.04:1)*(0.6+0.4*ee);ctx.scale(sc,sc);ctx.globalAlpha=ee;
@@ -727,7 +738,7 @@ function drawLevelUp(){
 function drawPause(){
   ctx.fillStyle='rgba(5,10,8,.65)';ctx.fillRect(0,0,W,H);
   txt('PAUSADO',W/2,260,80,'#fff','center',FD,'#000',8);
-  txt('Toque ou pressione P para continuar',W/2,310,22,'#cfe6d4','center',FB,'#000',4);
+  txt('Toque, P ou Start para continuar',W/2,310,22,'#cfe6d4','center',FB,'#000',4);
 }
 
 function render(){
@@ -756,7 +767,13 @@ function frame(ts){
 requestAnimationFrame(frame);
 
 /* ---------- input ---------- */
-function lpos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
+function lpos(e){
+  const r=cv.getBoundingClientRect();
+  if(!ROT)return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};
+  // girado 90 graus no sentido horário: largura do jogo = altura na tela
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  return{x:(.5+(e.clientY-cy)/r.height)*W,y:(.5-(e.clientX-cx)/r.width)*H};
+}
 function togglePause(){if(state==='play'){state='paused';joy.id=null;joy.dx=joy.dy=0}else if(state==='paused'){state='play'}}
 cv.addEventListener('pointerdown',e=>{
   ac();const p=lpos(e);e.preventDefault();
@@ -792,6 +809,15 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='p
 function toggleMute(){muted=!muted;document.getElementById('bm').innerHTML=muted?'&#128263;':'&#128266;'}
 document.getElementById('bm').addEventListener('click',e=>{ac();toggleMute();e.target.blur()});
 document.getElementById('bp').addEventListener('click',e=>{ac();togglePause();e.target.blur()});
+/* controle: analógico/direcional anda, Start ou B pausa, A começa e escolhe melhorias */
+if(window.Controle){
+  Controle.on('quadro',()=>{const p=[0,1,2,3].map(i=>Controle.pad(i)).find(q=>q.conectado);stick.x=p?p.lx:0;stick.y=p?p.ly:0});
+  Controle.teclas({cima:'ArrowUp',baixo:'ArrowDown',esquerda:'ArrowLeft',direita:'ArrowRight'},{ativo:()=>state==='play'});
+  /* um mapa só para play/pausa: dois mapas com a mesma tecla disparariam duas vezes na troca de estado */
+  Controle.teclas({a:['Enter','Space'],b:'Escape',start:'KeyP'},{ativo:()=>state==='play'||state==='paused'});
+  Controle.teclas({a:['Enter','Space'],start:'Enter'},{ativo:()=>state==='menu'||state==='over'});
+  Controle.teclas({esquerda:'ArrowLeft',direita:'ArrowRight',lb:'ArrowLeft',rb:'ArrowRight',a:['Enter','Space']},{ativo:()=>state==='levelup'});
+}
 window.__h={info:()=>({state,t,level,kills,n:enemies.length,gems:gems.length,hp:P.hp,fr,weps:weps.map(w=>w.id+w.lv)}),skip:s=>{t+=s},god:()=>{godMode=true},xp:v=>gainXp(v),pick:i=>choose(i),setState:s=>{state=s}};
 })();
 </script>

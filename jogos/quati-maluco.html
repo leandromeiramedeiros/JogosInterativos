@@ -85,6 +85,7 @@ canvas#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
 </div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="controle.js?v=1"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -535,6 +536,12 @@ cena.background=new THREE.Color(0x8fd3ff);
 {const ch=new THREE.Mesh(new THREE.CylinderGeometry(3,3,.5,24),lam(0x58b83a));ch.position.y=-.25;cena.add(ch);var palco=ch}
 const _novaPartida=novaPartida;novaPartida=function(){if(palco){cena.remove(palco);palco=null}camNova=true;_novaPartida()};
 requestAnimationFrame(quadro);
+// controle: botões viram as teclas do jogo; telas de início e fim navegadas com o direcional e A
+if(window.Controle){
+  const telaAberta=()=>document.querySelector(".tela:not(.oculto)");
+  Controle.navegar({raiz:telaAberta,ativo:()=>!!telaAberta()});
+  Controle.teclas({esquerda:"ArrowLeft",direita:"ArrowRight",cima:"ArrowUp",baixo:"ArrowDown",a:"Space",x:"KeyX",y:"KeyX",b:"KeyC",rt:"KeyC"},{ativo:()=>!telaAberta()});
+}
 </script>
 </body>
 </html>

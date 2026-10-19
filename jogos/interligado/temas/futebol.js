@@ -113,8 +113,8 @@ window.INTERLIGADO_TEMAS.futebol = {
         ["Copa do Mundo","Pelé"],
         ["vermelho","expulsão"],
         ["vermelho","amarelo"],
-        ["falha","defesa"],
-        ["falha","frango"]
+        ["luva","defesa"],
+        ["luva","frango"]
       ]
     }
   },
@@ -155,7 +155,6 @@ window.INTERLIGADO_TEMAS.futebol = {
     "expulsão": "Punição que manda o jogador mais cedo para o vestiário.",
     "amarelo": "Cor da camisa canarinho e da advertência.",
     "Copa do Mundo": "Torneio entre países que acontece de quatro em quatro anos.",
-    "vermelho": "Cor do morango, do sangue e da punição máxima.",
-    "falha": "Erro, deslize que ninguém esperava."
+    "vermelho": "Cor do morango, do sangue e da punição máxima."
   }
 };
