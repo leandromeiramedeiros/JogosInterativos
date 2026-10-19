@@ -35,6 +35,8 @@ Uma prateleira de jogos para jogar no navegador.
 | [Caverna Eco](https://leandromeiramedeiros.github.io/JogosInterativos/#caverna-eco) | Explore uma caverna viva, ganhe pulo duplo, investida e garra de parede para abrir caminhos e vencer dois chefes. |
 | [Sinuca](https://leandromeiramedeiros.github.io/JogosInterativos/#sinuca) | Sinuca brasileira: acerte sempre a bola da vez, some pontos e cuidado com a falta de 7. Contra a CPU ou a dois. |
 | [Clássico](https://leandromeiramedeiros.github.io/JogosInterativos/#futebol-classico) | Futebol arcade com os grandes do Rio e de São Paulo. Amistoso a dois ou o Torneio Rio-São Paulo contra a CPU. |
+| [Masmorra Relâmpago](https://leandromeiramedeiros.github.io/JogosInterativos/#masmorra-relampago) | RPG de ação em masmorras aleatórias: classe, habilidades, equipamentos e chefes em 5 minutos. |
+| [Quati Maluco](https://leandromeiramedeiros.github.io/JogosInterativos/#quati-maluco) | Plataforma em 3D: gire para quebrar caixas, cuidado com TNT e Nitro, fuja da pedra gigante e ganhe joias e relíquias em 4 fases. |
 
 ## Placar
 
