@@ -29,6 +29,7 @@ Uma prateleira de jogos para jogar no navegador.
 | [Caverna Eco](https://leandromeiramedeiros.github.io/JogosInterativos/#caverna-eco) | Explore uma caverna viva, ganhe pulo duplo, investida e garra de parede para abrir caminhos e vencer dois chefes. |
 | [Masmorra Relâmpago](https://leandromeiramedeiros.github.io/JogosInterativos/#masmorra-relampago) | RPG de ação em masmorras aleatórias: classe, habilidades, equipamentos e chefes em 5 minutos. |
 | [Operação Ômega](https://leandromeiramedeiros.github.io/JogosInterativos/#operacao-omega) | Tiro em primeira pessoa em 3D: segure um complexo militar por 6 ondas com pistola, fuzil, escopeta e granadas. |
+| [Piano Herói](https://leandromeiramedeiros.github.io/JogosInterativos/#piano-heroi) | As notas caem num piano de duas oitavas e você toca na hora certa; a melodia só soa quando você acerta. Parabéns pra Você, abertura de Dragon Ball ou um arquivo MIDI seu. Tem modo Treino, que espera você. |
 
 ## Controle
 
@@ -53,6 +54,7 @@ Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Ba
 | Arena de Briga | CPU (Fácil, Médio, Difícil) |
 | Kart Turbo | Pista |
 | Masmorra Relâmpago | Classe |
+| Piano Herói | Música × Nível (Fácil, Normal, Difícil) |
 
 Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`). O jogo avisa o modo ao começar a partida com `parent.postMessage({tipo: "jogos:modo", modo}, "*")` e manda o mesmo `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…). As do Interligado não diziam o tema, então ficam no tema **Antes dos temas**, separadas por nível; partida nova não entra nele.
 
@@ -73,6 +75,7 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 - `jogos/` — um HTML por jogo. Os quizzes usam o motor em `jogos/quiz/` (veja `jogos/quiz/LEIAME.md`) e guardam perguntas, imagens e tema em `jogos/<id>/`. No fim da partida, o jogo avisa a página com `parent.postMessage({tipo: "jogos:fim", pontos, nivel, modo}, "*")`.
 - `jogos/palavras-cruzadas/pistas.js` e `jogos/palpite/palavras.js` — palavras dos dois jogos diários. O jogo do dia sai da data no próprio navegador (sem servidor nem agendamento): a mesma data dá o mesmo jogo para todo mundo, e o Nº 1 é 15/10/2026. No Palpite, acrescente palavras no fim de `respostas` para não trocar as palavras de dias já sorteados. Nas Palavras Cruzadas, qualquer mudança no banco de pistas redesenha as grades de todos os dias.
 - `jogos/interligado/temas.js`, `temas-2.js` e `pistas.js` — os mapas do Interligado (a primeira palavra das ligações é a do tema) e a pista de cada palavra. Os temas de `temas-2.js` trazem as pistas dentro do próprio tema. Toda palavra nova nos mapas precisa de uma pista.
+- `jogos/piano-heroi/musicas.js` — as músicas do Piano Herói, escritas como partitura de texto (melodia nota a nota e acordes do acompanhamento). O cabeçalho do arquivo explica o formato; o teclado vai de C4 a B5. No jogo, **Abrir arquivo MIDI…** toca qualquer `.mid`: escolha a faixa da melodia e as outras viram o acompanhamento (fora do placar).
 - `jogos/controle.js` — suporte a controle (Gamepad API) usado pela grade e pelos jogos.
 - `trofeu3d.js` — o troféu 3D da comemoração do pódio.
 - `placar-config.js` — endereço e chave pública do Supabase (vazio = placar só no navegador).
