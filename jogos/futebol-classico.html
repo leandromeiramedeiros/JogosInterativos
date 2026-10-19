@@ -758,11 +758,11 @@ function fillNext(){
 /* ---------- pontuação / fim ---------- */
 function best(){try{return parseInt(localStorage.getItem('futebol-classico-best'))||0}catch(e){return 0}}
 function saveBest(v){try{localStorage.setItem('futebol-classico-best',String(v))}catch(e){}}
+function modoAtual(){return [cfg.mode==='torn'?'Torneio':'Amistoso',DIFFN[cfg.diff],cfg.mins+' min']}
 function postScore(pts,nivel){
  pts=clamp(Math.round(pts),1,50000);
  const b=best();if(pts>b)saveBest(pts);
- const modo=[cfg.mode==='torn'?'Torneio':'Amistoso',DIFFN[cfg.diff],cfg.mins+' min'];
- try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:pts,nivel,modo},'*')}catch(e){}
+ try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:pts,nivel,modo:modoAtual()},'*')}catch(e){}
  return pts;
 }
 function endScreen(title,score,det,pts,showBest){
@@ -825,6 +825,8 @@ $('#b-amis').onclick=()=>{cfg.mode='amis';teamStep=0;$('#tt-title').textContent=
 $('#b-torn').onclick=()=>{cfg.mode='torn';$('#tt-title').textContent='Torneio Rio-São Paulo';drawTeams();showUI('sc-teams')};
 $('#b-back').onclick=()=>showUI('sc-mode');
 $('#b-go').onclick=()=>{
+ // contra a CPU, o placar mostra o pódio deste modo, nível e tempo
+ if(cfg.mode==='torn'||cfg.players===1){try{if(parent!==window)parent.postMessage({tipo:'jogos:modo',modo:modoAtual()},'*')}catch(e){}}
  if(cfg.mode==='amis'){startMatch({a:cfg.t1,b:cfg.t2,h:[true,cfg.players===2],ko:false,onEnd:friendlyEnd})}
  else{newTournament();prepRound();showBracket('Você está no torneio como '+TEAMS[cfg.tp].nome+'. Boa sorte!')}
 };

@@ -386,6 +386,7 @@ function telaInicio(){
 let J=null, relogio=null;
 const nDias=()=>window.innerWidth<=560?3:5;
 function abrir(nv,dia,janela){
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:NIVEIS[nv].nome},"*")}catch(e){}   // o placar mostra o pódio deste nível
   HOJE=hojeInfo(); dia=dia||{numero:HOJE.numero,chave:HOJE.chave};
   const P=montarGrade(nv,dia);
   const salvo=LS.get(kEstado(nv,dia.chave),null);

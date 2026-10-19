@@ -51,7 +51,7 @@ No fim de cada partida aparece, ao lado do jogo, um campo para salvar a pontuaç
 
 ### Placar por modo
 
-Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Bandeiras do Mundo, quem joga no Difícil não disputa com quem joga no Fácil, e no Interligado cada tema tem seu placar em cada nível. Os botões acima do pódio trocam de modo, e no fim da partida o placar abre no modo jogado. A linha de cada pontuação mostra o detalhe que o jogo mandou (Fase 3, Onda 2, Andar 4…), e o aviso de "Pontuação salva" diz quando é um novo recorde pessoal naquele modo.
+Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Bandeiras do Mundo, quem joga no Difícil não disputa com quem joga no Fácil, e no Interligado cada tema tem seu placar em cada nível. O placar acompanha o jogador: quando a partida começa, ele passa sozinho para o pódio do modo escolhido (o botão do modo pisca para avisar), e no fim abre no modo jogado. Os botões acima do pódio servem para espiar os outros modos. A linha de cada pontuação mostra o detalhe que o jogo mandou (Fase 3, Onda 2, Andar 4…), e o aviso de "Pontuação salva" diz quando é um novo recorde pessoal naquele modo.
 
 | Jogo | Modos |
 | --- | --- |
@@ -65,7 +65,7 @@ Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Ba
 | Clássico | Amistoso ou Torneio × Nível × Tempo |
 | Masmorra Relâmpago | Classe |
 
-Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`), e o jogo diz em qual jogou com `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…). As do Interligado não diziam o tema, então ficam no tema **Antes dos temas**, separadas por nível; partida nova não entra nele.
+Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`). O jogo avisa o modo ao começar a partida com `parent.postMessage({tipo: "jogos:modo", modo}, "*")` e manda o mesmo `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…). As do Interligado não diziam o tema, então ficam no tema **Antes dos temas**, separadas por nível; partida nova não entra nele.
 
 ### Ligar o placar online (Supabase)
 
@@ -95,7 +95,7 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 1. Salve o HTML do jogo em `jogos/nome-do-jogo.html`.
 2. Acrescente um item na lista `JOGOS` no fim do `index.html` (id, título, arquivo, resumo, tags e a arte do cartucho).
 3. Para o jogo entrar no placar, chame `parent.postMessage({tipo: "jogos:fim", pontos: 1234, nivel: "Fase 3"}, "*")` quando a partida terminar. `nivel` é o detalhe que aparece na linha do placar.
-4. Se o jogo tem níveis, pistas, temas ou outro jeito de jogar que muda a pontuação, declare os eixos em `modos` no item da lista (veja o comentário antes de `JOGOS`) e mande também `modo: "Difícil"` (ou `modo: ["Praia", "Médio"]` com mais de um eixo). Tema novo no Interligado: acrescente também em `modos` do Interligado.
+4. Se o jogo tem níveis, pistas, temas ou outro jeito de jogar que muda a pontuação, declare os eixos em `modos` no item da lista (veja o comentário antes de `JOGOS`) e mande também `modo: "Difícil"` (ou `modo: ["Praia", "Médio"]` com mais de um eixo) no `jogos:fim`. Para o placar acompanhar a partida, avise o modo também quando ela começar: `parent.postMessage({tipo: "jogos:modo", modo: "Difícil"}, "*")`. Tema novo no Interligado: acrescente também em `modos` do Interligado.
 
 ## Publicação
 

@@ -373,6 +373,7 @@ function vagas(txt){ // posições das letras escondidas: [{i, x}] e largura tot
 /* ---------- Estado da partida ---------- */
 let J=null;
 function abrir(tema,nv){
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:[tema,NIVEIS[nv].nome]},"*")}catch(e){}   // o placar mostra o pódio deste tema e nível
   const T=TEMAS[tema], N=NIVEIS[nv], m=montar(tema,nv);
   const e=LS.get(kEst(tema,nv),null);
   J={tema,nv,T,N,nos:m.nos,fios:m.fios,

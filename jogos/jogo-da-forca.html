@@ -408,6 +408,7 @@ function telaInicio(){
 let M=null, W=null;
 function comecar(nv){
   const N=NIVEIS[nv];
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:N.nome},"*")}catch(e){}   // o placar mostra o pódio deste nível
   M={nv,N,palavras:sortear(nv),i:0,vidas:VIDAS,ajudas:AJUDAS,score:0,seq:0,hist:[],fim:false};
   montarTeclado();
   mostrar("jogo");

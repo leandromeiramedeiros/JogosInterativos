@@ -142,6 +142,7 @@ function resetBalls(){
   balls[0].x=BAULK-70;balls[0].y=MY;
 }
 function newGame(){
+  if(mode===1){try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:DIFFS[diff]},"*")}catch(e){}}   // contra a CPU, o placar mostra o pódio deste nível
   resetBalls();scores=[0,0];turn=0;over=null;shot=null;particles=[];banner=null;strike=null;cpuPlan=null;drag=null;power=0;
   aimAng=0;state='place';wait=40;placeValid=true;
   setBanner('Bola na mão! Posicione a branca na meia-lua','',"#ffe9a0",150);
