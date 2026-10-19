@@ -182,6 +182,9 @@ a{color:inherit}
 .art-om{background:#1a2230}
 .art-om .mark{font-family:"Chakra Petch","Arial Black",Impact,sans-serif;font-weight:700;color:#fff;letter-spacing:.06em;text-shadow:0 2px 0 #000,0 0 10px rgba(156,255,106,.3);font-size:clamp(16px,8cqw,28px);line-height:1}
 .art-om .mark span{color:#9cff6a}
+.art-piano{background:#160f33}
+.art-piano .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #5b2bd1;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-piano .mark span{color:#ffd23f;text-shadow:0 2px 0 #b4530a}
 
 /* ---------- Jogador ---------- */
 .player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}
