@@ -269,7 +269,7 @@ function endGame(){
     const P=Math.round(scores[0]*100+(win?3000*(diff+1):0));
     over.pts=P;
     if(P>best){best=P;saveBest(P)}
-    if(P>0){try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:clamp(P,1,50000),nivel:DIFFS[diff]},"*")}catch(e){}}
+    if(P>0){try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:clamp(P,1,50000),nivel:DIFFS[diff],modo:DIFFS[diff]},"*")}catch(e){}}
   }
 }
 

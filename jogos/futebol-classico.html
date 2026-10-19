@@ -761,7 +761,8 @@ function saveBest(v){try{localStorage.setItem('futebol-classico-best',String(v))
 function postScore(pts,nivel){
  pts=clamp(Math.round(pts),1,50000);
  const b=best();if(pts>b)saveBest(pts);
- try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:pts,nivel},'*')}catch(e){}
+ const modo=[cfg.mode==='torn'?'Torneio':'Amistoso',DIFFN[cfg.diff],cfg.mins+' min'];
+ try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:pts,nivel,modo},'*')}catch(e){}
  return pts;
 }
 function endScreen(title,score,det,pts,showBest){
@@ -779,13 +780,13 @@ function friendlyEnd(r){
  if(r.pen)det+=` · Pênaltis ${r.pen[0]} x ${r.pen[1]}`;
  if(cfg.players===1){
   const m=cfg.diff;const win=r.a>r.b||(r.pen&&r.pen[0]>r.pen[1]);
-  const pts=postScore((r.a*300-r.b*100+(win?1000:r.a===r.b?300:0))*m,'Amistoso · '+DIFFN[m]);
+  const pts=postScore((r.a*300-r.b*100+(win?1000:r.a===r.b?300:0))*m,win?'Vitória':r.a===r.b?'Empate':'Derrota');
   endScreen(win?'VITÓRIA!':r.a===r.b?'EMPATE':'DERROTA',sc,det,pts);
  }else endScreen('Fim de jogo',sc,det,null);
 }
 function tournEnd(){
  const T=tourn,m=cfg.diff;
- const pts=postScore((T.gf*300-T.ga*100+T.wins*1000)*m+(T.champ?5000:0),'Torneio · '+DIFFN[m]);
+ const pts=postScore((T.gf*300-T.ga*100+T.wins*1000)*m+(T.champ?5000:0),T.champ?'Campeão':T.lostAt===2?'Vice':'Eliminado nas '+RNAME[T.lostAt].toLowerCase());
  endScreen(T.champ?'CAMPEÃO!':T.lostAt===2?'VICE-CAMPEÃO':'Fim do torneio',T.champ?'Taça Rio-São Paulo':T.lostAt===2?'Perdeu a final':'Eliminado nas '+RNAME[T.lostAt].toLowerCase(),`Gols marcados ${T.gf} · sofridos ${T.ga} · vitórias ${T.wins}`,pts);
 }
 

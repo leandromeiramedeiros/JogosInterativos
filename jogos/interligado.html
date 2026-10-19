@@ -1019,7 +1019,7 @@ function vencer(){
   ajustar(true);
   setTimeout(()=>onda(),700);
   setTimeout(()=>mostrarFim(true),700+J.nAneis*130+1100);
-  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome},"*") }catch(e){}
+  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome,modo:[J.tema,J.N.nome]},"*") }catch(e){}
 }
 function onda(){ // uma onda passa pelos anéis, do centro para fora
   J.nos.forEach(n=>{n.el.classList.remove("onda");void n.el.getBBox();n.el.style.setProperty("--dl",`${n.d*130}ms`);n.el.classList.add("onda")});

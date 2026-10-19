@@ -47,7 +47,25 @@ A parte comum fica em `jogos/controle.js` (instruções no começo do arquivo): 
 
 ## Placar
 
-No fim de cada partida aparece, ao lado do jogo, um campo para salvar a pontuação com um nome. A barra mostra os 10 melhores de cada jogo (1º com medalha de ouro e coroa de louros, 2º prata, 3º bronze), e o botão **Ver últimas 100 pontuações** lista os envios mais recentes. Quem entra no pódio ganha uma tela de comemoração com o troféu do seu lugar.
+No fim de cada partida aparece, ao lado do jogo, um campo para salvar a pontuação com um nome. A barra mostra os 10 melhores (1º com medalha de ouro e coroa de louros, 2º prata, 3º bronze), e o botão **Ver últimas 100 pontuações** lista os envios mais recentes. Quem entra no pódio ganha uma tela de comemoração com um troféu 3D do seu lugar (ouro, prata ou bronze) que chega girando e pousa com clarão e faíscas. O troféu usa o three.js e só é baixado quando a pontuação vai para o pódio; sem WebGL ou sem conexão com o CDN, aparece o troféu desenhado em SVG.
+
+### Placar por modo
+
+Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Bandeiras do Mundo, quem joga no Difícil não disputa com quem joga no Fácil, e no Interligado cada tema tem seu placar em cada nível. Os botões acima do pódio trocam de modo, e no fim da partida o placar abre no modo jogado. A linha de cada pontuação mostra o detalhe que o jogo mandou (Fase 3, Onda 2, Andar 4…), e o aviso de "Pontuação salva" diz quando é um novo recorde pessoal naquele modo.
+
+| Jogo | Modos |
+| --- | --- |
+| Bandeiras do Mundo | Nível (Fácil, Normal, Difícil, Professor de Geografia) |
+| Quizzes | Nível (Normal, Difícil, Impossível) |
+| Palavras Cruzadas, Palpite, Jogo da Forca | Nível (Fácil, Médio, Difícil) |
+| Interligado | Tema × Nível |
+| Arena de Briga, Sinuca | CPU (Fácil, Médio, Difícil) |
+| Kart Turbo | Pista |
+| Rua dos Socos | 1 ou 2 jogadores |
+| Clássico | Amistoso ou Torneio × Nível × Tempo |
+| Masmorra Relâmpago | Classe |
+
+Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`), e o jogo diz em qual jogou com `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…). As do Interligado não diziam o tema, então ficam no tema **Antes dos temas**, separadas por nível; partida nova não entra nele.
 
 ### Ligar o placar online (Supabase)
 
@@ -63,10 +81,11 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 ## Estrutura
 
 - `index.html`, `hub.css`, `hub.js` — a página com a grade de jogos. Cada jogo abre por cima da grade, e o endereço ganha `#id-do-jogo` para poder ser compartilhado.
-- `jogos/` — um HTML por jogo. Os quizzes usam o motor em `jogos/quiz/` (veja `jogos/quiz/LEIAME.md`) e guardam perguntas, imagens e tema em `jogos/<id>/`. No fim da partida, o jogo avisa a página com `parent.postMessage({tipo: "jogos:fim", pontos, nivel}, "*")`.
+- `jogos/` — um HTML por jogo. Os quizzes usam o motor em `jogos/quiz/` (veja `jogos/quiz/LEIAME.md`) e guardam perguntas, imagens e tema em `jogos/<id>/`. No fim da partida, o jogo avisa a página com `parent.postMessage({tipo: "jogos:fim", pontos, nivel, modo}, "*")`.
 - `jogos/palavras-cruzadas/pistas.js` e `jogos/palpite/palavras.js` — palavras dos dois jogos diários. O jogo do dia sai da data no próprio navegador (sem servidor nem agendamento): a mesma data dá o mesmo jogo para todo mundo, e o Nº 1 é 15/10/2026. No Palpite, acrescente palavras no fim de `respostas` para não trocar as palavras de dias já sorteados. Nas Palavras Cruzadas, qualquer mudança no banco de pistas redesenha as grades de todos os dias.
 - `jogos/interligado/temas.js`, `temas-2.js` e `pistas.js` — os mapas do Interligado (a primeira palavra das ligações é a do tema) e a pista de cada palavra. Os temas de `temas-2.js` trazem as pistas dentro do próprio tema. Toda palavra nova nos mapas precisa de uma pista.
 - `jogos/controle.js` — suporte a controle (Gamepad API) usado pela grade e pelos jogos.
+- `trofeu3d.js` — o troféu 3D da comemoração do pódio.
 - `placar-config.js` — endereço e chave pública do Supabase (vazio = placar só no navegador).
 - `supabase/placar.sql` — criação da tabela do placar e das regras de acesso.
 - `.github/workflows/pages.yml` — publica o site no GitHub Pages a cada push no branch padrão.
@@ -75,7 +94,8 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 
 1. Salve o HTML do jogo em `jogos/nome-do-jogo.html`.
 2. Acrescente um item na lista `JOGOS` no fim do `index.html` (id, título, arquivo, resumo, tags e a arte do cartucho).
-3. Para o jogo entrar no placar, chame `parent.postMessage({tipo: "jogos:fim", pontos: 1234, nivel: "Difícil"}, "*")` quando a partida terminar.
+3. Para o jogo entrar no placar, chame `parent.postMessage({tipo: "jogos:fim", pontos: 1234, nivel: "Fase 3"}, "*")` quando a partida terminar. `nivel` é o detalhe que aparece na linha do placar.
+4. Se o jogo tem níveis, pistas, temas ou outro jeito de jogar que muda a pontuação, declare os eixos em `modos` no item da lista (veja o comentário antes de `JOGOS`) e mande também `modo: "Difícil"` (ou `modo: ["Praia", "Médio"]` com mais de um eixo). Tema novo no Interligado: acrescente também em `modos` do Interligado.
 
 ## Publicação
 

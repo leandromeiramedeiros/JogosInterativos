@@ -421,7 +421,7 @@ function commitScore(){
   if(newRec){bestScore=sc;try{localStorage.setItem('ruaDosSocosBest',String(sc))}catch(e){}}
   if(sc>0){
     const P=clamp(Math.round(sc),1,50000);
-    try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:P,nivel:players.length>1?"2 jogadores":"1 jogador"},"*")}catch(e){}
+    try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:P,nivel:win?"Cidade limpa":STAGES[stageI].name,modo:players.length>1?"2 jogadores":"1 jogador"},"*")}catch(e){}
   }
 }
 function endGame(w){
