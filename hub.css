@@ -279,6 +279,9 @@ a{color:inherit}
 .chip[aria-pressed="true"]{background:var(--g2);border-color:var(--g2);color:#fff8ea;box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--g1) 80%,transparent)}
 .msel{flex:1;min-width:0;font:800 13.5px var(--body);color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:6px 10px}
 .msel:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* o jogo trocou de modo: o escolhido pisca para avisar que o pódio mudou */
+.modos.trocou .chip[aria-pressed="true"],.modos.trocou .msel{animation:trocou .9s ease}
+@keyframes trocou{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 70%,transparent)}35%{box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 35%,transparent);transform:scale(1.06)}100%{box-shadow:0 0 0 0 transparent}}
 
 /* pódio de verdade: 2º · 1º · 3º, em degraus */
 .podium{display:block}
@@ -477,7 +480,7 @@ dialog.recent::backdrop{background:rgba(10,12,20,.55);backdrop-filter:blur(4px)}
   *{transition:none!important}
   .sheen{animation:none;opacity:0}
   .sp{animation:none;transform:scale(1);opacity:.9}
-  .crays,.cglow,.trofeu,.ccard,.celebra,.send,.pd-step,.pd-step::after,.rest li,.sk{animation:none!important}
+  .crays,.cglow,.trofeu,.ccard,.celebra,.send,.pd-step,.pd-step::after,.rest li,.sk,.modos .chip,.modos .msel{animation:none!important}
   .celebra.l1 .crays,.celebra.l1 .cglow,.celebra.l1 .cbox>*{opacity:1!important;scale:none!important;translate:none!important}
 }
 

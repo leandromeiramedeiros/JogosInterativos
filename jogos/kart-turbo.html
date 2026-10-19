@@ -178,6 +178,7 @@ const dbg=window.__kt={auto:false,get karts(){return karts;},get state(){return 
 
 function startRace(ti){
   sel=ti;track=TRACKS[ti];renderTrackImage(track);state='race';raceT=-3;lastCount=4;
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:track.name},"*")}catch(e){}   // o placar mostra o pódio desta pista
   boxes=[];oils=[];missiles=[];parts=[];skids=[];banner=null;result=null;finishTimer=0;resultsT=0;shake=0;
   for(const k in keys)keys[k]=0;
   const T=track,N=T.N;

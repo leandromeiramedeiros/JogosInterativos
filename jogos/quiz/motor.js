@@ -229,6 +229,7 @@ function start(lv){
   var usados = {}; qs.forEach(function(n){ usados[n.text] = 1; });
   var sobras = pool.filter(function(n){ return !usados[n.text]; });
   G = {lv:lv, qs:qs.map(montaQ), sobras:shuffle(sobras), i:0, score:0, lives:LIVES, streak:0, bestStreak:0, hits:0, log:[], tools:{fifty:1, skip:1, time:1}, locked:false};
+  try{ if(parent !== window) parent.postMessage({tipo:"jogos:modo", modo:(NIVEIS[lv] && NIVEIS[lv].nome) || lv}, "*"); }catch(e){}   // o placar mostra o pódio deste nível
   ask();
 }
 

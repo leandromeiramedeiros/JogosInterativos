@@ -397,6 +397,7 @@ function mkHero(idx,hero){
 function startGame(){
   players=[mkHero(0,sel?'tonhao':'duda')];
   if(coop)players.push(mkHero(1,sel?'duda':'tonhao'));
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:coop?"2 jogadores":"1 jogador"},"*")}catch(e){}   // o placar mostra o pódio de 1 ou 2 jogadores
   stageI=0;ended=false;win=false;overT=0;newRec=false;hitstop=0;shake=0;freeze=0;
   loadStage(0);scene='play';paused=false;
   inp[0]=newInp();inp[1]=newInp();

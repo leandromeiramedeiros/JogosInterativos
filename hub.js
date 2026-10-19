@@ -301,6 +301,20 @@ function desenharModos(){
     box.appendChild(row);
   });
 }
+/* mostra no placar o modo dado; devolve true se mudou */
+function mostrarModo(ids){
+  if(ids.join()===escolha.join()) return false;
+  escolha=ids; guardarEscolha(); desenharModos();
+  return true;
+}
+/* O jogo avisa o modo quando a partida começa ({tipo:"jogos:modo", modo}): o placar acompanha,
+   para quem está jogando ver o pódio que está disputando. */
+function seguirModo(d){
+  if(!(EIXOS.get(atual)||[]).length||d.modo==null) return;
+  if(!mostrarModo(modoRecebido(atual,d,escolha))) return;
+  carregarPlacar();
+  const m=$("modos"); m.classList.remove("trocou"); void m.offsetWidth; m.classList.add("trocou");
+}
 function escolher(i,id){
   if(escolha[i]===id) return;
   escolha[i]=id; guardarEscolha();
@@ -386,13 +400,13 @@ addEventListener("message",e=>{
   // Os jogos ficam no mesmo site; o Chrome nem sempre informa o iframe como remetente, então a checagem é pela origem.
   if(!atual||(e.origin!==location.origin&&e.source!==frame.contentWindow)) return;
   const d=e.data;
+  if(d&&d.tipo==="jogos:modo"){ seguirModo(d); return }
   if(!d||d.tipo!=="jogos:fim") return;
   const pontos=Math.round(+d.pontos);
   if(!Number.isFinite(pontos)||pontos<=0) return;   // partida sem pontos não entra no placar
   const q=quadro(atual,modoRecebido(atual,d,escolha));
   pendente={q,pontos,nivel:String(d.nivel||"").slice(0,40)};
-  // o placar passa a mostrar o modo em que a partida foi jogada
-  if(q.ids.join()!==escolha.join()){ escolha=q.ids; guardarEscolha(); desenharModos() }
+  mostrarModo(q.ids);   // o placar passa a mostrar o modo em que a partida foi jogada
   carregarPlacar();
   const det=detalhe(pendente,q);
   $("ypts").textContent=fmt(pontos)+" pts";
@@ -431,7 +445,7 @@ sendForm.addEventListener("submit",async e=>{
     let pos=null; try{ pos=await Placar.posicao(q,item.pontos) }catch(err){}
     const recorde=novoRecorde(q,item.pontos);
     pendente=null; sendForm.hidden=true;
-    if(q.ids.join()!==escolha.join()){ escolha=q.ids; guardarEscolha(); desenharModos() }
+    mostrarModo(q.ids);
     const onde=q.rotulo?` em ${q.rotulo}`:"";
     $("saved").textContent=`Pontuação salva!${recorde?" Novo recorde pessoal.":""} ${pos?`Você está em ${pos}º lugar${onde} com ${fmt(item.pontos)} pontos.`:`${fmt(item.pontos)} pontos.`}`;
     $("saved").hidden=false;

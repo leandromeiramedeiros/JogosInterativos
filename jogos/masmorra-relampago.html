@@ -1472,6 +1472,7 @@ function enterFloor(f){
   if(f===1)setTimeout(()=>{if(state==='play'&&G&&G.floor===1)floatTxt('Ache a escada!','#ffc857','Mova-se e ataque')},1700);
 }
 function startRun(ci){
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:CLASSES[ci].nome},"*")}catch(e){}   // o placar mostra o pódio desta classe
   ac();selCls=ci;store.set('masm_cls',String(ci));
   G={ci,time:0,left:RUN,floor:0,maxFloor:1,kills:0,bosses:0,coins:0,lvl:1,xp:0,pend:0,seed:(Math.random()*2147483647)>>>0,fade:null,morteT:0,eqChanged:true};
   makeHero(ci);

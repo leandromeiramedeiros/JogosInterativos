@@ -199,6 +199,7 @@ function startMatch(){
   const f0=mkFighter(0,game.sel[0]);
   const f1=mkFighter(1,game.sel[1]);
   if(game.mode===1)f1.cpu=true;
+  if(game.mode===1){try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:DIFFN[game.diff-1]},"*")}catch(e){}}   // contra a CPU, o placar mostra o pódio deste nível
   game.fighters=[f0,f1];game.projs=[];game.parts=[];game.ghosts=[];game.pops=[];game.koFx=null;game.shake=0;game.hitstop=0;game.flash=0;
   game.count=180;game.frames=0;game.paused=false;game.over=-1;game.endT=0;game.winner=-1;game.posted=false;game.score=0;
   pk[0]={};pk[1]={};

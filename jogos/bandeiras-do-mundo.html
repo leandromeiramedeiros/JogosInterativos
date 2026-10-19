@@ -457,6 +457,7 @@ function home(){
 
 function start(lv){
   G={lv,qs:shuffle(BYLV[lv]).slice(0,ROUNDS),i:0,score:0,streak:0,bestStreak:0,hits:0,log:[]};
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:LEVELS[lv].name},"*")}catch(e){}   // o placar mostra o pódio deste nível
   round();
 }
 function round(){

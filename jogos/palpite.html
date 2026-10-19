@@ -215,6 +215,7 @@ function telaInicio(){
 /* ---------- Jogo ---------- */
 let G=null, ocupado=false;
 function abrir(nv){
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:modo",modo:NIVEIS[nv].nome},"*")}catch(e){}   // o placar mostra o pódio deste nível
   HOJE=hojeInfo();
   const N=NIVEIS[nv], resp=palavraDoDia(nv,HOJE.numero);
   const e=LS.get(kEstado(nv,HOJE.chave),null);
