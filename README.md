@@ -29,7 +29,7 @@ Uma prateleira de jogos para jogar no navegador.
 | [Caverna Eco](https://leandromeiramedeiros.github.io/JogosInterativos/#caverna-eco) | Explore uma caverna viva, ganhe pulo duplo, investida e garra de parede para abrir caminhos e vencer dois chefes. |
 | [Masmorra Relâmpago](https://leandromeiramedeiros.github.io/JogosInterativos/#masmorra-relampago) | RPG de ação em masmorras aleatórias: classe, habilidades, equipamentos e chefes em 5 minutos. |
 | [Operação Ômega](https://leandromeiramedeiros.github.io/JogosInterativos/#operacao-omega) | Tiro em primeira pessoa em 3D: segure um complexo militar por 6 ondas com pistola, fuzil, escopeta e granadas. |
-| [Piano Herói](https://leandromeiramedeiros.github.io/JogosInterativos/#piano-heroi) | As notas caem num piano de duas oitavas e você toca na hora certa; a melodia só soa quando você acerta. Parabéns pra Você, abertura de Dragon Ball ou um arquivo MIDI seu. Tem modo Treino, que espera você. |
+| [Piano Herói](https://leandromeiramedeiros.github.io/JogosInterativos/#piano-heroi) | As notas caem num piano de duas oitavas e você toca na hora certa; a melodia só soa quando você acerta. Parabéns pra Você, abertura de Dragon Ball GT ou um arquivo MIDI seu. Tem modo Treino, que espera você. |
 
 ## Controle
 
