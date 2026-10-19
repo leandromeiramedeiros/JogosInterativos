@@ -10,44 +10,79 @@ const CFG=window.PLACAR||{};
 const ONLINE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
 const LOCAL_KEY="jogos-placar-v1";
 
+/* ================= Modos =================
+   Jogos com níveis, pistas, temas ou classes têm um placar para cada modo, para ninguém disputar
+   o Fácil contra o Difícil. Os eixos vêm de JOGOS[i].modos (ex.: Tema × Nível); o jogo conta em qual
+   jogou com {modo:"Difícil"} ou {modo:["Futebol","Difícil"]} no jogos:fim.
+   Cada modo é um "quadro": a coluna jogo do placar vira "id--opcao-opcao" (sem mudar a tabela).
+   Com legado:true, as pontuações de antes dos modos entram no quadro cujo nome era o nível enviado. */
+const slug=s=>String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const EIXOS=new Map(JOGOS.map(j=>[j.id,(j.modos||[]).map(e=>({...e,opcoes:e.opcoes.map(o=>Array.isArray(o)?{id:o[0],nome:o[1]}:{id:slug(o),nome:o})}))]));
+function quadro(jogo,ids){
+  const ex=EIXOS.get(jogo)||[];
+  if(!ex.length) return {jogo,chave:jogo,rotulo:"",ids:[],legado:null};
+  const ops=ex.map((e,i)=>e.opcoes.find(o=>o.id===ids[i])||e.opcoes[0]);
+  const rotulo=ops.map(o=>o.nome).join(" · "), j=JOGOS.find(x=>x.id===jogo);
+  return {jogo,chave:jogo+"--"+ops.map(o=>o.id).join("-"),rotulo,ids:ops.map(o=>o.id),legado:j&&j.legado?rotulo:null};
+}
+function quadros(jogo){   // todos os modos do jogo (para dar nome às linhas das últimas 100)
+  let l=[[]];
+  for(const e of EIXOS.get(jogo)||[]) l=l.flatMap(p=>e.opcoes.map(o=>[...p,o.id]));
+  return l.map(ids=>quadro(jogo,ids));
+}
+/* traduz o modo mandado pelo jogo em ids de opção; o que faltar fica como está escolhido no placar */
+function modoRecebido(jogo,d,escolhido){
+  const ex=EIXOS.get(jogo)||[], veio=[].concat(d.modo==null?[]:d.modo);
+  return ex.map((e,i)=>{
+    const acha=v=>v!=null&&slug(v)&&e.opcoes.find(o=>o.id===slug(v)||slug(o.nome)===slug(v));
+    let o=acha(veio[i]);
+    if(!o&&ex.length===1) o=acha(d.nivel);   // jogo antigo, que mandava o modo no nível
+    if(!o&&e.livre&&veio[i]!=null&&slug(veio[i])){ o={id:slug(veio[i]).slice(0,16),nome:String(veio[i]).slice(0,30)}; e.opcoes.push(o) }
+    return (o||e.opcoes.find(x=>x.id===escolhido[i])||e.opcoes[0]).id;
+  });
+}
+
 const Placar=ONLINE?(()=>{
   const base=CFG.supabaseUrl.replace(/\/+$/,"").replace(/\/rest\/v1$/,"")+"/rest/v1/placar"; // aceita a URL com ou sem /rest/v1
   const h={apikey:CFG.supabaseAnonKey};
   if(/^eyJ/.test(CFG.supabaseAnonKey)) h.Authorization="Bearer "+CFG.supabaseAnonKey; // chave anon antiga (JWT)
-  const campos="select=id,nome,pontos,nivel,criado_em";
+  const campos="select=id,jogo,nome,pontos,nivel,criado_em";
+  const filtro=q=>q.legado
+    ?"or="+encodeURIComponent(`(jogo.eq."${q.chave}",and(jogo.eq."${q.jogo}",nivel.eq."${q.legado}"))`)
+    :"jogo=eq."+encodeURIComponent(q.chave);
   async function get(q,extra){
     const r=await fetch(base+"?"+q,{headers:{...h,...extra}});
     if(!r.ok) throw new Error("HTTP "+r.status);
     return r;
   }
   return {
-    async topo(jogo){ return (await get(`${campos}&jogo=eq.${encodeURIComponent(jogo)}&order=pontos.desc,criado_em.asc&limit=10`)).json() },
-    async recentes(jogo){ return (await get(`${campos}&jogo=eq.${encodeURIComponent(jogo)}&order=criado_em.desc&limit=100`)).json() },
+    async topo(q){ return (await get(`${campos}&${filtro(q)}&order=pontos.desc,criado_em.asc&limit=10`)).json() },
+    async recentes(jogo){ return (await get(`${campos}&or=${encodeURIComponent(`(jogo.eq."${jogo}",jogo.like."${jogo}--*")`)}&order=criado_em.desc&limit=100`)).json() },
     async salvar(item){
       const r=await fetch(base+"?"+campos,{method:"POST",headers:{...h,"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify(item)});
       if(!r.ok) throw new Error("HTTP "+r.status);
       return (await r.json())[0];
     },
-    async posicao(jogo,pontos){
-      const r=await get(`select=id&jogo=eq.${encodeURIComponent(jogo)}&pontos=gt.${pontos}&limit=1`,{Prefer:"count=exact"});
+    async posicao(q,pontos){
+      const r=await get(`select=id&${filtro(q)}&pontos=gt.${pontos}&limit=1`,{Prefer:"count=exact"});
       const total=+(r.headers.get("content-range")||"").split("/")[1];
       return Number.isFinite(total)?total+1:null;
     }
   };
 })():(()=>{
   const ler=()=>{try{return JSON.parse(localStorage.getItem(LOCAL_KEY))||[]}catch(e){return []}};
-  const doJogo=j=>ler().filter(x=>x.jogo===j);
+  const doQuadro=q=>ler().filter(x=>x.jogo===q.chave||(q.legado&&x.jogo===q.jogo&&x.nivel===q.legado));
   const ordem=(a,b)=>b.pontos-a.pontos||a.criado_em.localeCompare(b.criado_em);
   return {
-    async topo(jogo){ return doJogo(jogo).sort(ordem).slice(0,10) },
-    async recentes(jogo){ return doJogo(jogo).sort((a,b)=>b.criado_em.localeCompare(a.criado_em)).slice(0,100) },
+    async topo(q){ return doQuadro(q).sort(ordem).slice(0,10) },
+    async recentes(jogo){ return ler().filter(x=>x.jogo===jogo||x.jogo.startsWith(jogo+"--")).sort((a,b)=>b.criado_em.localeCompare(a.criado_em)).slice(0,100) },
     async salvar(item){
       const novo={...item,id:Date.now()+"-"+Math.random().toString(36).slice(2,7),criado_em:new Date().toISOString()};
       const todos=ler(); todos.push(novo);
       localStorage.setItem(LOCAL_KEY,JSON.stringify(todos.slice(-1000)));
       return novo;
     },
-    async posicao(jogo,pontos){ return doJogo(jogo).filter(x=>x.pontos>pontos).length+1 }
+    async posicao(q,pontos){ return doQuadro(q).filter(x=>x.pontos>pontos).length+1 }
   };
 })();
 
@@ -112,7 +147,8 @@ function medalha(lugar){
   </svg>`;
 }
 
-/* Troféu do pódio: copa com bisel e reflexo no metal do lugar (o de ouro ganha louros) */
+/* Troféu do pódio em SVG: copa clássica com bisel e reflexo no metal do lugar.
+   É o reserva do troféu 3D (trofeu3d.js), para quando não há WebGL ou o three.js não baixou. */
 function trofeu(lugar){
   const [hi,mid,lo,txt]=METAIS[lugar], id=uid("t");
   const cup="M38 20h44v16c0 20-10 34-22 34S38 56 38 36z";
@@ -121,11 +157,9 @@ function trofeu(lugar){
       <linearGradient id="${id}m" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${lo}"/><stop offset=".16" stop-color="${mid}"/><stop offset=".3" stop-color="${hi}"/><stop offset=".5" stop-color="${mid}"/><stop offset=".78" stop-color="${lo}"/><stop offset=".9" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
       <linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${hi}"/><stop offset=".4" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
       <linearGradient id="${id}o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1203"/><stop offset="1" stop-color="${lo}"/></linearGradient>
-      <linearGradient id="${id}l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#d9a826"/><stop offset="1" stop-color="#9a6d12"/></linearGradient>
       <linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
       <clipPath id="${id}c"><path d="${cup}"/></clipPath>
     </defs>
-    ${lugar===1?coroaDeLouros(60,66,40,49,5,id+"l"):""}
     <ellipse cx="60" cy="109" rx="30" ry="4" fill="#000" opacity=".22"/>
     <path d="M39 27H30C21 27 21 49 40 53" fill="none" stroke="${lo}" stroke-width="6.4" stroke-linecap="round"/><path d="M81 27H90C99 27 99 49 80 53" fill="none" stroke="${lo}" stroke-width="6.4" stroke-linecap="round"/>
     <path d="M39 27H30C21 27 21 49 40 53" fill="none" stroke="url(#${id}v)" stroke-width="4.6" stroke-linecap="round"/><path d="M81 27H90C99 27 99 49 80 53" fill="none" stroke="url(#${id}v)" stroke-width="4.6" stroke-linecap="round"/>
@@ -151,10 +185,11 @@ function trofeu(lugar){
 
 /* ================= Comemoração (cartão sólido) ================= */
 const FRASES={
-  1:{t:"Topo do placar!",d:(n,j)=>`${n}, ninguém fez mais pontos que você em ${j}. A coroa de louros é sua.`},
+  1:{t:"Topo do placar!",d:(n,j)=>`${n}, ninguém fez mais pontos que você em ${j}. O troféu de ouro é seu.`},
   2:{t:"Medalha de prata!",d:(n,j)=>`${n}, só uma pessoa fez mais pontos que você em ${j}. Falta pouco para o topo.`},
   3:{t:"Bronze garantido!",d:(n,j)=>`${n}, você subiu ao pódio de ${j}. Agora é mirar mais alto.`}
 };
+const POUSO={1:1.6,2:1.05,3:1.05};   // segundos até o troféu 3D pousar (igual ao trofeu3d.js)
 const semMovimento=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 let confeteRaf=0;
 function confete(cor){
@@ -177,30 +212,50 @@ function confete(cor){
   })();
 }
 let AC=null;
-function fanfarra(lugar){
+/* subida de notas enquanto o troféu chega e o acorde no pouso */
+function fanfarra(lugar,pouso){
   try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume() }catch(e){ return }
-  const notas=lugar===1?[523,659,784,1047,784,1047,1319]:lugar===2?[523,659,784,1047]:[440,554,659,880];
-  notas.forEach((f,i)=>{
-    const t=AC.currentTime+i*.13, o=AC.createOscillator(), g=AC.createGain();
-    o.type="triangle"; o.frequency.setValueAtTime(f,t);
-    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.12,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+(i===notas.length-1?.9:.22));
-    o.connect(g).connect(AC.destination); o.start(t); o.stop(t+1);
-  });
+  const nota=(f,t,dur,vol,tipo)=>{
+    const o=AC.createOscillator(), g=AC.createGain(); t+=AC.currentTime;
+    o.type=tipo||"triangle"; o.frequency.setValueAtTime(f,t);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g).connect(AC.destination); o.start(t); o.stop(t+dur+.05);
+  };
+  const subida=lugar===1?[392,523,659,784,1047]:lugar===2?[523,659,784]:[440,554,659];
+  const passo=Math.max(.1,(pouso-.08)/subida.length);
+  subida.forEach((f,i)=>nota(f,i*passo,.2,.09));
+  const acorde=lugar===1?[523,659,784,1047,1319]:lugar===2?[523,659,1047]:[440,659,880];
+  acorde.forEach((f,i)=>{ nota(f,pouso,lugar===1?1.6:1,.07); if(lugar===1&&i<2) nota(f/2,pouso,1.3,.05,"sawtooth") });
+  if(lugar===1) [1047,1319,1568,2093].forEach((f,i)=>nota(f,pouso+.35+i*.09,.35,.035,"sine"));   // brilhinho depois do pouso
 }
-let focoAntes=null;
-function celebrar(lugar,item){
-  const j=JOGOS.find(x=>x.id===item.jogo), f=FRASES[lugar], c=$("celebra");
+let focoAntes=null, celebraVez=0;
+function celebrar(lugar,item,q){
+  const j=JOGOS.find(x=>x.id===q.jogo), f=FRASES[lugar], c=$("celebra"), vez=++celebraVez;
+  const nomeJogo=(j?j.titulo:"este jogo")+(q.rotulo?` (${q.rotulo})`:"");
   c.className="celebra l"+lugar;
-  $("trofeu").innerHTML=trofeu(lugar);
-  $("ceyebrow").textContent=`${lugar}º lugar · ${j?j.titulo:""}${item.nivel?" · "+item.nivel:""}`;
+  $("ceyebrow").textContent=`${lugar}º lugar · ${j?j.titulo:""}${q.rotulo?" · "+q.rotulo:""}`;
   $("ctitle").textContent=f.t;
-  $("cdesc").textContent=f.d(item.nome,j?j.titulo:"este jogo");
+  $("cdesc").textContent=f.d(item.nome,nomeJogo);
   $("cpts").textContent=fmt(item.pontos)+" pontos";
   focoAntes=document.activeElement;
   c.hidden=false; $("c-placar").focus();
-  confete([METAIS[lugar][1],METAIS[lugar][0]]); fanfarra(lugar);
+  const pousou=()=>{ if(vez!==celebraVez||c.hidden||c.classList.contains("pousou")) return; c.classList.add("pousou"); confete([METAIS[lugar][1],METAIS[lugar][0]]) };
+  const parado=semMovimento(), musica=()=>fanfarra(lugar,parado?.3:POUSO[lugar]);
+  const svg=()=>{ const t=$("trofeu"); t.className="trofeu svg"; t.innerHTML=trofeu(lugar); musica(); setTimeout(pousou,parado?0:700) };
+  const caixa=$("trofeu"); caixa.className="trofeu"; caixa.innerHTML="";
+  setTimeout(pousou,4500);   // por garantia: o texto nunca fica escondido
+  if(!window.Trofeu3D){ svg(); return }
+  // o three.js já vem baixando desde o fim da partida; se não chegar logo, fica o SVG
+  Promise.race([Trofeu3D.preparar(),new Promise(r=>setTimeout(()=>r(false),1500))]).then(ok=>{
+    if(vez!==celebraVez||c.hidden) return;
+    if(!ok||!Trofeu3D.montar(caixa,lugar,{aoComecar:musica,aoPousar:pousou,parado})) svg();
+  });
 }
-function fecharCelebra(){ const c=$("celebra"); if(c.hidden) return; c.hidden=true; cancelAnimationFrame(confeteRaf) }
+function fecharCelebra(){
+  const c=$("celebra"); if(c.hidden) return;
+  c.hidden=true; celebraVez++; cancelAnimationFrame(confeteRaf);
+  if(window.Trofeu3D) Trofeu3D.parar();
+}
 $("c-placar").onclick=()=>{ fecharCelebra(); abrirPlacar(true); $("podium").scrollIntoView({block:"nearest"}); $("bclose").focus() };
 $("c-again").onclick=()=>{ fecharCelebra(); abrirPlacar(false); const j=JOGAVEIS.find(x=>x.id===atual); if(j){ frame.src=j.arquivo; frame.focus() } };
 $("celebra").addEventListener("keydown",e=>{
@@ -212,8 +267,48 @@ $("celebra").addEventListener("keydown",e=>{
 /* ================= Barra do placar ================= */
 function setVazio(html){ const e=$("empty"); e.hidden=!html; e.innerHTML=html||"" }
 
+/* escolha de modo: uma fileira por eixo (botões; lista quando são muitas opções) */
+let escolha=[];
+const MODO_KEY=j=>"jogos-modo:"+j;
+function lerEscolha(jogo){
+  let ids=[]; try{ ids=JSON.parse(localStorage.getItem(MODO_KEY(jogo)))||[] }catch(e){}
+  return quadro(jogo,ids).ids;
+}
+function guardarEscolha(){ try{ localStorage.setItem(MODO_KEY(atual),JSON.stringify(escolha)) }catch(e){} }
+function desenharModos(){
+  const box=$("modos"), ex=EIXOS.get(atual)||[];
+  box.hidden=!ex.length; box.replaceChildren();
+  ex.forEach((e,i)=>{
+    const row=mk("div","modo"), rot=mk("span","mrot",e.nome);
+    rot.id="mrot"+i; row.appendChild(rot);
+    if(e.opcoes.length>5){
+      const s=mk("select","msel"); s.setAttribute("aria-labelledby",rot.id);
+      for(const o of e.opcoes){ const op=mk("option",null,o.nome); op.value=o.id; s.appendChild(op) }
+      s.value=escolha[i]; s.onchange=()=>escolher(i,s.value);
+      row.appendChild(s);
+    }else{
+      const g=mk("div","chips"); g.setAttribute("role","group"); g.setAttribute("aria-labelledby",rot.id);
+      for(const o of e.opcoes){
+        const b=mk("button","chip",o.nome); b.type="button"; b.setAttribute("aria-pressed",o.id===escolha[i]);
+        b.onclick=()=>escolher(i,o.id); g.appendChild(b);
+      }
+      row.appendChild(g);
+    }
+    box.appendChild(row);
+  });
+}
+function escolher(i,id){
+  if(escolha[i]===id) return;
+  escolha[i]=id; guardarEscolha();
+  const foco=document.activeElement&&document.activeElement.closest("#modos")?i:-1;
+  desenharModos(); carregarPlacar();
+  if(foco>=0){ const el=$("modos").children[foco].querySelector('[aria-pressed="true"],select'); if(el) el.focus() }
+}
+/* o nível só aparece na linha quando diz algo além do modo (Fase 3, Onda 2…) */
+const detalhe=(x,q)=>x.nivel&&x.nivel!==q.rotulo&&!q.rotulo.split(" · ").includes(x.nivel)?x.nivel:"";
+
 const COLUNAS=[2,1,3];
-function degrau(lugar,x,voce){
+function degrau(lugar,x,voce,q){
   const li=mk("li","pd p"+lugar+(x?"":" vazio")+(voce?" you":""));
   const who=mk("div","pd-who"), medal=mk("span","pd-medal");
   if(x){
@@ -221,7 +316,7 @@ function degrau(lugar,x,voce){
     if(voce) who.appendChild(mk("span","tagyou","você"));
     const nm=mk("span","nm",x.nome); nm.title=x.nome; who.appendChild(nm);
     const p=mk("span","pts",fmt(x.pontos)); p.appendChild(mk("small",null,"pts")); who.appendChild(p);
-    if(x.nivel) who.appendChild(mk("span","lv",x.nivel));
+    if(detalhe(x,q)) who.appendChild(mk("span","lv",detalhe(x,q)));
   }else{
     li.setAttribute("aria-hidden","true");
     medal.appendChild(mk("span",null,lugar+"º")); who.appendChild(medal);
@@ -230,10 +325,10 @@ function degrau(lugar,x,voce){
   li.appendChild(mk("div","pd-step")).appendChild(mk("b",null,String(lugar)));
   return li;
 }
-function podio(lista){
+function podio(lista,q){
   const ol=mk("ol","podio");
-  ol.setAttribute("aria-label","Pódio");
-  for(const l of [1,2,3]){ const x=lista[l-1]; ol.appendChild(degrau(l,x,x&&String(x.id)===String(meuId))) }
+  ol.setAttribute("aria-label","Pódio"+(q.rotulo?" · "+q.rotulo:""));
+  for(const l of [1,2,3]){ const x=lista[l-1]; ol.appendChild(degrau(l,x,x&&String(x.id)===String(meuId),q)) }
   return ol;
 }
 function esqueleto(){
@@ -245,27 +340,30 @@ function esqueleto(){
 async function carregarPlacar(){
   const jogo=atual, gen=++boardGen;
   if(!jogo) return;
+  const q=quadro(jogo,escolha);
   setVazio(""); $("rest").innerHTML=""; esqueleto();
   $("podium").setAttribute("aria-busy","true");
   let lista;
-  try{ lista=await Placar.topo(jogo) }
+  try{ lista=await Placar.topo(q) }
   catch(e){
     if(gen!==boardGen) return;
-    $("podium").removeAttribute("aria-busy"); $("podium").replaceChildren(podio([]));
+    $("podium").removeAttribute("aria-busy"); $("podium").replaceChildren(podio([],q));
     setVazio(`<strong>Sem conexão com o placar</strong>Não foi possível carregar. Verifique sua conexão.<button class="linkbtn" type="button" id="retry">Tentar de novo</button>`);
     $("retry").onclick=carregarPlacar; return;
   }
   if(gen!==boardGen) return;
   $("podium").removeAttribute("aria-busy");
-  $("podium").replaceChildren(podio(lista));
-  if(!lista.length){ setVazio(`<strong>Ninguém pontuou ainda</strong>Termine uma partida e seja o primeiro do placar.`); return }
+  $("podium").replaceChildren(podio(lista,q));
+  // pontuação esperando para ser salva e que entra no pódio: já vai baixando o troféu 3D
+  if(pendente&&pendente.q.chave===q.chave&&(lista.length<3||pendente.pontos>lista[2].pontos)&&window.Trofeu3D) Trofeu3D.preparar();
+  if(!lista.length){ setVazio(`<strong>Ninguém pontuou ainda${q.rotulo?" em "+esc(q.rotulo):""}</strong>Termine uma partida nesse modo e seja o primeiro do placar.`); return }
   const topo=Math.max(1,lista[0].pontos), rest=$("rest");
   lista.slice(3).forEach((x,i)=>{
-    const li=mk("li",String(x.id)===String(meuId)?"you":"");
+    const li=mk("li",String(x.id)===String(meuId)?"you":""), det=detalhe(x,q);
     li.style.setProperty("--w",Math.max(4,Math.round(x.pontos/topo*100))+"%"); li.style.setProperty("--i",i);
-    li.title=(x.nivel?x.nivel+" · ":"")+fmt(x.pontos)+" pontos";
+    li.title=(det?det+" · ":"")+fmt(x.pontos)+" pontos";
     li.appendChild(mk("span","pos",String(i+4)));
-    const who=mk("span","who"); who.appendChild(mk("span","nm",x.nome)); if(x.nivel) who.appendChild(mk("span","lv",x.nivel));
+    const who=mk("span","who"); who.appendChild(mk("span","nm",x.nome)); if(det) who.appendChild(mk("span","lv",det));
     li.appendChild(who); li.appendChild(mk("span","pts",fmt(x.pontos)));
     rest.appendChild(li);
   });
@@ -287,9 +385,14 @@ addEventListener("message",e=>{
   if(!d||d.tipo!=="jogos:fim") return;
   const pontos=Math.round(+d.pontos);
   if(!Number.isFinite(pontos)||pontos<=0) return;   // partida sem pontos não entra no placar
-  pendente={jogo:atual,pontos,nivel:String(d.nivel||"").slice(0,40)};
+  const q=quadro(atual,modoRecebido(atual,d,escolha));
+  pendente={q,pontos,nivel:String(d.nivel||"").slice(0,40)};
+  // o placar passa a mostrar o modo em que a partida foi jogada
+  if(q.ids.join()!==escolha.join()){ escolha=q.ids; guardarEscolha(); desenharModos() }
+  carregarPlacar();
+  const det=detalhe(pendente,q);
   $("ypts").textContent=fmt(pontos)+" pts";
-  $("ylv").textContent=pendente.nivel;
+  $("ylv").textContent=[q.rotulo,det].filter(Boolean).join(" · ");
   $("saved").hidden=true; $("smsg").textContent=""; $("smsg").className="msg";
   $("salvar").disabled=false;
   try{ nomeInp.value=nomeInp.value||localStorage.getItem("jogos-nome")||"" }catch(err){}
@@ -300,23 +403,36 @@ addEventListener("message",e=>{
   if(padUsado()){ noPlacar=true; if(window.Controle) Controle.focar(nomeInp) }
 });
 
+/* melhor pontuação deste navegador em cada modo (a primeira partida salva só marca a referência) */
+function novoRecorde(q,pontos){
+  const k="jogos-recorde:"+q.chave;
+  try{
+    const antes=+localStorage.getItem(k)||0;
+    if(pontos>antes) localStorage.setItem(k,String(pontos));
+    return antes>0&&pontos>antes;
+  }catch(e){ return false }
+}
+
 sendForm.addEventListener("submit",async e=>{
   e.preventDefault();
   if(!pendente) return;
   const nome=nomeInp.value.replace(/[\u0000-\u001f\u007f]/g,"").replace(/\s+/g," ").trim().slice(0,20);
   if(!nome){ $("smsg").className="msg err"; $("smsg").textContent="Escreva um nome para aparecer no placar."; nomeInp.focus(); return }
-  const item={...pendente,nome};
+  const {q}=pendente, item={jogo:q.chave,nome,pontos:pendente.pontos,nivel:pendente.nivel};
   $("salvar").disabled=true; $("smsg").className="msg"; $("smsg").textContent="Salvando…";
   try{
     const salvo=await Placar.salvar(item);
     try{ localStorage.setItem("jogos-nome",nome) }catch(err){}
     meuId=salvo&&salvo.id;
-    let pos=null; try{ pos=await Placar.posicao(item.jogo,item.pontos) }catch(err){}
+    let pos=null; try{ pos=await Placar.posicao(q,item.pontos) }catch(err){}
+    const recorde=novoRecorde(q,item.pontos);
     pendente=null; sendForm.hidden=true;
-    $("saved").textContent=`Pontuação salva! ${pos?`Você está em ${pos}º lugar com ${fmt(item.pontos)} pontos.`:`${fmt(item.pontos)} pontos.`}`;
+    if(q.ids.join()!==escolha.join()){ escolha=q.ids; guardarEscolha(); desenharModos() }
+    const onde=q.rotulo?` em ${q.rotulo}`:"";
+    $("saved").textContent=`Pontuação salva!${recorde?" Novo recorde pessoal.":""} ${pos?`Você está em ${pos}º lugar${onde} com ${fmt(item.pontos)} pontos.`:`${fmt(item.pontos)} pontos.`}`;
     $("saved").hidden=false;
     carregarPlacar();
-    if(pos&&pos<=3) celebrar(pos,item);
+    if(pos&&pos<=3) celebrar(pos,item,q);
   }catch(err){
     $("salvar").disabled=false; $("smsg").className="msg err";
     $("smsg").textContent=ONLINE?"Não foi possível salvar agora. Verifique sua conexão e tente de novo.":"Este navegador não permitiu salvar a pontuação.";
@@ -341,10 +457,13 @@ $("recent-btn").onclick=async()=>{
   try{
     const lista=await Placar.recentes(atual);
     if(!lista.length){ $("rbody").innerHTML=`<p class="empty">Nenhuma pontuação salva ainda.</p>`; return }
-    $("rbody").innerHTML=`<table><thead><tr><th>Quando</th><th>Nome</th><th>Nível</th><th class="num">Pontos</th></tr></thead><tbody>${
+    const comModos=(EIXOS.get(atual)||[]).length>0, nomes=new Map(quadros(atual).map(q=>[q.chave,q]));
+    // modo e nível juntos ("Difícil · Fase 3"); pontuação de antes dos modos mostra só o nível que tinha
+    const modo=x=>{ const q=nomes.get(x.jogo); return q?[q.rotulo,detalhe(x,q)].filter(Boolean).join(" · "):x.nivel||"—" };
+    $("rbody").innerHTML=`<table><thead><tr><th>Quando</th><th>Nome</th><th>${comModos?"Modo":"Nível"}</th><th class="num">Pontos</th></tr></thead><tbody>${
       lista.map(x=>`<tr><td class="when" title="${esc(new Date(x.criado_em).toLocaleString("pt-BR"))}">${esc(quando(x.criado_em))}</td><td class="nm"></td><td class="lvl"></td><td class="num">${fmt(x.pontos)}</td></tr>`).join("")
     }</tbody></table>`;
-    [...$("rbody").querySelectorAll("tbody tr")].forEach((tr,i)=>{ tr.querySelector(".nm").textContent=lista[i].nome; tr.querySelector(".lvl").textContent=lista[i].nivel||"—" });
+    [...$("rbody").querySelectorAll("tbody tr")].forEach((tr,i)=>{ tr.querySelector(".nm").textContent=lista[i].nome; tr.querySelector(".lvl").textContent=modo(lista[i]) });
   }catch(err){ $("rbody").innerHTML=`<p class="empty">Não foi possível carregar as pontuações. Verifique sua conexão e tente de novo.</p>` }
 };
 $("rclose").onclick=()=>recent.close?recent.close():recent.removeAttribute("open");
@@ -361,7 +480,7 @@ function route(){
       const [g1,g2]=j.cor||["#ff6b2c","#14213d"];
       for(const el of [board,recent]){ el.style.setProperty("--g1",g1); el.style.setProperty("--g2",g2) }
       $("bgame").textContent=j.titulo;
-      atual=j.id; meuId=null; limparEnvio(); abrirPlacar(false); carregarPlacar();
+      atual=j.id; meuId=null; escolha=lerEscolha(j.id); limparEnvio(); desenharModos(); abrirPlacar(false); carregarPlacar();
       saiuDaTelaCheia=false; abrirFab(false);
     }
     player.hidden=false; document.body.classList.add("playing");

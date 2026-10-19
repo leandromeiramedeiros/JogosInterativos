@@ -1505,7 +1505,7 @@ function fim(motivo){
   const C=CLASSES[G.ci],pts=pontos();
   const rec=getRec(G.ci),novo=!rec||pts>rec.p;
   if(novo)store.set('masm_rec_'+C.id,JSON.stringify({p:pts,a:G.floor}));
-  try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:pts,nivel:C.nome},'*')}catch(e){}
+  try{if(parent!==window)parent.postMessage({tipo:'jogos:fim',pontos:pts,nivel:'Andar '+G.floor,modo:C.nome},'*')}catch(e){}
   const linhas=[['Andar alcançado',G.floor+' × 1000',G.floor*1000],['Inimigos derrotados',G.kills+' × 20',G.kills*20],['Chefes vencidos',G.bosses+' × 600',G.bosses*600],['Moedas',G.coins+' × 2',G.coins*2],['Nível do herói',G.lvl+' × 80',G.lvl*80]];
   const eq=['arma','armadura','amuleto'].map(s=>P.eq[s]).filter(Boolean);
   const tt=Math.round(G.time);

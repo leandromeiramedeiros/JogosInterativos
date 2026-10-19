@@ -533,7 +533,7 @@ function next(){ G.i++; G.i>=ROUNDS?end():round() }
 function end(){
   stopRound(); cancelAnimationFrame(waveRaf);
   const lv=G.lv, rec=G.score>best(lv); if(rec){try{localStorage.setItem("bm-best-"+lv,G.score)}catch(e){}}
-  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:G.score,nivel:LEVELS[lv].name},"*") }catch(e){}
+  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:G.score,nivel:LEVELS[lv].name,modo:LEVELS[lv].name},"*") }catch(e){}
   const h=G.hits, title=h===10?"Gabaritou! Pode dar aula de geografia.":h>=8?"Excelente! Você conhece o mundo.":h>=6?"Mandou bem, viajante.":h>=4?"Dá para melhorar. Que tal mais uma volta ao mundo?":"O atlas está te esperando!";
   app.innerHTML=`
    ${rec&&G.score>0?`<span class="rec">NOVO RECORDE · ${LEVELS[lv].name.toUpperCase()}</span>`:""}

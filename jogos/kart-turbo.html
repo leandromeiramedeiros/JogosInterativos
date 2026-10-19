@@ -436,7 +436,7 @@ function finishRace(){
   result={pos,time:tsec,score,rec,best:Math.max(prev,score),at:raceT};
   pop(pos+'º LUGAR!','#ffd23f',2.2);
   beep(660,.3,'square',.06,0);setTimeout(()=>beep(880,.4,'square',.06,0),200);
-  try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:score,nivel:track.name},"*");}catch(e){}
+  try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:score,nivel:pos+"º lugar",modo:track.name},"*");}catch(e){}
 }
 
 /* ---------- drawing helpers ---------- */

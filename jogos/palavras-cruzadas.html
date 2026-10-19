@@ -652,7 +652,7 @@ function vencer(){
   let d=0; $("grade").querySelectorAll(".cell.l").forEach(el=>{el.style.setProperty("--d",d++);el.classList.add("win")});
   document.querySelector(".pistabar").hidden=true; $("tec").hidden=true;
   pintar(); desenharDias(); mostrarFim(true);
-  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome},"*") }catch(e){}
+  try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:J.pts,nivel:J.N.nome,modo:J.N.nome},"*") }catch(e){}
 }
 let cont=null;
 function mostrarFim(agora){

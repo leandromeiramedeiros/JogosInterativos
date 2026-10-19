@@ -66,6 +66,7 @@
       </form>
       <p class="msg ok" id="saved" role="status" hidden></p>
 
+      <div class="modos" id="modos" hidden></div>
       <div class="podium" id="podium"></div>
       <ol class="rest" id="rest"></ol>
       <div class="empty" id="empty" hidden></div>
@@ -101,7 +102,13 @@
 <script src="placar-config.js"></script>
 <script>
 /* Para adicionar um jogo: coloque o arquivo HTML em jogos/ e acrescente um item aqui.
-   cor: [destaque, fundo] do jogo, usadas no cabeçalho do placar. original: opcional. */
+   cor: [destaque, fundo] do jogo, usadas no cabeçalho do placar. original: opcional.
+   modos (opcional): eixos do placar, cada combinação com seu próprio pódio (ex.: Tema × Nível).
+     Opção: "Nome" ou ["id-curto","Nome"]; a coluna jogo vira "id--opcao-opcao" e cabe em 40 caracteres.
+     livre:true aceita opções que o jogo mandar e não estejam na lista.
+   legado:true: as pontuações de antes dos modos entram no modo com o mesmo nome do nível que mandavam. */
+const NIVEL3={nome:"Nível",opcoes:["Fácil","Médio","Difícil"]};
+const QUIZ={nome:"Nível",opcoes:["Normal","Difícil","Impossível"]};
 const JOGOS=[
   {
     id:"bandeiras-do-mundo",
@@ -111,6 +118,7 @@ const JOGOS=[
     resumo:"Uma bandeira aparece e você digita o nome do país antes que o tempo acabe. Pequenos erros de grafia contam como acerto.",
     tags:["Geografia","4 níveis","10 rodadas"],
     cor:["#ff6b2c","#14213d"],
+    modos:[{nome:"Nível",opcoes:["Fácil","Normal","Difícil",["professor","Professor de Geografia"]]}], legado:true,
     arte:`<div class="label art-flags">
       <span class="coord">00°00′N · 00°00′E</span>
       <div class="flags" aria-hidden="true">
@@ -129,6 +137,7 @@ const JOGOS=[
     resumo:"Perguntas sobre o seriado Chaves dentro de uma TV de tubo. Três vidas, combos de acertos e ajudas de 50/50, pular e +10s.",
     tags:["Seriado Chaves","3 níveis","3 vidas"],
     cor:["#f2b134","#123a3c"],
+    modos:[QUIZ], legado:true,
     arte:`<div class="label art-vila">
       <div class="tv" aria-hidden="true"><div class="screen"><b>?</b></div></div>
       <div class="mark" aria-hidden="true">Quiz da Vila</div>
@@ -141,6 +150,7 @@ const JOGOS=[
     resumo:"Modalidades, fases, contratos e sanções da Nova Lei de Licitações e Contratos.",
     tags:["Direito público","3 níveis","3 vidas"],
     cor:["#e6c26b","#0f2a4a"],
+    modos:[QUIZ], legado:true,
     arte:`<div class="label art-lic">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -188,6 +198,7 @@ const JOGOS=[
     resumo:"CRAS, CREAS, BPC e a LOAS: teste o que você sabe sobre o Sistema Único de Assistência Social.",
     tags:["Assistência social","3 níveis","3 vidas"],
     cor:["#ffc857","#0b5a63"],
+    modos:[QUIZ], legado:true,
     arte:`<div class="label art-suas">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -230,6 +241,7 @@ const JOGOS=[
     resumo:"Carros, rachas e a família Toretto em todos os filmes da saga.",
     tags:["Filmes","3 níveis","3 vidas"],
     cor:["#ff5a2b","#1a0b2e"],
+    modos:[QUIZ], legado:true,
     arte:`<div class="label art-vel">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -276,6 +288,7 @@ const JOGOS=[
     resumo:"Dunder Mifflin, Michael Scott e as pegadinhas do Jim em perguntas sobre a série.",
     tags:["Série","3 níveis","3 vidas"],
     cor:["#ffd23f","#1d4f91"],
+    modos:[QUIZ], legado:true,
     arte:`<div class="label art-off">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -338,6 +351,7 @@ const JOGOS=[
     resumo:"Duplas, violeiros e modas de viola que fizeram a música caipira.",
     tags:["Música","3 níveis","3 vidas"],
     cor:["#ffb347","#3b1a0c"],
+    modos:[QUIZ], legado:true,
     arte:`<div class="label art-ser">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -380,6 +394,7 @@ const JOGOS=[
     resumo:"Uma cruzada nova por dia, igual para todo mundo. Quanto mais rápido e com menos ajudas, mais pontos.",
     tags:["Palavras","3 níveis","Do dia"],
     cor:["#c8372d","#1d1b17"],
+    modos:[NIVEL3], legado:true,
     arte:`<div class="label art-pc">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -423,6 +438,7 @@ const JOGOS=[
     resumo:"Descubra a palavra do dia em seis tentativas. As cores dizem quais letras estão no lugar certo.",
     tags:["Palavras","3 níveis","Do dia"],
     cor:["#3a8f5c","#22201b"],
+    modos:[NIVEL3], legado:true,
     arte:`<div class="label art-pal">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -457,6 +473,7 @@ const JOGOS=[
     resumo:"Descubra as palavras escondidas num mapa de associações. Arraste palavras e fios, sacuda o mapa e peça pistas.",
     tags:["Palavras","14 temas","3 níveis"],
     cor:["#f2b134","#1b2230"],
+    modos:[{nome:"Tema",livre:true,opcoes:[["futebol","Futebol"],["natureza","Natureza"],["musica","Música"],["animais","Animais"],["comida","Comida"],["praia","Praia"],["escola","Escola"],["corpo","Corpo Humano"],["espaco","Espaço"],["cidade","Cidade"],["casa","Casa"],["tecnologia","Tecnologia"],["viagem","Viagem"],["fazenda","Fazenda"],["guaratingueta","Guaratinguetá"]]},NIVEL3],
     arte:`<div class="label art-int">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -749,6 +766,7 @@ const JOGOS=[
     resumo:"Luta de plataforma para 2 jogadores no mesmo teclado ou com dois controles (ou contra a CPU). Jogue o rival para fora da arena.",
     tags:["Luta","2 jogadores","vs CPU"],
     cor:["#ff7a1a","#1a1036"],
+    modos:[{nome:"CPU",opcoes:["Fácil","Médio","Difícil"]}], legado:true,
     arte:`<div class="label art-arena">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -789,6 +807,7 @@ const JOGOS=[
     resumo:"Corrida de kart vista de cima: derrape nas curvas, pegue turbos e mísseis e chegue em 1º em 3 pistas.",
     tags:["Corrida","3 pistas","Itens"],
     cor:["#ff3b3b","#1d2733"],
+    modos:[{nome:"Pista",opcoes:[["verde","Circuito Verde"],["deserto","Deserto Rápido"],["montanha","Montanha Maluca"]]}], legado:true,
     arte:`<div class="label art-kart">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs><linearGradient id="kt-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ccf5c"/><stop offset="1" stop-color="#3f9e3a"/></linearGradient><linearGradient id="kt-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d2733" stop-opacity="0"/><stop offset="1" stop-color="#1d2733" stop-opacity=".94"/></linearGradient></defs>
@@ -974,6 +993,7 @@ const JOGOS=[
     resumo:"Briga de rua com combos, arremessos e chefes. Limpe a cidade, o porto e o terraço.",
     tags:["Porradaria","3 fases","Combos"],
     cor:["#ff3d7f","#1a0f2e"],
+    modos:[{nome:"Jogadores",opcoes:[["1p","1 jogador"],["2p","2 jogadores"]]}], legado:true,
     arte:`<div class="label art-rua">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs><linearGradient id="rd-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1446"/><stop offset="1" stop-color="#1a0f2e"/></linearGradient><linearGradient id="rd-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0f2e" stop-opacity="0"/><stop offset="1" stop-color="#1a0f2e" stop-opacity=".94"/></linearGradient></defs>
@@ -1096,6 +1116,7 @@ const JOGOS=[
     resumo:"Descubra a palavra antes de completar o boneco. 3 níveis, de palavras curtas a compostas, com dicas e sequência perfeita.",
     tags:["Palavras","3 níveis","10 rodadas"],
     cor:["#f4f1ea","#22382c"],
+    modos:[NIVEL3], legado:true,
     arte:`<div class="label art-forca">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs><radialGradient id="fc-bg" cx=".5" cy=".4" r=".75"><stop offset="0" stop-color="#2f4f3c"/><stop offset="1" stop-color="#22382c"/></radialGradient></defs>
@@ -1172,6 +1193,7 @@ const JOGOS=[
     resumo:"Sinuca brasileira: acerte sempre a bola da vez, some pontos e cuidado com a falta de 7. Contra a CPU ou a dois.",
     tags:["Sinuca","vs CPU","2 jogadores"],
     cor:["#1f8a4c","#3b2414"],
+    modos:[{nome:"CPU",opcoes:["Fácil","Médio","Difícil"]}], legado:true,
     arte:`<div class="label art-sinuca">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs><radialGradient id="sn-felt" cx=".5" cy=".45" r=".7"><stop offset="0" stop-color="#2aa35d"/><stop offset="1" stop-color="#1a7040"/></radialGradient></defs>
@@ -1202,6 +1224,7 @@ const JOGOS=[
     resumo:"Futebol arcade com os grandes do Rio e de São Paulo. Amistoso a dois ou o Torneio Rio-São Paulo contra a CPU.",
     tags:["Futebol","8 times","2 jogadores"],
     cor:["#ffffff","#1a5c2a"],
+    modos:[{nome:"Modo",opcoes:["Amistoso","Torneio"]},NIVEL3,{nome:"Tempo",opcoes:[["2min","2 min"],["3min","3 min"]]}],
     arte:`<div class="label art-cla">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs><pattern id="cl-stripes" width="400" height="60" patternUnits="userSpaceOnUse"><rect width="400" height="30" fill="#1a5c2a"/><rect y="30" width="400" height="30" fill="#1f6b32"/></pattern></defs>
@@ -1238,6 +1261,7 @@ const JOGOS=[
     resumo:"RPG de ação em masmorras aleatórias: escolha sua classe, use habilidades, junte equipamentos, enfrente chefes e desça o mais fundo que puder em 5 minutos.",
     tags:["RPG de ação","3 classes","5 minutos"],
     cor:["#ffc857","#120c1c"],
+    modos:[{nome:"Classe",opcoes:["Guerreiro","Arqueira","Maga"]}], legado:true,
     arte:`<div class="label art-masm" style="background:#0c0814">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges" aria-hidden="true">
         <defs>
@@ -1362,6 +1386,7 @@ shelf.innerHTML=JOGOS.map(j=>`
   </li>`;
 </script>
 <script src="jogos/controle.js?v=1"></script>
+<script src="trofeu3d.js"></script>
 <script src="hub.js"></script>
 </body>
 </html>

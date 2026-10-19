@@ -303,7 +303,7 @@ function enviar(){
       if(venceu){ $("l"+r).classList.add("ganhou"); aviso(["Genial!","Incrível!","Muito bem!","Boa!","Ufa, foi!","Na última!"][G.tent.length-1]); }
       else aviso(grafia(G.n,G.chave).toUpperCase());
       setTimeout(()=>{ $("teclas").hidden=true; mostrarFim(true); },venceu?1100:1600);
-      if(venceu) try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:G.pts,nivel:G.N.nome},"*") }catch(e){}
+      if(venceu) try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:G.pts,nivel:G.N.nome,modo:G.N.nome},"*") }catch(e){}
     }
   },G.n*220+320);
 }

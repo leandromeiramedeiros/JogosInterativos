@@ -344,7 +344,7 @@ function end(){
   var lv = G.lv, total = G.qs.length, pontos = Math.min(MAX_PONTOS, G.score), rec = pontos > best(lv);
   if(rec) setBest(lv, pontos);
   var nomeNivel = (NIVEIS[lv] && NIVEIS[lv].nome) || lv;
-  try{ if(parent !== window) parent.postMessage({tipo:"jogos:fim", pontos:pontos, nivel:nomeNivel}, "*"); }catch(e){}
+  try{ if(parent !== window) parent.postMessage({tipo:"jogos:fim", pontos:pontos, nivel:nomeNivel, modo:nomeNivel}, "*"); }catch(e){}
   var won = G.lives > 0, pct = G.hits / total;
   var rank = !won ? RES.derrota : pct === 1 ? RES.perfeito : pct >= .8 ? RES.otimo : pct >= .6 ? RES.bom : RES.raspando;
   var log = G.log, s = G;

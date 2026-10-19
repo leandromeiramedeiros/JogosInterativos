@@ -629,7 +629,7 @@ function telaFim(){
   const total=M.score, N=M.N;
   const novo=total>0&&salvarMelhor(M.nv,total);
   const P=Math.max(1,Math.min(50000,Math.round(total)));
-  if(total>0){ try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:P,nivel:N.nome},"*") }catch(e){} }
+  if(total>0){ try{ if(parent!==window) parent.postMessage({tipo:"jogos:fim",pontos:P,nivel:N.nome,modo:N.nome},"*") }catch(e){} }
   const m=melhores(), acertos=M.hist.filter(h=>h.ok).length;
   const motivo=M.vidas<=0&&M.hist.length<RODADAS?"Suas 3 vidas acabaram":"Partida completa";
   $("fim").innerHTML=`<section class="fim" aria-labelledby="ft">

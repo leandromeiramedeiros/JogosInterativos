@@ -81,6 +81,6 @@ Se `arquivo` for `null`, a cena não existir ou a imagem falhar ao carregar, o m
 - Ajudas (1 de cada por partida): 50/50, Pular (troca por pergunta inédita do mesmo nível) e +10s.
 - Teclas 1 a 4 respondem; Enter avança.
 - Recordes em `localStorage` (`quiz-<id>-best-<nivel>`) e som em `quiz-<id>-mute`. O Quiz da Vila mantém as chaves antigas `qv-best-<nivel>` e `qv-mute`.
-- No fim da partida envia `parent.postMessage({tipo:"jogos:fim", pontos, nivel}, "*")` para o placar da página de jogos.
+- No fim da partida envia `parent.postMessage({tipo:"jogos:fim", pontos, nivel, modo}, "*")` para o placar da página de jogos. `modo` é o nome do nível, e cada nível tem seu pódio (veja `modos` no `index.html`).
 - Se `QUIZ_CONFIG`, `QUIZ_PERGUNTAS` ou `QUIZ_IMAGENS` não existirem, a TV mostra "Este quiz ainda está sendo preparado.".
 - Textos vindos dos dados são sempre escapados (só `<span>` é aceito no `heroTitulo`).

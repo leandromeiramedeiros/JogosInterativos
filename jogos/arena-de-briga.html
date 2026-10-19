@@ -735,7 +735,7 @@ function finishMatch(){
     let pts=1000*game.diff+500*game.fighters[0].lives+Math.max(0,300-secs);
     pts=Math.max(1,Math.min(50000,Math.round(pts)));
     game.score=pts;game.posted=true;
-    try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:pts,nivel:DIFFN[game.diff-1]},"*");}catch(e){}
+    try{if(parent!==window)parent.postMessage({tipo:"jogos:fim",pontos:pts,nivel:DIFFN[game.diff-1],modo:DIFFN[game.diff-1]},"*");}catch(e){}
   }
 }
 

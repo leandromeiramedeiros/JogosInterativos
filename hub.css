@@ -268,6 +268,18 @@ a{color:inherit}
 .msg.ok::before{content:"✓";flex:none;display:grid;place-items:center;width:20px;height:20px;margin-top:1px;border-radius:50%;background:#2fbf71;color:#04210f;font-size:12px;font-weight:900}
 .msg.err{color:var(--accent);font-weight:600}
 
+/* modo do placar: cada nível / tema / pista tem seu pódio */
+.modos{display:flex;flex-direction:column;gap:8px;margin-bottom:-4px}
+.modos[hidden]{display:none}
+.modo{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.mrot{flex:none;width:64px;padding-top:7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.chips{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:5px}
+.chip{font:800 12.5px var(--body);color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer;line-height:1.15}
+.chip:hover{border-color:color-mix(in srgb,var(--g1) 70%,var(--line))}
+.chip[aria-pressed="true"]{background:var(--g2);border-color:var(--g2);color:#fff8ea;box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--g1) 80%,transparent)}
+.msel{flex:1;min-width:0;font:800 13.5px var(--body);color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:6px 10px}
+.msel:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
 /* pódio de verdade: 2º · 1º · 3º, em degraus */
 .podium{display:block}
 .podio{list-style:none;margin:0;padding:0 2px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr);align-items:end;gap:6px;position:relative;border-bottom:4px solid var(--line);border-radius:0 0 3px 3px}
@@ -410,9 +422,26 @@ a{color:inherit}
 @keyframes pulsa{50%{scale:1.12;opacity:.8}}
 #confete{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
 .cbox{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px}
-.trofeu{width:min(210px,52vw);aspect-ratio:1;filter:drop-shadow(0 16px 22px rgba(0,0,0,.55));animation:sobe 1s cubic-bezier(.2,1.6,.4,1) .12s both}
+.trofeu{position:relative;width:min(230px,56vw);aspect-ratio:1}
+.trofeu.svg{filter:drop-shadow(0 16px 22px rgba(0,0,0,.55));animation:sobe 1s cubic-bezier(.2,1.6,.4,1) .12s both}
 .trofeu svg{width:100%;height:100%;overflow:visible}
 @keyframes sobe{0%{transform:translateY(60px) scale(.3) rotate(-10deg);opacity:0}55%{opacity:1}100%{transform:none}}
+/* troféu 3D: a tela passa da caixa para as faíscas caberem, e some nas bordas */
+.trofeu .t3d{position:absolute;left:-25%;top:-25%;width:150%;height:150%;display:block;touch-action:pan-y;cursor:grab;
+  -webkit-mask:radial-gradient(closest-side,#000 74%,transparent);mask:radial-gradient(closest-side,#000 74%,transparent)}
+.trofeu .t3d:active{cursor:grabbing}
+.cbox>*:not(.trofeu){position:relative}
+/* no 1º lugar, os raios acendem e o texto aparece quando o troféu pousa */
+.celebra.l1 .crays{opacity:.15;transition:opacity .9s ease}
+.celebra.l1.pousou .crays{opacity:1}
+.celebra.l1 .cglow{scale:.6;opacity:.4;transition:scale 1s cubic-bezier(.2,1.4,.4,1),opacity 1s}
+.celebra.l1.pousou .cglow{scale:1;opacity:1}
+.celebra.l1 .cbox>*:not(.trofeu){opacity:0;translate:0 10px;transition:opacity .45s ease,translate .45s cubic-bezier(.2,1.3,.4,1)}
+.celebra.l1.pousou .cbox>*:not(.trofeu){opacity:1;translate:none}
+.celebra.l1.pousou .cbox>:nth-child(3){transition-delay:.08s}
+.celebra.l1.pousou .cbox>:nth-child(4){transition-delay:.16s}
+.celebra.l1.pousou .cbox>:nth-child(5){transition-delay:.24s}
+.celebra.l1.pousou .cbox>:nth-child(6){transition-delay:.32s}
 .ceyebrow{margin:6px 0 0;max-width:100%;font-family:var(--mono);font-weight:500;font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:#1a1206;background:linear-gradient(135deg,var(--m2),var(--m1));padding:5px 13px;border-radius:99px;overflow-wrap:anywhere;box-shadow:0 3px 0 rgba(0,0,0,.3)}
 .celebra h2{margin:4px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(32px,9vw,46px);line-height:1;text-wrap:balance;
   background:linear-gradient(180deg,#fff 0,var(--m2) 45%,var(--m1) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(0,0,0,.4))}
@@ -449,6 +478,7 @@ dialog.recent::backdrop{background:rgba(10,12,20,.55);backdrop-filter:blur(4px)}
   .sheen{animation:none;opacity:0}
   .sp{animation:none;transform:scale(1);opacity:.9}
   .crays,.cglow,.trofeu,.ccard,.celebra,.send,.pd-step,.pd-step::after,.rest li,.sk{animation:none!important}
+  .celebra.l1 .crays,.celebra.l1 .cglow,.celebra.l1 .cbox>*{opacity:1!important;scale:none!important;translate:none!important}
 }
 
 /* Cartucho ainda não lançado */
