@@ -21,24 +21,19 @@ window.MUSICAS=[
   },
   {
     id:"dragon-ball",
-    titulo:"Dragon Ball",
-    sub:"Abertura · rock acelerado",
-    bpm:126, compasso:4, anacruse:0, estilo:"rock",
+    titulo:"Dragon Ball GT",
+    sub:"Abertura · Eu quero saber…",
+    bpm:131, compasso:4, anacruse:0, estilo:"rock",
     cor:"#ff8a1f", icone:"🐉",
-    /* Arranjo simplificado em Dó maior, escrito de ouvido: confira com a gravação e ajuste à vontade. */
+    /* Refrão de "Dan Dan Kokoro Hikareteku" ("Eu quero saber, se comigo você quer vir dançar…"),
+       tirado de um MIDI da música, em Dó maior. */
     melodia:`-:4 |
-             G4:.5 G4:.5 A4:.5 C5:1.5 -:1 | D5:.5 C5:.5 D5:.5 E5:1.5 -:1 |
-             E5:.5 E5:.5 E5:.5 D5:.5 C5:.5 C5:.5 D5:1 | E5:.5 D5:.5 C5:.5 A4:.5 C5:2 |
-             G4:.5 G4:.5 A4:.5 C5:1.5 -:1 | D5:.5 C5:.5 D5:.5 E5:1.5 -:1 |
-             E5:.5 E5:.5 E5:.5 D5:.5 C5:.5 C5:.5 D5:1 | E5:.5 G5:.5 E5:.5 D5:.5 C5:2 |
-             A4:.5 A4:.5 C5:.5 A4:.5 G4 E4 | F4:.5 F4:.5 A4:.5 F4:.5 E4 C4 |
-             D4:.5 E4:.5 F4:.5 G4:.5 A4:.5 B4:.5 C5:.5 D5:.5 | E5:2 D5:2 |
-             C5 E5 G5:1.5 E5:.5 | F5 E5:.5 D5:.5 C5:2 |
-             A4:.5 C5:.5 D5:.5 E5:.5 F5 E5 | D5:4 |
-             C5 E5 G5:1.5 A5:.5 | G5 E5:.5 C5:.5 D5:2 |
-             E5:.5 D5:.5 C5:.5 A4:.5 G4 A4 | C5:4`,
-    acordes:`C:4 | C:4 | G:4 | Am:4 | F:2 G:2 | C:4 | G:4 | Am:4 | F:2 G:2 |
-             Am:4 | F:2 C:2 | Dm:2 G:2 | C:2 G:2 |
-             C:4 | F:2 C:2 | F:4 | G:4 | C:4 | C:2 G:2 | F:2 G:2 | C:4`
+             G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5 D5 C5 B4 |
+             -:1 A4 C5 A5 | G5 G5:.5 C5:1.5 D5:.5 E5:.5 | F5 E5 D5 C5:.5 D5:.5 | E5:1.5 F5:.25 E5:.25 D5:2 |
+             G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5 D5 C5 B4 |
+             -:1 A4 C5 A5 | G5 G5:.5 C5:1.5 -:1 | F5 E5 D5 C5 | D5:2 C5 B4 | C5:4`,
+    acordes:`G:4 |
+             C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Dm:4 | E:2 G:2 |
+             C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Bb:4 | G:4 | C:4`
   }
 ];
