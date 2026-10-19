@@ -106,7 +106,9 @@
    modos (opcional): eixos do placar, cada combinação com seu próprio pódio (ex.: Tema × Nível).
      Opção: "Nome" ou ["id-curto","Nome"]; a coluna jogo vira "id--opcao-opcao" e cabe em 40 caracteres.
      livre:true aceita opções que o jogo mandar e não estejam na lista.
-   legado:true: as pontuações de antes dos modos entram no modo com o mesmo nome do nível que mandavam. */
+   legado:true: as pontuações de antes dos modos entram no modo com o mesmo nome do nível que mandavam;
+     legado:{"opcao-opcao":"Nível"} escolhe o modo de cada nível antigo.
+   Opção ["id","Nome",{arquivo:true}]: modo só com pontuações antigas (nenhuma partida nova entra nele). */
 const NIVEL3={nome:"Nível",opcoes:["Fácil","Médio","Difícil"]};
 const QUIZ={nome:"Nível",opcoes:["Normal","Difícil","Impossível"]};
 const JOGOS=[
@@ -473,7 +475,8 @@ const JOGOS=[
     resumo:"Descubra as palavras escondidas num mapa de associações. Arraste palavras e fios, sacuda o mapa e peça pistas.",
     tags:["Palavras","14 temas","3 níveis"],
     cor:["#f2b134","#1b2230"],
-    modos:[{nome:"Tema",livre:true,opcoes:[["futebol","Futebol"],["natureza","Natureza"],["musica","Música"],["animais","Animais"],["comida","Comida"],["praia","Praia"],["escola","Escola"],["corpo","Corpo Humano"],["espaco","Espaço"],["cidade","Cidade"],["casa","Casa"],["tecnologia","Tecnologia"],["viagem","Viagem"],["fazenda","Fazenda"],["guaratingueta","Guaratinguetá"]]},NIVEL3],
+    modos:[{nome:"Tema",livre:true,opcoes:[["futebol","Futebol"],["natureza","Natureza"],["musica","Música"],["animais","Animais"],["comida","Comida"],["praia","Praia"],["escola","Escola"],["corpo","Corpo Humano"],["espaco","Espaço"],["cidade","Cidade"],["casa","Casa"],["tecnologia","Tecnologia"],["viagem","Viagem"],["fazenda","Fazenda"],["guaratingueta","Guaratinguetá"],["antes","Antes dos temas",{arquivo:true}]]},NIVEL3],
+    legado:{"antes-facil":"Fácil","antes-medio":"Médio","antes-dificil":"Difícil"},   // pontuações de quando o placar não guardava o tema
     arte:`<div class="label art-int">
       <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>

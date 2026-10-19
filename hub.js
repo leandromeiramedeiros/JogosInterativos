@@ -15,15 +15,18 @@ const LOCAL_KEY="jogos-placar-v1";
    o Fácil contra o Difícil. Os eixos vêm de JOGOS[i].modos (ex.: Tema × Nível); o jogo conta em qual
    jogou com {modo:"Difícil"} ou {modo:["Futebol","Difícil"]} no jogos:fim.
    Cada modo é um "quadro": a coluna jogo do placar vira "id--opcao-opcao" (sem mudar a tabela).
-   Com legado:true, as pontuações de antes dos modos entram no quadro cujo nome era o nível enviado. */
-const slug=s=>String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-const EIXOS=new Map(JOGOS.map(j=>[j.id,(j.modos||[]).map(e=>({...e,opcoes:e.opcoes.map(o=>Array.isArray(o)?{id:o[0],nome:o[1]}:{id:slug(o),nome:o})}))]));
+   Com legado:true, as pontuações de antes dos modos entram no quadro cujo nome era o nível enviado;
+   legado:{"opcao-opcao":"Nível"} diz a mão em qual quadro cada nível antigo entra.
+   Opção ["id","Nome",{arquivo:true}]: quadro só de pontuações antigas; partida nova nunca cai nele. */
+const slug=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const EIXOS=new Map(JOGOS.map(j=>[j.id,(j.modos||[]).map(e=>({...e,opcoes:e.opcoes.map(o=>Array.isArray(o)?{id:o[0],nome:o[1],...o[2]}:{id:slug(o),nome:o})}))]));
 function quadro(jogo,ids){
   const ex=EIXOS.get(jogo)||[];
   if(!ex.length) return {jogo,chave:jogo,rotulo:"",ids:[],legado:null};
   const ops=ex.map((e,i)=>e.opcoes.find(o=>o.id===ids[i])||e.opcoes[0]);
-  const rotulo=ops.map(o=>o.nome).join(" · "), j=JOGOS.find(x=>x.id===jogo);
-  return {jogo,chave:jogo+"--"+ops.map(o=>o.id).join("-"),rotulo,ids:ops.map(o=>o.id),legado:j&&j.legado?rotulo:null};
+  const rotulo=ops.map(o=>o.nome).join(" · "), j=JOGOS.find(x=>x.id===jogo), sel=ops.map(o=>o.id);
+  const legado=!j||!j.legado?null:j.legado===true?rotulo:j.legado[sel.join("-")]||null;
+  return {jogo,chave:jogo+"--"+sel.join("-"),rotulo,ids:sel,legado};
 }
 function quadros(jogo){   // todos os modos do jogo (para dar nome às linhas das últimas 100)
   let l=[[]];
@@ -34,11 +37,12 @@ function quadros(jogo){   // todos os modos do jogo (para dar nome às linhas da
 function modoRecebido(jogo,d,escolhido){
   const ex=EIXOS.get(jogo)||[], veio=[].concat(d.modo==null?[]:d.modo);
   return ex.map((e,i)=>{
-    const acha=v=>v!=null&&slug(v)&&e.opcoes.find(o=>o.id===slug(v)||slug(o.nome)===slug(v));
+    const acha=v=>v!=null&&slug(v)&&e.opcoes.find(o=>!o.arquivo&&(o.id===slug(v)||slug(o.nome)===slug(v)));
     let o=acha(veio[i]);
     if(!o&&ex.length===1) o=acha(d.nivel);   // jogo antigo, que mandava o modo no nível
-    if(!o&&e.livre&&veio[i]!=null&&slug(veio[i])){ o={id:slug(veio[i]).slice(0,16),nome:String(veio[i]).slice(0,30)}; e.opcoes.push(o) }
-    return (o||e.opcoes.find(x=>x.id===escolhido[i])||e.opcoes[0]).id;
+    const novo=veio[i]!=null&&slug(veio[i]).slice(0,16);
+    if(!o&&e.livre&&novo&&!e.opcoes.some(x=>x.id===novo)){ o={id:novo,nome:String(veio[i]).slice(0,30)}; e.opcoes.push(o) }
+    return (o||e.opcoes.find(x=>x.id===escolhido[i]&&!x.arquivo)||e.opcoes.find(x=>!x.arquivo)).id;
   });
 }
 

@@ -65,7 +65,7 @@ Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Ba
 | Clássico | Amistoso ou Torneio × Nível × Tempo |
 | Masmorra Relâmpago | Classe |
 
-Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`), e o jogo diz em qual jogou com `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…); só as do Interligado ficaram de fora, porque não diziam o tema.
+Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`), e o jogo diz em qual jogou com `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…). As do Interligado não diziam o tema, então ficam no tema **Antes dos temas**, separadas por nível; partida nova não entra nele.
 
 ### Ligar o placar online (Supabase)
 
