@@ -8,7 +8,7 @@
 <style>
 html,body{margin:0;height:100%;background:#10140c;overflow:hidden;font-family:Figtree,system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
 #stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:480px;height:270px;--u:1}
-canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-rendering:pixelated;background:#000}
+canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-rendering:pixelated;background:#000;cursor:crosshair}
 .ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(10,14,6,.84);color:#f4f1d8;padding:calc(var(--u)*6px);box-sizing:border-box}
 .ov.hide,.ov button.hide{display:none}
 .ov h1{font-family:"Lilita One",Impact,sans-serif;font-weight:400;font-size:calc(var(--u)*30px);margin:0;color:#ffd23f;text-shadow:calc(var(--u)*2px) calc(var(--u)*2px) 0 #b3261e,calc(var(--u)*4px) calc(var(--u)*4px) 0 #000;letter-spacing:calc(var(--u)*1px)}
@@ -24,9 +24,15 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
 #tc.on{display:block}
 #tc .b{position:fixed;pointer-events:auto;touch-action:none;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);color:#fff;font:400 16px "Lilita One",Impact,sans-serif;display:flex;align-items:center;justify-content:center;border-radius:50%;box-sizing:border-box}
 #tc .b.on{background:rgba(255,210,63,.5)}
-#tc .d{width:54px;height:54px;border-radius:12px;font-size:22px}
-#bu{left:62px;bottom:122px}#bd{left:62px;bottom:10px}#bl{left:6px;bottom:66px}#br{left:118px;bottom:66px}
-#bs{right:10px;bottom:46px;width:84px;height:84px}#bj{right:104px;bottom:14px;width:70px;height:70px}#bb{right:104px;bottom:96px;width:62px;height:62px;font-size:14px}
+#bj{right:12px;bottom:168px;width:62px;height:62px;font-size:14px}#bb{right:84px;bottom:186px;width:52px;height:52px;font-size:12px}
+/* rodas virtuais: mover (esquerda) e mirar/atirar (direita) */
+#tc .wh{position:fixed;width:100px;height:100px;border-radius:50%;border:3px solid rgba(255,255,255,.4);background:rgba(255,255,255,.08);box-sizing:border-box;opacity:.45;pointer-events:none}
+#tc .wh.on{opacity:1}
+#tc .wh .kn{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(255,255,255,.45);border:2px solid rgba(255,255,255,.75);box-sizing:border-box}
+#tc .wh span{position:absolute;left:0;right:0;top:104px;text-align:center;color:#fff;font:400 12px "Lilita One",Impact,sans-serif;opacity:.8}
+#tc .wh.on span{display:none}
+#wm{left:36px;bottom:40px}#wa{right:36px;bottom:40px}#wa .kn{background:rgba(255,210,63,.55)}
+.tq{display:none}body.toque .tq{display:block}body.toque .pc{display:none}
 </style>
 </head>
 <body>
@@ -35,10 +41,12 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
   <div class="ov" id="ovStart">
     <h1>TROPA DE LATA</h1>
     <h2>Cabo Lata contra a Legião Ferrugem!</h2>
-    <p><b>Setas / WASD</b> mover e mirar (cima, diagonais, agachar)</p>
-    <p><b>Z / J</b> atirar (faca se o robô estiver colado) &nbsp; <b>X / K / Espaço</b> pular</p>
-    <p><b>C / L</b> granada &nbsp; Liberte os prisioneiros: <b>H</b> metralhadora, <b>R</b> foguetes, <b>F</b> lança-chamas</p>
-    <p><b>Controle</b>: direcional/analógico mover e mirar · <b>A</b> pular · <b>X/RT</b> atirar · <b>B</b> granada</p>
+    <p class="pc"><b>WASD / Setas</b> mover (<b>W</b> pula, <b>S</b> agacha) &nbsp; <b>Espaço / X</b> pular</p>
+    <p class="pc"><b>Mouse</b> mira em 360° &nbsp; <b>Clique</b> atirar (segure) &nbsp; <b>Botão direito / C</b> granada</p>
+    <p class="tq"><b>Roda esquerda</b> mover (para cima pula, para baixo agacha)</p>
+    <p class="tq"><b>Roda direita</b> mira em 360° e atira enquanto segurar &nbsp; <b>BOMBA</b> granada</p>
+    <p>Faca se o robô estiver colado &nbsp; Prisioneiros: <b>H</b> metralhadora, <b>R</b> foguetes, <b>F</b> lança-chamas</p>
+    <p class="pc"><b>Controle</b>: analógico esquerdo move (cima pula) · <b>direito</b> mira em 360° · <b>A</b> pular · <b>X/RT</b> atirar · <b>B</b> granada</p>
     <button id="btnPlay">Jogar</button>
   </div>
   <div class="ov hide" id="ovOver">
@@ -52,8 +60,8 @@ canvas{display:block;width:100%;height:100%;image-rendering:crisp-edges;image-re
 </div>
 <button id="mute">Som: ligado</button>
 <div id="tc">
-  <div class="b d" id="bu" data-a="u">&#9650;</div><div class="b d" id="bl" data-a="l">&#9664;</div><div class="b d" id="br" data-a="r">&#9654;</div><div class="b d" id="bd" data-a="d">&#9660;</div>
-  <div class="b" id="bs" data-a="s">ATIRAR</div><div class="b" id="bj" data-a="j">PULAR</div><div class="b" id="bb" data-a="b">BOMBA</div>
+  <div class="wh" id="wm"><div class="kn"></div><span>MOVER</span></div><div class="wh" id="wa"><div class="kn"></div><span>MIRAR</span></div>
+  <div class="b" id="bj" data-a="j">PULAR</div><div class="b" id="bb" data-a="b">BOMBA</div>
 </div>
 <script src="controle.js?v=1"></script>
 <script>
@@ -78,7 +86,12 @@ $('mute').onclick=()=>{muted=!muted;$('mute').textContent=muted?'Som: mudo':'Som
 /* ---------- input ---------- */
 const KM={ArrowLeft:'l',KeyA:'l',ArrowRight:'r',KeyD:'r',ArrowUp:'u',KeyW:'u',ArrowDown:'d',KeyS:'d',KeyZ:'s',KeyJ:'s',KeyX:'j',KeyK:'j',Space:'j',KeyC:'b',KeyL:'b'};
 const kd={},td={},edge={};
-const held=a=>!!td[a]||Object.keys(kd).some(c=>kd[c]&&KM[c]===a);
+// mira: mouse (em coordenadas do jogo) ou roda direita; movimento: teclado ou roda esquerda
+const rato={x:0,y:0,ok:false,tiro:false};
+let modoMira='mov';
+const RODA=50; // raio das rodas virtuais (px)
+const rodas={m:{id:null,cx:0,cy:0,x:0,y:0,el:$('wm')},a:{id:null,cx:0,cy:0,x:0,y:0,a:0,el:$('wa')}};
+const held=a=>!!td[a]||(a==='s'&&rato.tiro)||Object.keys(kd).some(c=>kd[c]&&KM[c]===a);
 addEventListener('keydown',e=>{
   if(KM[e.code]||e.code==='Enter')e.preventDefault();
   if(state!=='play'&&(e.code==='Enter'||e.code==='Space')&&!e.repeat){if(state==='over'&&!$('btnCont').classList.contains('hide'))continueRun();else startGame();return}
@@ -86,15 +99,60 @@ addEventListener('keydown',e=>{
   kd[e.code]=true;
 });
 addEventListener('keyup',e=>{kd[e.code]=false});
-addEventListener('blur',()=>{for(const k in kd)kd[k]=false;for(const k in td)td[k]=false});
+addEventListener('blur',()=>{for(const k in kd)kd[k]=false;for(const k in td)td[k]=false;rato.tiro=false;soltaRoda(rodas.m.id);soltaRoda(rodas.a.id)});
+const ehBotao=t=>t&&t.closest&&t.closest('button,.b');
+function posRato(e){const r=cv.getBoundingClientRect();rato.x=(e.clientX-r.left)/r.width*W;rato.y=(e.clientY-r.top)/r.height*H;rato.ok=true;modoMira='rato'}
+addEventListener('mousedown',e=>{
+  if(ehBotao(e.target)||state!=='play')return;
+  posRato(e);
+  if(e.button===0)rato.tiro=true;else if(e.button===2)edge.b=true;
+});
+addEventListener('mouseup',e=>{if(e.button===0)rato.tiro=false});
+addEventListener('contextmenu',e=>e.preventDefault());
+function desenhaRoda(r){
+  const s=r.el.style;
+  if(r.id===null){s.left=s.top=s.right=s.bottom='';r.el.classList.remove('on');r.el.firstChild.style.transform='';return}
+  s.left=(r.cx-RODA)+'px';s.top=(r.cy-RODA)+'px';s.right=s.bottom='auto';r.el.classList.add('on');
+  r.el.firstChild.style.transform='translate('+Math.round(r.x*RODA)+'px,'+Math.round(r.y*RODA)+'px)';
+}
+function soltaRoda(id){
+  for(const k in rodas){const r=rodas[k];if(id===null||r.id!==id)continue;
+    r.id=null;r.x=r.y=0;
+    if(k==='a')td.s=false;else{td.u=false;td.d=false}
+    desenhaRoda(r);
+  }
+}
+addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'||ehBotao(e.target)||state!=='play')return;
+  e.preventDefault();
+  // roda dinâmica: aparece onde o dedo toca (metade esquerda move, direita mira)
+  const k=e.clientX<innerWidth/2?'m':'a',r=rodas[k];if(r.id!==null)return;
+  r.id=e.pointerId;r.cx=e.clientX;r.cy=e.clientY;r.x=r.y=0;modoMira='toque';
+  if(k==='a'){r.a=pl.aa;td.s=true}
+  desenhaRoda(r);
+});
+addEventListener('pointermove',e=>{
+  if(e.pointerType==='mouse'){posRato(e);if(!(e.buttons&1))rato.tiro=false;return}
+  for(const k in rodas){const r=rodas[k];if(r.id!==e.pointerId)continue;
+    let dx=e.clientX-r.cx,dy=e.clientY-r.cy;const d=Math.hypot(dx,dy);
+    if(d>RODA){r.cx+=dx*(1-RODA/d);r.cy+=dy*(1-RODA/d);dx*=RODA/d;dy*=RODA/d} // a roda acompanha o dedo
+    r.x=dx/RODA;r.y=dy/RODA;
+    if(k==='a'){if(d>RODA*.2)r.a=Math.atan2(dy,dx)}
+    else{const up=r.y<-.6;if(up&&!td.u)edge.u=true;td.u=up;td.d=r.y>.6}
+    desenhaRoda(r);
+  }
+});
+addEventListener('pointerup',e=>{if(e.pointerType!=='mouse')soltaRoda(e.pointerId)});
+addEventListener('pointercancel',e=>{if(e.pointerType!=='mouse')soltaRoda(e.pointerId)});
 document.querySelectorAll('#tc .b').forEach(el=>{
   const a=el.dataset.a;
   el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(x){}td[a]=true;edge[a]=true;el.classList.add('on')});
   const up=e=>{td[a]=false;el.classList.remove('on')};
   el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('lostpointercapture',up);
 });
-if(matchMedia('(pointer:coarse)').matches||'ontouchstart' in window)$('tc').classList.add('on');
-addEventListener('touchstart',()=>$('tc').classList.add('on'),{passive:true,once:true});
+function ligaToque(){$('tc').classList.add('on');document.body.classList.add('toque')}
+if(matchMedia('(pointer:coarse)').matches||'ontouchstart' in window)ligaToque();
+addEventListener('touchstart',ligaToque,{passive:true,once:true});
 $('btnPlay').onclick=()=>startGame();$('btnAgain').onclick=()=>startGame();$('btnCont').onclick=()=>continueRun();
 
 /* ---------- state ---------- */
@@ -144,7 +202,7 @@ function buildLevel(n){
 function startGame(){
   $('ovStart').classList.add('hide');$('ovOver').classList.add('hide');
   score=0;lives=3;state='play';posted=false;
-  pl={x:40,y:0,vx:0,vy:0,w:12,h:24,face:1,ground:false,crouch:false,wp:'P',ammo:0,bombs:6,cd:0,inv:90,dead:false,dt:0,anim:0,flash:0,knife:0,ax:1,ay:0,dropT:0,plat:null};
+  pl={x:40,y:0,vx:0,vy:0,w:12,h:24,face:1,ground:false,crouch:false,wp:'P',ammo:0,bombs:6,cd:0,inv:90,dead:false,dt:0,anim:0,flash:0,knife:0,aa:0,dropT:0,plat:null};
   startMission(1);
   snd(300,.2,'square',.05,300);
 }
@@ -265,31 +323,36 @@ function updPlayer(){
   if(P.flash>0)P.flash--;if(P.knife>0)P.knife--;
   if(P.dead){P.dt--;P.vy+=.3;P.y+=P.vy;P.x+=P.vx;if(P.dt<=0)respawn();return}
   P.crouch=P.ground&&held('d');
+  // movimento: teclado (8 direções) ou roda esquerda analógica
   let mv=(held('r')?1:0)-(held('l')?1:0);
+  if(!mv&&rodas.m.id!==null){const jx=rodas.m.x;mv=Math.abs(jx)<.18?0:clamp((jx-Math.sign(jx)*.18)/.62,-1,1)}
   if(P.crouch)mv=0;
-  P.vx=mv*1.7;if(mv)P.face=mv;
+  P.vx=mv*1.7;
   P.anim+=Math.abs(P.vx)*.12;
-  if(edge.j&&P.ground){
-    if(held('d')&&P.plat&&!P.plat.ground){P.dropT=14;P.y+=2;P.ground=false}
+  if((edge.j||edge.u)&&P.ground){
+    if(held('d')&&edge.j&&P.plat&&!P.plat.ground){P.dropT=14;P.y+=2;P.ground=false}
     else{P.vy=-6.7;P.ground=false;snd(300,.12,'square',.03,200)}
   }
-  if(!held('j')&&P.vy<-2.8)P.vy=-2.8;
+  if(!held('j')&&!held('u')&&P.vy<-2.8)P.vy=-2.8;
   P.x+=P.vx;
   const maxX=lockAct?camX+W-8:L.len-8;
   P.x=clamp(P.x,camX+9,Math.min(maxX,camX+W-9));
   phys(P);
   if(P.y>L.GY+40){P.y=L.GY;P.vy=0}
-  // aim
-  const up=held('u'),dn=held('d');
-  let ax=(held('l')||held('r'))?P.face:0,ay=0;
-  if(up)ay=-1;else if(dn&&!P.ground)ay=1;
-  if(!ax&&!ay)ax=P.face;
-  P.ax=ax;P.ay=ay;
+  // mira 360°: roda direita, analógico direito, mouse ou (sem mira) a direção do movimento
+  const ch=P.crouch?9:16;
+  const pad=window.Controle?Controle.pads.find(p=>p.conectado&&Math.hypot(p.rx,p.ry)>.35):null; // analógico direito do controle
+  if(rodas.a.id!==null)P.aa=rodas.a.a;
+  else if(pad){P.aa=Math.atan2(pad.ry,pad.rx);modoMira='pad'}
+  else if(modoMira==='rato'&&rato.ok)P.aa=Math.atan2(rato.y-(P.y-ch),rato.x+camX-P.x);
+  else if(modoMira==='pad'){} // solta o analógico: mantém a última mira
+  else if(mv)P.aa=mv>0?0:Math.PI;
+  const ca=Math.cos(P.aa);if(Math.abs(ca)>.08)P.face=ca<0?-1:1; // vira para o lado da mira
   if(P.cd>0)P.cd--;
   if(held('s')&&P.cd<=0)shoot();
   if(edge.b&&P.bombs>0&&P.cd<=4){
     P.bombs--;P.cd=Math.max(P.cd,10);
-    const f=P.face,upw=held('u');
+    const f=P.face,upw=Math.sin(P.aa)<-.75;
     gren.push({x:P.x+f*6,y:P.y-(P.crouch?10:20),vx:upw?f*.6+P.vx*.4:f*2.5+P.vx*.5,vy:upw?-6.2:-3.8,r:46,g:.3,fr:'p',t:0});
     snd(220,.15,'triangle',.05,200);
   }
@@ -305,9 +368,9 @@ function updPlayer(){
   items=items.filter(i=>!i.gone);
 }
 function shoot(){
-  const P=pl,ax=P.ax,ay=P.ay,l=Math.hypot(ax,ay),dx=ax/l,dy=ay/l;
-  // knife
-  if(ay===0){
+  const P=pl,dx=Math.cos(P.aa),dy=Math.sin(P.aa);
+  // knife (mira mais ou menos horizontal)
+  if(Math.abs(dy)<.5){
     for(const e of en){
       if(e.dead||e.hostage||e.prop||e.t==='turret')continue;
       if(Math.abs(e.x-P.x)<22+e.w/2&&(e.x-P.x)*P.face>-2&&Math.abs((e.y-e.h/2)-(P.y-12))<20){
@@ -720,7 +783,8 @@ function drawWorld(){
   }
   for(const b of pbul){
     if(b.t==='p'){R(b.x-2,b.y-1,4,3,'#fff7a0');R(b.x-1,b.y,2,1,'#ffb300')}
-    else if(b.t==='r'){R(b.x-4,b.y-2,8,4,'#d9d9d9');R(b.x+(b.vx>0?2:-4),b.y-2,3,4,'#e63e1f');R(b.x-(b.vx>0?5:-2),b.y-1,3,2,'#ffb300')}
+    else if(b.t==='r'){ctx.save();ctx.translate(Math.round(b.x),Math.round(b.y));ctx.rotate(Math.atan2(b.vy,b.vx)); // foguete gira com a mira
+      ctx.fillStyle='#d9d9d9';ctx.fillRect(-4,-2,8,4);ctx.fillStyle='#e63e1f';ctx.fillRect(2,-2,3,4);ctx.fillStyle='#ffb300';ctx.fillRect(-7,-1,3,2);ctx.restore()}
     else{const a=b.life/26;R(b.x-3*(1.4-a),b.y-3*(1.4-a),6*(1.4-a),6*(1.4-a),a>.6?'#fff3b0':a>.3?'#ffb300':'#e6561f')}
   }
   for(const b of ebul){
@@ -760,7 +824,7 @@ function drawPlayer(){
   // arm + gun
   if(!P.dead){
     const ch=P.crouch?9:16,sx=P.x,sy=P.y-ch;
-    const l=Math.hypot(P.ax,P.ay),dx=P.ax/l,dy=P.ay/l;
+    const dx=Math.cos(P.aa),dy=Math.sin(P.aa);
     const col={P:'#cfd3d8',H:'#444b55',R:'#6b7a3a',F:'#c1622c'}[P.wp];
     const len={P:9,H:13,R:14,F:12}[P.wp];
     pline(sx,sy,sx+dx*len,sy+dy*len,P.wp==='R'?4:3,col);
@@ -940,7 +1004,7 @@ function frame(t){
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden){paused=state==='play'}else{paused=false;last=0;acc=0}});
 addEventListener('focus',()=>{if(!document.hidden&&paused){paused=false;last=0;acc=0}});
-L=buildLevel(1);camX=0;tick=0;pl={x:-999,y:0,face:1,inv:0,dead:true,wp:'P',ammo:0,bombs:0,crouch:false,ax:1,ay:0,flash:0,knife:0,vx:0};en=[];pbul=[];ebul=[];gren=[];parts=[];items=[];pops=[];boss=null;shake=0;banner=null;lockAct=null;lockIdx=0;mc=0;goT=0;
+L=buildLevel(1);camX=0;tick=0;pl={x:-999,y:0,face:1,inv:0,dead:true,wp:'P',ammo:0,bombs:0,crouch:false,aa:0,flash:0,knife:0,vx:0};en=[];pbul=[];ebul=[];gren=[];parts=[];items=[];pops=[];boss=null;shake=0;banner=null;lockAct=null;lockIdx=0;mc=0;goT=0;
 requestAnimationFrame(frame);
 // controle: botões mapeados para as teclas do jogo; menus (início, fim) navegados com o direcional e A
 if(window.Controle){

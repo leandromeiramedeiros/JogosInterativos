@@ -203,6 +203,12 @@ a{color:inherit}
 .art-cla{background:#1a5c2a}
 .art-cla .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #0b3416;font-size:clamp(18px,9.4cqw,32px);line-height:1}
 .art-cla .mark span{color:#ffd23f}
+.art-qm{background:#8fd3ff}
+.art-qm .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#ff7a1a;text-shadow:0 2px 0 #6b2a05,0 0 6px rgba(0,0,0,.3);font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-qm .mark span{color:#ffc23d}
+.art-om{background:#1a2230}
+.art-om .mark{font-family:"Chakra Petch","Arial Black",Impact,sans-serif;font-weight:700;color:#fff;letter-spacing:.06em;text-shadow:0 2px 0 #000,0 0 10px rgba(156,255,106,.3);font-size:clamp(16px,8cqw,28px);line-height:1}
+.art-om .mark span{color:#9cff6a}
 
 /* ---------- Jogador ---------- */
 .player{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bar)}
