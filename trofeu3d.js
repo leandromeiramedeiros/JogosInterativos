@@ -5,7 +5,8 @@
      Trofeu3D.preparar()                          → Promise<boolean>  baixa o three.js
      Trofeu3D.montar(caixa,lugar,{aoComecar,aoPousar,parado}) → boolean  false = sem three.js/WebGL (o hub usa o SVG)
        aoComecar: primeiro quadro desenhado (a música começa junto); aoPousar: o troféu chegou
-     Trofeu3D.parar()                             para a animação e solta o troféu da cena */
+     Trofeu3D.parar()                             para a animação e solta o troféu da cena
+     Trofeu3D.forma                               perfil da copa e da alça (o troféu em SVG do hub é desenhado com eles) */
 window.Trofeu3D=(()=>{
   const SRC="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
   let baixando=null;
@@ -338,5 +339,5 @@ window.Trofeu3D=(()=>{
     canvasPai=null;
   }
 
-  return {preparar,montar,parar,acordar};
+  return {preparar,montar,parar,acordar,forma:{PERFIL,ALCA,COPA_Y}};
 })();

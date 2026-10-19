@@ -47,7 +47,7 @@ A parte comum fica em `jogos/controle.js` (instruções no começo do arquivo): 
 
 ## Placar
 
-No fim de cada partida aparece, ao lado do jogo, um campo para salvar a pontuação com um nome. A barra mostra os 10 melhores (1º com medalha de ouro e coroa de louros, 2º prata, 3º bronze), e o botão **Ver últimas 100 pontuações** lista os envios mais recentes. Quem entra no pódio ganha uma tela de comemoração com um troféu 3D do seu lugar (ouro, prata ou bronze) que chega girando e pousa com clarão e faíscas. O troféu usa o three.js e só é baixado quando a pontuação vai para o pódio; sem WebGL ou sem conexão com o CDN, aparece o troféu desenhado em SVG.
+No fim de cada partida aparece, ao lado do jogo, um campo para salvar a pontuação com um nome. A barra mostra os 10 melhores (no pódio, o mesmo troféu da comemoração desenhado em SVG: ouro, prata e bronze), e o botão **Ver últimas 100 pontuações** lista os envios mais recentes. Quem entra no pódio ganha uma tela de comemoração com um troféu 3D do seu lugar (ouro, prata ou bronze) que chega girando e pousa com clarão e faíscas. O troféu usa o three.js e só é baixado quando a pontuação vai para o pódio; sem WebGL ou sem conexão com o CDN, aparece o troféu desenhado em SVG.
 
 ### Placar por modo
 
