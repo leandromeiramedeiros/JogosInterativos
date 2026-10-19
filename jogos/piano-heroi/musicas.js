@@ -2,6 +2,9 @@
    Cada música é uma partitura curta, no espírito de um MIDI: a melodia é a faixa do piano (as notas que caem
    e que só soam quando você acerta) e os acordes viram o acompanhamento (baixo, acordes e bateria).
 
+   A melodia é sempre a voz de quem canta: uma nota por sílaba, no ritmo do canto, nunca o acompanhamento
+   (acordes, arpejos, introdução instrumental). Quem toca deve conseguir cantar junto.
+
    melodia: notas separadas por espaço, "Nota:duração" com a duração em tempos (sem duração = 1 tempo).
      Nota = letra + acidente opcional (# ou b) + oitava: C4 é o Dó central, F#4, Bb4… "-" é pausa.
      O teclado tem duas oitavas: de C4 a B5. O "|" só separa os compassos para facilitar a leitura.
@@ -25,13 +28,13 @@ window.MUSICAS=[
     sub:"Abertura · Eu quero saber…",
     bpm:131, compasso:4, anacruse:0, estilo:"rock",
     cor:"#ff8a1f", icone:"🐉",
-    /* Refrão de "Dan Dan Kokoro Hikareteku" ("Eu quero saber, se comigo você quer vir dançar…"),
-       tirado de um MIDI da música, em Dó maior. */
+    /* Refrão de "Dan Dan Kokoro Hikareteku" ("Eu quero saber, se comigo você quer vir dançar…"), em Dó maior:
+       a linha do canto tirada do último refrão de um MIDI da música, onde cada sílaba tem a sua nota. */
     melodia:`-:4 |
              G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5 D5 C5 B4 |
-             -:1 A4 C5 A5 | G5 G5:.5 C5:1.5 D5:.5 E5:.5 | F5 E5 D5 C5:.5 D5:.5 | E5:1.5 F5:.25 E5:.25 D5:2 |
-             G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5 D5 C5 B4 |
-             -:1 A4 C5 A5 | G5 G5:.5 C5:1.5 -:1 | F5 E5 D5 C5 | D5:2 C5 B4 | C5:4`,
+             -:1 A4:.5 A4:.5 C5:.5 C5:.5 A5:.5 A5:.5 | G5 G5:.5 C5:1.5 D5:.5 E5:.5 | F5 E5:.5 E5:.5 D5 C5:.5 D5:.5 | E5:1.5 F5:.25 E5:.25 D5:2 |
+             G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5:.5 F5:.5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5:.5 E5:.5 D5:.5 D5:.5 C5 B4 |
+             -:1 A4:.5 A4:.5 C5 A5 | G5 G5:.5 C5:1.5 -:1 | F5:.5 F5:.5 E5 D5 C5 | D5:2 C5 B4 | C5:4`,
     acordes:`G:4 |
              C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Dm:4 | E:2 G:2 |
              C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Bb:4 | G:4 | C:4`
