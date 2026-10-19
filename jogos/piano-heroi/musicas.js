@@ -28,14 +28,31 @@ window.MUSICAS=[
     sub:"Abertura · Eu quero saber…",
     bpm:131, compasso:4, anacruse:0, estilo:"rock",
     cor:"#ff8a1f", icone:"🐉",
-    /* Refrão de "Dan Dan Kokoro Hikareteku" ("Eu quero saber, se comigo você quer vir dançar…"), em Dó maior:
-       a linha do canto tirada do último refrão de um MIDI da música, onde cada sílaba tem a sua nota. */
+    /* "Dan Dan Kokoro Hikareteku" em Dó maior: refrão ("Eu quero saber, se comigo você quer vir dançar…"),
+       estrofe (em Mi bemol, como na música) e refrão de novo. A melodia é a linha do canto tirada de um MIDI
+       da música; no refrão, a do último refrão, onde cada sílaba tem a sua nota. */
     melodia:`-:4 |
+             G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5 D5 C5 B4 |
+             -:1 A4:.5 A4:.5 C5:.5 C5:.5 A5:.5 A5:.5 | G5 G5:.5 C5:1.5 D5:.5 E5:.5 | F5 E5:.5 E5:.5 D5 C5:.5 D5:.5 | E5:1.5 F5:.25 E5:.25 D5:2 |
+             G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5:.5 F5:.5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5:.5 E5:.5 D5:.5 D5:.5 C5 B4 |
+             -:1 A4:.5 A4:.5 C5 A5 | G5 G5:.5 C5:1.5 -:1 | F5:.5 F5:.5 E5 D5 C5 | D5:2 C5 B4 | -:4 |
+             -:1.5 C5 C5:.5 C5:.5 C5:.5 | C5 Bb4:.5 Ab4 Bb4:.5 C5 | Bb4 -:1 Bb4:.5 Bb4:.5 Bb4:.5 Ab4:.5 | Ab4:.5 Bb4:.5 Ab4:.5 G4:1.5 Ab4:.5 Bb4:.5 |
+             Ab4 -:1 Ab4 Ab4:.5 G4:1.5 -:.5 F4:.5 G4 F4:.5 F4:.5 | F4:.5 F4:.5 F4:.5 F4:.5 Eb4:.5 F4 G4:1.5 -:1.5 Ab4 Bb4:.5 |
+             C5 -:.5 C5 C5:.5 C5:.5 C5:.5 | C5 Bb4:.5 Ab4 Bb4:.5 C5 | Bb4 -:.5 Bb4:.5 Bb4:.75 C5:.75 D5:.5 | Eb5:.5 D5:.5 Eb5 Bb4:.5 Ab4:.5 Ab4:.5 G4:.5 |
+             Ab4:2 -:.5 Ab4:.5 Bb4:.5 Ab4:.5 | G4:.5 G4:.5 -:.5 G4:.5 G4:.5 G5 F5:.5 | F5:2 F5:.5 Eb5:.5 D5:.5 Eb5:1.5 -:.5 C5:.5 C5 D5 |
+             Eb5:.5 Eb5:.5 -:.5 D5:.5 Eb5:1.5 D5:.5 | Eb5:1.5 C5:.5 F5:.5 Eb5:.5 D5:.5 C5:.5 | C5:.5 Bb4:.5 -:.5 G4:.5 Bb4:.5 Bb4:.5 -:.5 G4:.5 |
+             Bb4:.5 Bb4 G4:.5 Bb4:.75 C5:.75 D5:.5 | Eb5:.75 D5:.75 Eb5:.5 C5:2 | Eb5:.75 D5:.75 Eb5:.5 C5:.5 C5:.5 G5:.5 F5:.5 |
+             F5 -:.5 F5:.5 F5:.5 Eb5:.5 F5:.5 G5:3.5 -:1 |
              G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5 D5 C5 B4 |
              -:1 A4:.5 A4:.5 C5:.5 C5:.5 A5:.5 A5:.5 | G5 G5:.5 C5:1.5 D5:.5 E5:.5 | F5 E5:.5 E5:.5 D5 C5:.5 D5:.5 | E5:1.5 F5:.25 E5:.25 D5:2 |
              G5 G5 E5:.5 F5:.5 G5:.5 A5:.5 | G5 F5:.5 F5:.5 E5 D5 | E5 E5 C5:.5 D5:.5 E5:.5 F5:.5 | E5:.5 E5:.5 D5:.5 D5:.5 C5 B4 |
              -:1 A4:.5 A4:.5 C5 A5 | G5 G5:.5 C5:1.5 -:1 | F5:.5 F5:.5 E5 D5 C5 | D5:2 C5 B4 | C5:4`,
     acordes:`G:4 |
+             C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Dm:4 | E:2 G:2 |
+             C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Bb:4 | G:4 | Ab:2 Bb:2 |
+             Ab:4 | Bb7:4 | Bb:4 | Eb:2 Cm:2 | Ab:4 | F:2 Dm:2 | Eb:4 | C#dim:2 Ab:1 Bb:1 |
+             Ab:4 | Bb:4 | Gm:4 | Cm:4 | Fm:4 | Cm:2 G:2 | Eb:4 | Cm:4 |
+             Ab:4 | Ab:4 | Gm:4 | Gm:4 | Eb:4 | Ab:2 Fm:2 | Fm:4 | G:4 |
              C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Dm:4 | E:2 G:2 |
              C:4 | G:4 | Am:4 | Em:4 | F:4 | C:2 Am:2 | Bb:4 | G:4 | C:4`
   }
