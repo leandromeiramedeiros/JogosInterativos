@@ -16,27 +16,18 @@ Uma prateleira de jogos para jogar no navegador.
 | [Palavras Cruzadas](https://leandromeiramedeiros.github.io/JogosInterativos/#palavras-cruzadas) | Uma cruzada nova por dia em 3 níveis (7, 10 e 14 palavras). Pontua pelo tempo e pelas ajudas usadas. |
 | [Palpite](https://leandromeiramedeiros.github.io/JogosInterativos/#palpite) | Descubra a palavra do dia em 6 tentativas. 3 níveis: 4, 5 e 6 letras. |
 | [Interligado](https://leandromeiramedeiros.github.io/JogosInterativos/#interligado) | Descubra as palavras escondidas num mapa de associações. 14 temas (Futebol, Natureza, Música, Animais, Comida, Praia, Escola, Corpo Humano, Espaço, Cidade, Casa, Tecnologia, Viagem e Fazenda) em 3 níveis. Arraste palavras e fios, sacuda o mapa e peça pistas. |
-| [Puxe o Pino](https://leandromeiramedeiros.github.io/JogosInterativos/#puxe-o-pino) | Puxe os pinos na ordem certa: o ouro tem que cair no herói, e a lava não. |
-| [Corrida dos Portões](https://leandromeiramedeiros.github.io/JogosInterativos/#corrida-dos-portoes) | Arraste a multidão pelos portões que mais somam e vença o exército inimigo no fim da pista. |
-| [Torre do Poder](https://leandromeiramedeiros.github.io/JogosInterativos/#torre-do-poder) | Derrote só quem for mais fraco que você e suba a torre andar por andar. |
-| [Salve o Cachorro](https://leandromeiramedeiros.github.io/JogosInterativos/#salve-o-cachorro) | Desenhe uma linha para proteger o cachorro das abelhas por 10 segundos. A tinta é pouca. |
 | [Estilingue](https://leandromeiramedeiros.github.io/JogosInterativos/#estilingue) | Estique o estilingue, mire e derrube as torres de madeira, pedra e vidro até não sobrar nenhum inimigo. |
 | [Doce na Corda](https://leandromeiramedeiros.github.io/JogosInterativos/#doce-na-corda) | Corte as cordas na hora certa para o doce pegar as estrelas e cair na boca do sapinho. |
 | [Arena de Briga](https://leandromeiramedeiros.github.io/JogosInterativos/#arena-de-briga) | Luta de plataforma para 2 jogadores no mesmo teclado ou com dois controles (ou contra a CPU). Jogue o rival para fora da arena. |
 | [Kart Turbo](https://leandromeiramedeiros.github.io/JogosInterativos/#kart-turbo) | Corrida de kart vista de cima: derrape nas curvas, pegue turbos e mísseis e chegue em 1º em 3 pistas. |
 | [Voa Voa](https://leandromeiramedeiros.github.io/JogosInterativos/#voa-voa) | Toque para o tucano Tuca bater as asas e passar entre os troncos. Um toque, recorde infinito. |
-| [Pulo do Zé](https://leandromeiramedeiros.github.io/JogosInterativos/#pulo-do-ze) | Plataforma clássica: Zé, o faz-tudo de bigode, pula em mangas bravas, quebra tijolos e chega na bandeira em 4 fases. |
 | [Tropa de Lata](https://leandromeiramedeiros.github.io/JogosInterativos/#tropa-de-lata) | Corra e atire contra o exército de robôs, liberte reféns, pegue armas pesadas e derrube chefes gigantes. |
 | [Esquadrilha](https://leandromeiramedeiros.github.io/JogosInterativos/#esquadrilha) | Tiro vertical com aviões: desvie das rajadas, junte power-ups e derrube encouraçados e fortalezas. |
-| [Rua dos Socos](https://leandromeiramedeiros.github.io/JogosInterativos/#rua-dos-socos) | Briga de rua com combos, arremessos e chefes. Limpe a cidade, o porto e o terraço. |
 | [Empilha](https://leandromeiramedeiros.github.io/JogosInterativos/#empilha) | Um toque para soltar cada bloco. Acerte em cima do anterior e a torre sobe; erre e ela encolhe. |
 | [Horda](https://leandromeiramedeiros.github.io/JogosInterativos/#horda) | Sobreviva 10 minutos contra hordas de monstros. As armas atiram sozinhas; você só escolhe as melhorias. |
 | [Jogo da Forca](https://leandromeiramedeiros.github.io/JogosInterativos/#jogo-da-forca) | Descubra a palavra antes de completar o boneco. 3 níveis, de palavras curtas a compostas, com dicas e sequência perfeita. |
 | [Caverna Eco](https://leandromeiramedeiros.github.io/JogosInterativos/#caverna-eco) | Explore uma caverna viva, ganhe pulo duplo, investida e garra de parede para abrir caminhos e vencer dois chefes. |
-| [Sinuca](https://leandromeiramedeiros.github.io/JogosInterativos/#sinuca) | Sinuca brasileira: acerte sempre a bola da vez, some pontos e cuidado com a falta de 7. Contra a CPU ou a dois. |
-| [Clássico](https://leandromeiramedeiros.github.io/JogosInterativos/#futebol-classico) | Futebol arcade com os grandes do Rio e de São Paulo. Amistoso a dois ou o Torneio Rio-São Paulo contra a CPU. |
 | [Masmorra Relâmpago](https://leandromeiramedeiros.github.io/JogosInterativos/#masmorra-relampago) | RPG de ação em masmorras aleatórias: classe, habilidades, equipamentos e chefes em 5 minutos. |
-| [Quati Maluco](https://leandromeiramedeiros.github.io/JogosInterativos/#quati-maluco) | Plataforma em 3D: gire para quebrar caixas, cuidado com TNT e Nitro, fuja da pedra gigante e ganhe joias e relíquias em 4 fases. |
 | [Operação Ômega](https://leandromeiramedeiros.github.io/JogosInterativos/#operacao-omega) | Tiro em primeira pessoa em 3D: segure um complexo militar por 6 ondas com pistola, fuzil, escopeta e granadas. |
 
 ## Controle
@@ -59,10 +50,8 @@ Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Ba
 | Quizzes | Nível (Normal, Difícil, Impossível) |
 | Palavras Cruzadas, Palpite, Jogo da Forca | Nível (Fácil, Médio, Difícil) |
 | Interligado | Tema × Nível |
-| Arena de Briga, Sinuca | CPU (Fácil, Médio, Difícil) |
+| Arena de Briga | CPU (Fácil, Médio, Difícil) |
 | Kart Turbo | Pista |
-| Rua dos Socos | 1 ou 2 jogadores |
-| Clássico | Amistoso ou Torneio × Nível × Tempo |
 | Masmorra Relâmpago | Classe |
 
 Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`). O jogo avisa o modo ao começar a partida com `parent.postMessage({tipo: "jogos:modo", modo}, "*")` e manda o mesmo `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…). As do Interligado não diziam o tema, então ficam no tema **Antes dos temas**, separadas por nível; partida nova não entra nele.
@@ -88,7 +77,8 @@ As pontuações são enviadas pelo navegador, então alguém mal-intencionado po
 - `trofeu3d.js` — o troféu 3D da comemoração do pódio.
 - `placar-config.js` — endereço e chave pública do Supabase (vazio = placar só no navegador).
 - `supabase/placar.sql` — criação da tabela do placar e das regras de acesso.
-- `.github/workflows/pages.yml` — publica o site no GitHub Pages a cada push no branch padrão.
+- `.github/workflows/pages.yml` — publica o site no GitHub Pages a cada push no branch padrão (sem a pasta `arquivados/`).
+- `arquivados/` — jogos tirados da grade e do site, guardados só para desenvolvimento e sem manutenção: o HTML de cada um em `arquivados/jogos/`, os itens da lista e a arte dos cartuchos em `jogos-arquivados.js` e `arquivados.css`, e uma grade própria em `arquivados/index.html` (abra com um servidor local na raiz do repositório). Os jogos abrem soltos, sem placar; as pontuações antigas continuam no Supabase. Para reativar um, faça o caminho de volta: HTML para `jogos/` (com `src="controle.js?v=1"`), item para `JOGOS` e CSS para `hub.css`.
 
 ## Adicionar um jogo
 

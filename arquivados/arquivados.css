@@ -1,0 +1,28 @@
+/* Arte dos cartuchos dos jogos arquivados (saiu do hub.css). */
+.art-pino{background:#2f5fb8}
+.art-pino .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6d6;text-shadow:0 2px 0 #0f1f4d;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-pino .mark span{color:#ffd23f}
+.art-corrida{background:#8fd0ff}
+.art-corrida .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #0d2a5e;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-corrida .mark span{color:#ffd23f}
+.art-torre{background:#1b1640}
+.art-torre .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#f1f7ee;text-shadow:0 2px 0 #0a0820;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-torre .mark span{color:#5ee08a}
+.art-cao{background:#fbe9a6}
+.art-cao .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6d8;text-shadow:0 2px 0 #3a2a10;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-cao .mark span{color:#ffc53d}
+.art-ze{background:#3a6fd8}
+.art-ze .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff6d6;text-shadow:0 2px 0 #0f1f4d;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-ze .mark span{color:#5ee08a}
+.art-rua{background:#1a0f2e}
+.art-rua .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #3a0a24;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-rua .mark span{color:#ffe066}
+.art-sinuca{background:#3b2414}
+.art-sinuca .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #1a0f05;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-sinuca .mark span{color:#7fe6a0}
+.art-cla{background:#1a5c2a}
+.art-cla .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#fff;text-shadow:0 2px 0 #0b3416;font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-cla .mark span{color:#ffd23f}
+.art-qm{background:#8fd3ff}
+.art-qm .mark{font-family:"Lilita One","Arial Black",Impact,sans-serif;color:#ff7a1a;text-shadow:0 2px 0 #6b2a05,0 0 6px rgba(0,0,0,.3);font-size:clamp(18px,9.4cqw,32px);line-height:1}
+.art-qm .mark span{color:#ffc23d}

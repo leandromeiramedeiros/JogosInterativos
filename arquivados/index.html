@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jogos arquivados</title>
+<link rel="stylesheet" href="../hub.css">
+<link rel="stylesheet" href="arquivados.css">
+</head>
+<body>
+<!-- Só para desenvolvimento: esta pasta não vai para o GitHub Pages. Abra com um servidor local na raiz do repositório
+     (ex.: python3 -m http.server) em /arquivados/. Os jogos abrem soltos, sem placar. -->
+<header style="padding:24px 16px"><h1>Jogos arquivados</h1><p>Fora do site publicado e sem manutenção.</p></header>
+<ul class="shelf" id="shelf"></ul>
+<script src="jogos-arquivados.js"></script>
+<script>
+const escH=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+document.getElementById("shelf").innerHTML=JOGOS_ARQUIVADOS.map(j=>`
+  <li class="cart">
+    ${j.arte}
+    <div class="info">
+      <h2>${escH(j.titulo)}</h2>
+      <p>${escH(j.resumo)}</p>
+      <ul class="tags">${j.tags.map(t=>`<li>${escH(t)}</li>`).join("")}</ul>
+    </div>
+    <div class="actions"><a class="play" href="${escH(j.arquivo)}">Jogar</a></div>
+  </li>`).join("");
+</script>
+</body>
+</html>

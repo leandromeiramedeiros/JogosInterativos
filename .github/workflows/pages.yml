@@ -24,6 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Jogos arquivados ficam só no repositório (desenvolvimento), fora do site.
+      - run: rm -rf arquivados
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
