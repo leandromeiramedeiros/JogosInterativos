@@ -1,4 +1,4 @@
-/* Hub: placar, medalhas, comemoração e navegação. Depende de JOGOS (definida no index.html) e de placar-config.js. */
+/* Hub: placar, troféus, comemoração e navegação. Depende de JOGOS (definida no index.html) e de placar-config.js. */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const player=document.getElementById("player"), frame=document.getElementById("frame"), ptitle=document.getElementById("ptitle");
 const JOGAVEIS=JOGOS.filter(j=>!j.emBreve);
@@ -99,91 +99,81 @@ $("src").textContent=ONLINE?"Online":"Só neste navegador";
 $("src").classList.toggle("on",ONLINE);
 $("src").title=ONLINE?"Pontuações compartilhadas entre todos os jogadores":"Sem servidor configurado: as pontuações ficam salvas apenas neste navegador";
 
-/* ================= Medalhas e troféus =================
+/* ================= Troféus =================
    Metais: [brilho, tom médio, sombra, cor do número]. Cada SVG tem ids próprios para os gradientes. */
 const METAIS={1:["#fff1b8","#e9b824","#9c6a00","#6b4700"],2:["#ffffff","#c3cad4","#7b8594","#4b5563"],3:["#ffd9b8","#cd8a52","#8a4f22","#5c3210"]};
 let _uid=0; const uid=p=>p+(++_uid);
 const estrela=(x,y,s,d)=>`<g transform="translate(${x} ${y}) scale(${s})"><path class="sp" style="animation-delay:${d}s" d="M0-5Q.8-.8 5 0Q.8.8 0 5Q-.8.8-5 0Q-.8-.8 0-5Z" fill="#fff" stroke="#fff6cf" stroke-width=".4"/></g>`;
-const SPARKS=[[16,38,.9,0],[86,30,.7,1.1],[90,78,1,.6],[10,80,.65,1.7]];
 const brilhos=(pts)=>pts.map(p=>estrela(...p)).join("");
 
-/* coroa de louros: folhas com gradiente, duas fileiras por lado */
-function coroaDeLouros(cx,cy,r1,r2,n,gid){
-  let out="";
-  for(const lado of [1,-1]) for(let k=0;k<n;k++){
-    const a=106+k*(n>6?17:19), t=a*Math.PI/180;
-    for(const [r,tilt] of [[r1,-38],[r2,38]]){
-      const x=cx+lado*r*Math.cos(t), y=cy+r*Math.sin(t), rot=lado*(a+90+tilt);
-      out+=`<g transform="rotate(${rot.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})"><ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="7.4" ry="3.2" fill="url(#${gid})" stroke="#7a5408" stroke-width=".7"/><path d="M${(x-5.5).toFixed(1)} ${y.toFixed(1)}H${(x+5.5).toFixed(1)}" stroke="#fff6cf" stroke-opacity=".7" stroke-width=".5"/></g>`;
-    }
+/* Troféu em SVG: o mesmo do 3D (trofeu3d.js), visto de frente e um pouco de cima. A copa e as alças saem
+   do perfil do torno do 3D (Trofeu3D.forma); a base de ébano tem o friso e a placa de metal.
+   No pódio do placar a placa diz só "1º"; na comemoração (reserva do 3D, sem WebGL ou sem three.js) diz "1º LUGAR". */
+const TROFEU_K=38, tx=x=>+(60+x*TROFEU_K).toFixed(2), ty=y=>+(114-y*TROFEU_K).toFixed(2);
+const curvaSvg=pts=>{   // Catmull-Rom pelos pontos, em cúbicas
+  let d=`M${pts[0][0]} ${pts[0][1]}`;
+  for(let i=0;i<pts.length-1;i++){
+    const a=pts[Math.max(0,i-1)], b=pts[i], c=pts[i+1], e=pts[Math.min(pts.length-1,i+2)], f=(u,v,w)=>+(u+(v-w)/6).toFixed(2);
+    d+=`C${f(b[0],c[0],a[0])} ${f(b[1],c[1],a[1])} ${f(c[0],b[0],e[0])} ${f(c[1],b[1],e[1])} ${c[0]} ${c[1]}`;
   }
-  return out;
+  return d;
+};
+let _forma=null;
+function formaTrofeu(){
+  if(_forma) return _forma;
+  const F=window.Trofeu3D&&Trofeu3D.forma;
+  if(!F) return null;
+  const topo=F.PERFIL.reduce((m,p,i,a)=>p[1]>a[m][1]?i:m,0);   // topo da borda virada: dali em diante é o lado de dentro
+  const fora=F.PERFIL.slice(0,topo+1).map(([x,y])=>[x,y+F.COPA_Y]);
+  const lado=[...fora].reverse().map(([x,y])=>[tx(-x),ty(y)]).concat(fora.map(([x,y])=>[tx(x),ty(y)]));
+  const borda=fora[fora.length-1];
+  const alca=s=>curvaSvg(F.ALCA.map(([x,y])=>[tx(s*x),ty(y+F.COPA_Y)]));
+  return _forma={copa:curvaSvg(lado)+"Z",alcaD:alca(1),alcaE:alca(-1),borda,anel:[.664,1.48+F.COPA_Y],estrela:F.COPA_Y+1.74};
 }
-
-function medalha(lugar){
-  const [hi,mid,lo,txt]=METAIS[lugar], id=uid("m"), cy=62, atraso=(lugar*1.3).toFixed(1);
-  return `<svg viewBox="0 0 100 100" role="img" aria-label="${lugar}º lugar">
-    <defs>
-      <linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${hi}"/><stop offset=".5" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
-      <linearGradient id="${id}i" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="${hi}"/><stop offset=".55" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
-      <radialGradient id="${id}f" cx="36%" cy="28%" r="85%"><stop offset="0" stop-color="${hi}"/><stop offset=".5" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></radialGradient>
-      <linearGradient id="${id}l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".55" stop-color="#d9a826"/><stop offset="1" stop-color="#9a6d12"/></linearGradient>
-      <linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-      <linearGradient id="${id}e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-      <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4a74dd"/><stop offset="1" stop-color="#1f3a85"/></linearGradient>
-      <linearGradient id="${id}d" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff6a5c"/><stop offset="1" stop-color="#b02a22"/></linearGradient>
-      <clipPath id="${id}c"><circle cx="50" cy="${cy}" r="24"/></clipPath>
-    </defs>
-    <path d="M33 0H49L62 48H46Z" fill="url(#${id}b)"/><path d="M67 0H51L38 48H54Z" fill="url(#${id}d)"/>
-    <path d="M35 0 48 48" stroke="#fff" stroke-opacity=".35" stroke-width="1"/><path d="M65 0 52 48" stroke="#fff" stroke-opacity=".3" stroke-width="1"/>
-    ${lugar===1?coroaDeLouros(50,cy,31,40,7,id+"l"):""}
-    <ellipse cx="50" cy="92" rx="22" ry="3" fill="#000" opacity=".18"/>
-    <circle cx="50" cy="${cy}" r="25" fill="url(#${id}r)" stroke="${lo}" stroke-width="1.2"/>
-    <circle cx="50" cy="${cy}" r="23.2" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.5" stroke-dasharray="1 1.7"/>
-    <circle cx="50" cy="${cy}" r="20" fill="url(#${id}i)" stroke="${lo}" stroke-opacity=".6" stroke-width=".8"/>
-    <circle cx="50" cy="${cy}" r="18" fill="url(#${id}f)"/>
-    <circle cx="50" cy="${cy}" r="15.5" fill="none" stroke="${hi}" stroke-opacity=".75" stroke-width=".9"/>
-    <text x="50" y="${cy+8.4}" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="22" fill="${hi}" opacity=".85" transform="translate(-.5 -.7)">${lugar}</text>
-    <text x="50" y="${cy+8.4}" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="22" fill="${txt}">${lugar}</text>
-    <ellipse cx="41" cy="${cy-12}" rx="11" ry="5.4" transform="rotate(-38 41 ${cy-12})" fill="url(#${id}e)" opacity=".75"/>
-    <g clip-path="url(#${id}c)"><g class="sheen" style="animation-delay:${atraso}s"><rect x="24" y="34" width="12" height="64" fill="url(#${id}s)" transform="rotate(24 30 62)"/></g></g>
-    ${brilhos(SPARKS.map(([x,y,s,d])=>[x,y,s,(d+lugar*.4).toFixed(1)]))}
-  </svg>`;
+function estrela5(cx,cy,r1,r2){
+  let d="";
+  for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, r=i%2?r2:r1; d+=(i?"L":"M")+(cx+Math.cos(a)*r).toFixed(2)+" "+(cy+Math.sin(a)*r).toFixed(2) }
+  return d+"Z";
 }
-
-/* Troféu do pódio em SVG: copa clássica com bisel e reflexo no metal do lugar.
-   É o reserva do troféu 3D (trofeu3d.js), para quando não há WebGL ou o three.js não baixou. */
-function trofeu(lugar){
-  const [hi,mid,lo,txt]=METAIS[lugar], id=uid("t");
-  const cup="M38 20h44v16c0 20-10 34-22 34S38 56 38 36z";
+function trofeu(lugar,grande){
+  const [hi,mid,lo,txt]=METAIS[lugar], id=uid("t"), F=formaTrofeu();
+  if(!F) return "";
+  const caixa=(w,y0,y1,r,fill,stroke)=>`<rect x="${tx(-w/2)}" y="${ty(y1)}" width="${(w*TROFEU_K).toFixed(1)}" height="${((y1-y0)*TROFEU_K).toFixed(1)}" rx="${r}" fill="${fill}"${stroke?` stroke="${stroke}" stroke-width=".8"`:""}/>`;
+  const [bx,by]=F.borda, RY=.16;   // a borda vista um pouco de cima
+  const [ax,ay]=F.anel;
+  const placa=grande?`${lugar}º LUGAR`:`${lugar}º`;
   return `<svg viewBox="0 0 120 120" role="img" aria-label="Troféu de ${lugar}º lugar">
     <defs>
-      <linearGradient id="${id}m" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${lo}"/><stop offset=".16" stop-color="${mid}"/><stop offset=".3" stop-color="${hi}"/><stop offset=".5" stop-color="${mid}"/><stop offset=".78" stop-color="${lo}"/><stop offset=".9" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
-      <linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${hi}"/><stop offset=".4" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
-      <linearGradient id="${id}o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1203"/><stop offset="1" stop-color="${lo}"/></linearGradient>
+      <linearGradient id="${id}m" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${lo}"/><stop offset=".12" stop-color="${mid}"/><stop offset=".3" stop-color="${hi}"/><stop offset=".48" stop-color="${mid}"/><stop offset=".76" stop-color="${lo}"/><stop offset=".9" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
+      <linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${hi}"/><stop offset=".45" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></linearGradient>
+      <linearGradient id="${id}o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1203"/><stop offset=".7" stop-color="${lo}"/><stop offset="1" stop-color="${mid}"/></linearGradient>
+      <linearGradient id="${id}e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3542"/><stop offset=".12" stop-color="#16131b"/><stop offset="1" stop-color="#050407"/></linearGradient>
+      <linearGradient id="${id}r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity=".15"/></linearGradient>
       <linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-      <clipPath id="${id}c"><path d="${cup}"/></clipPath>
+      <clipPath id="${id}c"><path d="${F.copa}"/></clipPath>
     </defs>
-    <ellipse cx="60" cy="109" rx="30" ry="4" fill="#000" opacity=".22"/>
-    <path d="M39 27H30C21 27 21 49 40 53" fill="none" stroke="${lo}" stroke-width="6.4" stroke-linecap="round"/><path d="M81 27H90C99 27 99 49 80 53" fill="none" stroke="${lo}" stroke-width="6.4" stroke-linecap="round"/>
-    <path d="M39 27H30C21 27 21 49 40 53" fill="none" stroke="url(#${id}v)" stroke-width="4.6" stroke-linecap="round"/><path d="M81 27H90C99 27 99 49 80 53" fill="none" stroke="url(#${id}v)" stroke-width="4.6" stroke-linecap="round"/>
-    <path d="M38 26H31C25 27 24.5 38 31 45" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.3" stroke-linecap="round"/>
-    <path d="M54 68H66L64 82H56Z" fill="url(#${id}m)" stroke="${lo}" stroke-width="1"/>
-    <ellipse cx="60" cy="71" rx="10" ry="3.4" fill="url(#${id}v)" stroke="${lo}" stroke-width="1"/>
-    <path d="${cup}" fill="url(#${id}m)" stroke="${lo}" stroke-width="1.6"/>
-    <path d="M41.5 25C41.5 40 46 53 55 61" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M78 28C78 40 74 51 68 58" fill="none" stroke="${lo}" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>
-    <ellipse cx="60" cy="20" rx="22.6" ry="5.4" fill="url(#${id}v)" stroke="${lo}" stroke-width="1.4"/>
-    <ellipse cx="60" cy="20.6" rx="19.6" ry="3.8" fill="url(#${id}o)"/>
-    <path d="M42 19.6Q60 24 78 19.6" fill="none" stroke="${hi}" stroke-opacity=".6" stroke-width=".8"/>
-    <text x="60" y="49.5" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="19" fill="${hi}" opacity=".9" transform="translate(-.6 -.8)">${lugar}º</text>
-    <text x="60" y="49.5" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="19" fill="${txt}">${lugar}º</text>
-    <g clip-path="url(#${id}c)"><g class="sheen" style="animation-delay:.6s"><rect x="20" y="10" width="13" height="70" fill="url(#${id}s)" transform="rotate(22 26 45)"/></g></g>
-    <ellipse cx="60" cy="83" rx="13" ry="3.4" fill="url(#${id}v)" stroke="${lo}" stroke-width="1"/>
-    <path d="M45 84H75L80 94H40Z" fill="url(#${id}m)" stroke="${lo}" stroke-width="1.2"/><path d="M47 86H73" stroke="#fff" stroke-opacity=".5" stroke-width="1"/>
-    <rect x="33" y="94" width="54" height="13" rx="2.5" fill="#2a2230" stroke="${lo}" stroke-width="1.2"/><rect x="33" y="94" width="54" height="3" rx="1.5" fill="#fff" opacity=".12"/>
-    <rect x="45" y="98" width="30" height="5" rx="1.6" fill="url(#${id}v)"/><path d="M47 99.2H73" stroke="#fff" stroke-opacity=".7" stroke-width=".8"/>
-    ${brilhos([[16,30,1.3,0],[104,26,1,.9],[102,76,1.5,.5],[18,86,1,1.6],[60,6,1.1,1.2]])}
+    <ellipse cx="60" cy="115" rx="34" ry="3.4" fill="#000" opacity=".25"/>
+    <path d="${F.alcaD}" fill="none" stroke="${lo}" stroke-width="5.2" stroke-linecap="round"/><path d="${F.alcaE}" fill="none" stroke="${lo}" stroke-width="5.2" stroke-linecap="round"/>
+    <path d="${F.alcaD}" fill="none" stroke="url(#${id}v)" stroke-width="3.6" stroke-linecap="round"/><path d="${F.alcaE}" fill="none" stroke="url(#${id}v)" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="${F.alcaE}" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1" stroke-linecap="round" transform="translate(-.6 -.8)"/>
+    ${caixa(1.62,0,.3,3.4,`url(#${id}e)`)}<rect x="${tx(-.79)}" y="${ty(.3)}" width="${(1.58*TROFEU_K).toFixed(1)}" height="1" rx=".5" fill="#fff" opacity=".18"/>
+    ${caixa(1.4,.29,.33,1,`url(#${id}m)`,lo)}
+    ${caixa(1.32,.33,.54,2.6,`url(#${id}e)`)}<rect x="${tx(-.64)}" y="${ty(.54)}" width="${(1.28*TROFEU_K).toFixed(1)}" height=".9" rx=".45" fill="#fff" opacity=".16"/>
+    ${caixa(.92,.35,.52,1,`url(#${id}m)`,lo)}<rect x="${tx(-.43)}" y="${ty(.495)}" width="${(.86*TROFEU_K).toFixed(1)}" height="${(.12*TROFEU_K).toFixed(1)}" rx=".6" fill="none" stroke="${lo}" stroke-opacity=".7" stroke-width=".5"/>
+    <text x="60" y="${ty(.4)}" text-anchor="middle" font-family="Bowlby One SC, Arial Black, sans-serif" font-size="${grande?3.4:5.2}" fill="${txt}">${placa}</text>
+    <path d="${F.copa}" fill="url(#${id}m)" stroke="${lo}" stroke-width="1.3"/>
+    <g clip-path="url(#${id}c)">
+      <rect x="${tx(-.5)}" y="${ty(2.62)}" width="${(.42*TROFEU_K).toFixed(1)}" height="${(.62*TROFEU_K).toFixed(1)}" rx="3" fill="url(#${id}r)" opacity=".55"/>
+      <path d="M${tx(.6)} ${ty(2.75)}C${tx(.55)} ${ty(2.2)} ${tx(.4)} ${ty(1.9)} ${tx(.12)} ${ty(1.74)}" fill="none" stroke="${lo}" stroke-opacity=".4" stroke-width="3" stroke-linecap="round"/>
+      <path d="M${tx(-.13)} ${ty(1.4)}C${tx(-.1)} ${ty(1.1)} ${tx(-.09)} ${ty(.9)} ${tx(-.12)} ${ty(.66)}" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6" stroke-linecap="round"/>
+      <g class="sheen" style="animation-delay:.6s"><rect x="20" y="0" width="13" height="80" fill="url(#${id}s)" transform="rotate(22 26 45)"/></g>
+    </g>
+    <path d="M${tx(-ax)} ${ty(ay)}A${(ax*TROFEU_K).toFixed(2)} ${(ax*TROFEU_K*RY).toFixed(2)} 0 0 0 ${tx(ax)} ${ty(ay)}" fill="none" stroke="${lo}" stroke-width="2.2"/>
+    <path d="M${tx(-ax)} ${ty(ay)}A${(ax*TROFEU_K).toFixed(2)} ${(ax*TROFEU_K*RY).toFixed(2)} 0 0 0 ${tx(ax)} ${ty(ay)}" fill="none" stroke="${hi}" stroke-opacity=".8" stroke-width=".9" transform="translate(0 -.5)"/>
+    <ellipse cx="60" cy="${ty(by)}" rx="${(bx*TROFEU_K).toFixed(2)}" ry="${(bx*TROFEU_K*RY).toFixed(2)}" fill="url(#${id}v)" stroke="${lo}" stroke-width="1.1"/>
+    <ellipse cx="60" cy="${(ty(by)+.6).toFixed(2)}" rx="${((bx-.07)*TROFEU_K).toFixed(2)}" ry="${((bx-.07)*TROFEU_K*RY).toFixed(2)}" fill="url(#${id}o)"/>
+    <path d="${estrela5(60,ty(F.estrela),.17*TROFEU_K,.072*TROFEU_K)}" fill="url(#${id}v)" stroke="${lo}" stroke-width=".8" stroke-linejoin="round"/>
+    ${brilhos([[14,30,1.2,0+lugar*.4],[106,22,.9,.9+lugar*.4],[104,70,1.3,.5+lugar*.4],[16,84,.9,1.6+lugar*.4]])}
   </svg>`;
 }
 
@@ -245,7 +235,7 @@ function celebrar(lugar,item,q){
   c.hidden=false; $("c-placar").focus();
   const pousou=()=>{ if(vez!==celebraVez||c.hidden||c.classList.contains("pousou")) return; c.classList.add("pousou"); confete([METAIS[lugar][1],METAIS[lugar][0]]) };
   const parado=semMovimento(), musica=()=>fanfarra(lugar,parado?.3:POUSO[lugar]);
-  const svg=()=>{ const t=$("trofeu"); t.className="trofeu svg"; t.innerHTML=trofeu(lugar); musica(); setTimeout(pousou,parado?0:700) };
+  const svg=()=>{ const t=$("trofeu"); t.className="trofeu svg"; t.innerHTML=trofeu(lugar,true); musica(); setTimeout(pousou,parado?0:700) };
   const caixa=$("trofeu"); caixa.className="trofeu"; caixa.innerHTML="";
   setTimeout(pousou,4500);   // por garantia: o texto nunca fica escondido
   if(!window.Trofeu3D){ svg(); return }
@@ -330,7 +320,7 @@ function degrau(lugar,x,voce,q){
   const li=mk("li","pd p"+lugar+(x?"":" vazio")+(voce?" you":""));
   const who=mk("div","pd-who"), medal=mk("span","pd-medal");
   if(x){
-    medal.innerHTML=medalha(lugar); who.appendChild(medal);
+    medal.innerHTML=trofeu(lugar); who.appendChild(medal);
     if(voce) who.appendChild(mk("span","tagyou","você"));
     const nm=mk("span","nm",x.nome); nm.title=x.nome; who.appendChild(nm);
     const p=mk("span","pts",fmt(x.pontos)); p.appendChild(mk("small",null,"pts")); who.appendChild(p);
