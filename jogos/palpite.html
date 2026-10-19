@@ -359,7 +359,7 @@ function aviso(t){
 
 document.addEventListener("keydown",e=>{
   if(!G||e.ctrlKey||e.metaKey||e.altKey||$("regras").open) return;
-  if(e.key==="Enter"){ if(e.target.closest&&e.target.closest("button")) return; e.preventDefault(); tecla("enter"); }
+  if(e.key==="Enter"){ const bt=e.target.closest&&e.target.closest("button"); if(bt&&!bt.closest("#teclas")) return; e.preventDefault(); tecla("enter"); }
   else if(e.key==="Backspace"){e.preventDefault();tecla("apaga")}
   else if(e.key==="ArrowLeft"||e.key==="ArrowRight"){e.preventDefault();tecla(e.key==="ArrowLeft"?"esq":"dir")}
   else if(/^[a-zA-ZçÇ]$/.test(e.key)){tecla(norm(e.key).replace("ç","c"))}
@@ -372,7 +372,7 @@ if(window.Controle){
   const dlg=$("regras"); let ultG=null;
   Controle.navegar({seletor:"button",raiz:()=>dlg.open?dlg:document,voltar:()=>{ if(dlg.open) dlg.close(); else if(G) telaInicio(); }});
   Controle.on("quadro",()=>{
-    if(G!==ultG){ ultG=G; if(G&&!G.fim) Controle.focar(document.querySelector(".teclas button")); return; }
+    if(G!==ultG){ ultG=G; if(G&&!G.fim&&Controle.usado) Controle.focar(document.querySelector(".teclas button")); return; }
     if(dlg.open||!G) return;
     if(Controle.apertou(-1,"x")) tecla("apaga");
     if(Controle.apertou(-1,"y")) tecla("enter");
