@@ -35,6 +35,7 @@ body{font-family:'Figtree',system-ui,sans-serif;color:#f4f1ff}
 .btn2{font:800 15px 'Figtree',sans-serif;color:#e8e3ff;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.16);border-radius:999px;padding:9px 18px;cursor:pointer;margin:12px 4px 0}
 .ajuda{font-size:13.5px;line-height:1.45;color:#c9c1f0;margin:14px 0 0;text-align:left;background:rgba(255,255,255,.04);border-radius:14px;padding:10px 12px}
 .ajuda b{color:#fff}
+.ajuda .nobr{white-space:nowrap}
 .ajuda kbd{display:inline-block;min-width:1.2em;padding:0 5px;border-radius:5px;background:#2e2563;border:1px solid #4b3f93;border-bottom-width:3px;font:800 12px 'Figtree',sans-serif;color:#fff;text-align:center}
 .gire{display:none;font-size:13px;font-weight:800;color:#ffd23f;margin:10px 0 0}
 @media (orientation:portrait) and (max-width:600px){.gire{display:block}}
@@ -81,8 +82,7 @@ select{font:700 15px 'Figtree',sans-serif;color:#fff;background:#251d55;border:2
     <p class="gire">Gire o celular para deitar o piano: as teclas ficam maiores.</p>
     <div class="ajuda">
       <b>Toque</b> nas teclas (ou na coluna acima delas). Pode deslizar o dedo.<br>
-      <b>Teclado:</b> oitava de baixo <kbd>Z</kbd><kbd>X</kbd><kbd>C</kbd><kbd>V</kbd><kbd>B</kbd><kbd>N</kbd><kbd>M</kbd> (pretas <kbd>S</kbd><kbd>D</kbd><kbd>G</kbd><kbd>H</kbd><kbd>J</kbd>),
-      oitava de cima <kbd>Q</kbd><kbd>W</kbd><kbd>E</kbd><kbd>R</kbd><kbd>T</kbd><kbd>Y</kbd><kbd>U</kbd> (pretas <kbd>2</kbd><kbd>3</kbd><kbd>5</kbd><kbd>6</kbd><kbd>7</kbd>). A letra aparece em cada tecla.<br>
+      <b>Teclado:</b> as mãos não trocam de fileira. As brancas ficam na do meio, <span id="kbdMeio" class="nobr"></span>, e as pretas nas letras logo acima (<span class="nobr"><kbd>W</kbd><kbd>E</kbd><kbd>T</kbd><kbd>Y</kbd><kbd>U</kbd>…</span>). Cada nota desce com a letra que você deve apertar.<br>
       <b>Controle:</b> qualquer botão (A, B, X, Y, LB, RB) toca a próxima nota na hora certa. Start pausa.<br>
       A tecla que vem a seguir acende antes da nota chegar. O piano só toca a melodia quando você acerta.
     </div>
@@ -147,12 +147,46 @@ const BAIXA=60, ALTA=83;
 const NOMES=['Dó','Dó♯','Ré','Ré♯','Mi','Fá','Fá♯','Sol','Sol♯','Lá','Lá♯','Si'];
 const PRETA=[0,1,0,1,0,0,1,0,1,0,1,0];
 const CORES=['#ff5a5f','#ff7f3f','#ffb02e','#ffd23f','#b8e04a','#4fd67a','#2ed3b7','#36b8ff','#5b8cff','#8a6bff','#c45bff','#ff5bc8'];
-/* posição física das teclas (e.code), como num programa de música: Z… para a oitava de baixo, Q… para a de cima */
-const TECLAS={KeyZ:60,KeyS:61,KeyX:62,KeyD:63,KeyC:64,KeyV:65,KeyG:66,KeyB:67,KeyH:68,KeyN:69,KeyJ:70,KeyM:71,
-  Comma:72,KeyL:73,Period:74,Semicolon:75,Slash:76,
-  KeyQ:72,Digit2:73,KeyW:74,Digit3:75,KeyE:76,KeyR:77,Digit5:78,KeyT:79,Digit6:80,KeyY:81,Digit7:82,KeyU:83};
-const ROTULO={};
-for(const [code,m] of Object.entries(TECLAS)) if(!ROTULO[m]&&!/Comma|Period|Semicolon|Slash|KeyL/.test(code)) ROTULO[m]=code.replace(/^Key|^Digit/,'');
+/* teclado do computador (posição física, e.code): a fileira do meio são as brancas e a de cima as pretas,
+   como num piano, para a mão nunca trocar de fileira. A fileira do meio tem 11 teclas, então cada música
+   escolhe as 11 brancas seguidas que cobrem a melodia dela (a "janela" do teclado). */
+const MEIO=['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'];
+const CIMA=['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight'];
+const BRANCAS=[]; for(let m=BAIXA;m<=ALTA;m++) if(!PRETA[m%12]) BRANCAS.push(m);
+const JANELAS=BRANCAS.length-MEIO.length+1;
+function janela(b){   // b = índice da primeira branca; cada tecla de cima fica entre duas do meio, um pouco à esquerda
+  const teclas={};
+  MEIO.forEach((c,i)=>{ teclas[c]=BRANCAS[b+i]; });
+  CIMA.forEach((c,i)=>{ const m=i?BRANCAS[b+i-1]+1:BRANCAS[b]-1; if(m>=BAIXA&&m<=ALTA&&PRETA[m%12]) teclas[c]=m; });
+  const ms=Object.values(teclas);
+  return {teclas,lo:Math.min(...ms),hi:Math.max(...ms)};
+}
+function melhorJanela(ms){   // a que cobre mais notas; empate: a mais centrada na melodia
+  const media=ms.length?ms.reduce((a,m)=>a+m,0)/ms.length:66;
+  let melhor=0, nota=-Infinity;
+  for(let b=0;b<JANELAS;b++){
+    const j=janela(b), c=ms.filter(m=>m>=j.lo&&m<=j.hi).length;
+    const sc=c*1000-Math.abs((BRANCAS[b]+BRANCAS[b+MEIO.length-1])/2-media);
+    if(sc>nota){ nota=sc; melhor=b; }
+  }
+  return melhor;
+}
+/* a letra que aparece: a do teclado da pessoa quando o navegador conta, senão ABNT2 (pt-BR) ou americano */
+const SIMBOLO=/^pt-BR/i.test(navigator.language||'')?{Semicolon:'Ç',Quote:'~',BracketLeft:'´',BracketRight:'['}:{Semicolon:';',Quote:"'",BracketLeft:'[',BracketRight:']'};
+const rotuloDe=c=>(SIMBOLO[c]||c.replace(/^Key/,'')).toUpperCase();
+let TECLAS={}, ROTULO={}, janelaAtual=0;
+function usarJanela(b){
+  janelaAtual=b; TECLAS=janela(b).teclas; ROTULO={};
+  for(const [c,m] of Object.entries(TECLAS)) ROTULO[m]=rotuloDe(c);
+  const k=document.getElementById('kbdMeio');
+  if(k) k.innerHTML=MEIO.map(c=>`<kbd>${rotuloDe(c).replace(/[<&]/g,'')}</kbd>`).join('');
+}
+try{
+  navigator.keyboard.getLayoutMap().then(mapa=>{
+    for(const c of [...MEIO,...CIMA]){ const v=mapa.get(c); if(v&&v.length===1) SIMBOLO[c]=v; }
+    usarJanela(janelaAtual);
+  }).catch(()=>{});
+}catch(e){}
 const corDe=m=>CORES[m%12];
 const nomeDe=m=>NOMES[m%12];
 
@@ -215,7 +249,7 @@ function construir(def){
   for(let k=comp;k>=1;k--) ev(-k,'clique',{v:k===comp?1:.6});
   fundo.sort((x,y)=>x.t-y.t);
   return {id:def.id,titulo:def.titulo,sub:def.sub||'',icone:def.icone||'♪',cor:def.cor,notas,fundo,spb,compasso:comp,
-    t0Compasso:ana*spb,fim:Math.max(fimMel,b)*spb+1.6,placar:true};
+    t0Compasso:ana*spb,fim:Math.max(fimMel,b)*spb+1.6,placar:true,janela:melhorJanela(notas.map(n=>n.m))};
 }
 
 /* ---------- arquivo MIDI (formato 0 e 1) ---------- */
@@ -285,10 +319,15 @@ function musicaDoMidi(mid,iLead,nomeArq){
     if(u&&n.t-u.t<.11){ sobras.push(n); continue; }
     notas.push({t:n.t,d:n.d,m:n.m,v:n.v});
   }
-  let melhor=0, melhorK=0;
-  for(let k=-48;k<=48;k+=12){ const c=notas.filter(n=>n.m+k>=BAIXA&&n.m+k<=ALTA).length; if(c>melhor||(c===melhor&&Math.abs(k)<Math.abs(melhorK))){ melhor=c; melhorK=k; } }
+  /* oitava e janela do teclado que deixam mais notas no lugar; as que sobram mudam de oitava para caber */
+  let melhor=-1, melhorK=0, melhorB=0;
+  for(let k=-48;k<=48;k+=12) for(let b=0;b<JANELAS;b++){
+    const j=janela(b), c=notas.filter(n=>n.m+k>=j.lo&&n.m+k<=j.hi).length;
+    if(c>melhor||(c===melhor&&Math.abs(k)<Math.abs(melhorK))){ melhor=c; melhorK=k; melhorB=b; }
+  }
+  const jan=janela(melhorB);
   notas.forEach((n,i)=>{
-    n.m+=melhorK; while(n.m<BAIXA) n.m+=12; while(n.m>ALTA) n.m-=12;
+    n.m+=melhorK; while(n.m<jan.lo) n.m+=12; while(n.m>jan.hi) n.m-=12;
     const prox=notas[i+1]; if(prox) n.d=Math.min(n.d,prox.t-n.t);
   });
   const fundo=[];
@@ -303,7 +342,7 @@ function musicaDoMidi(mid,iLead,nomeArq){
   for(let k=4;k>=1;k--) fundo.push({t:t0-k*mid.spb,tipo:'clique',v:k===4?1:.6});
   fundo.sort((x,y)=>x.t-y.t);
   const fim=[...notas,...fundo].reduce((a,e)=>Math.max(a,e.t+(e.d||0)),0)+1.2;
-  return {id:'midi',titulo:nomeArq.replace(/\.midi?$/i,''),cor:'#7b5cff',notas,fundo,spb:mid.spb,compasso:4,t0Compasso:t0,fim,placar:false};
+  return {id:'midi',titulo:nomeArq.replace(/\.midi?$/i,''),cor:'#7b5cff',notas,fundo,spb:mid.spb,compasso:4,t0Compasso:t0,fim,placar:false,janela:melhorB};
 }
 
 /* ---------- som (WebAudio) ---------- */
@@ -465,6 +504,7 @@ function montaMenu(){
   }
 }
 function desenhaMenu(){
+  const sel=MUSICAS.find(x=>x.id===escolhaMusica)||MUSICAS[0]; if(sel) usarJanela(sel.janela);
   for(const b of $('listaMusicas').children){
     const est=lerEstrelas(b.dataset.id,nivel.id), rec=lerRec(b.dataset.id,nivel.id);
     b.querySelector('.rec').innerHTML=(est?'★'.repeat(est)+'<br>':'')+(rec?rec.toLocaleString('pt-BR')+' pts':'');
@@ -527,7 +567,7 @@ function mostrar(id){
 /* ---------- partida ---------- */
 function comecar(m){
   audio();
-  musica=m;
+  musica=m; usarJanela(m.janela);
   musica.notas.forEach(n=>{ n.res=null; n.tRes=0; });
   pontos=0; combo=0; maxCombo=0; cont={perfeito:0,bom:0,ok:0,errou:0}; deslizes=0;
   fx=[]; textos=[]; idxFundo=0; idxNota=0;
@@ -704,6 +744,15 @@ function estouro(m){
 }
 function rr(x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 const tecladoFisico={visto:matchMedia('(pointer:fine)').matches};
+/* tecla de computador desenhada: face clara com a letra, borda de baixo escura (centro cx, base by) */
+function teclinha(cx,by,lado,txt,face,letra){
+  const x=cx-lado/2, y=by-lado, r=Math.max(3,lado*.22);
+  ctx.fillStyle='rgba(12,6,32,.6)'; rr(x,y,lado,lado,r); ctx.fill();
+  ctx.fillStyle=face; rr(x,y,lado,lado-Math.max(2,lado*.12),r); ctx.fill();
+  ctx.fillStyle=letra; ctx.font=`800 ${Math.round(lado*.62)}px Figtree,sans-serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(txt,cx,y+(lado-Math.max(2,lado*.12))/2+1);
+}
 
 function desenha(dt){
   const agora=performance.now();
@@ -744,7 +793,10 @@ function desenha(dt){
       ctx.fillStyle=cor; rr(lx-cresce,base-alt-cresce,lw+cresce*2,alt+cresce*2,Math.min(10,lw/3)); ctx.fill();
       ctx.fillStyle='rgba(255,255,255,.35)'; rr(lx+3,base-alt+3,lw-6,Math.min(8,alt/3),4); ctx.fill();
       if(t.preta){ ctx.strokeStyle='rgba(10,6,30,.85)'; ctx.lineWidth=2; rr(lx,base-alt,lw,alt,Math.min(10,lw/3)); ctx.stroke(); }
-      if(!x.res&&alt>=22&&lw>=18){
+      if(!x.res&&tecladoFisico.visto&&ROTULO[x.m]){   // a letra a apertar desce junto com a nota
+        const lado=Math.max(16,Math.min(30,lw*.66,alt-4));
+        teclinha(lx+lw/2,base-3,lado,ROTULO[x.m],'#fff','#1b1035');
+      }else if(!x.res&&alt>=22&&lw>=18){
         ctx.fillStyle='rgba(20,10,40,.85)';
         ctx.font=`800 ${Math.max(9,Math.min(14,lw*.36))}px Figtree,sans-serif`;
         ctx.textAlign='center'; ctx.textBaseline='bottom';
@@ -789,19 +841,16 @@ function desenha(dt){
       if(t.preta){ rr(t.x,y-4,t.w,t.h+4,5); } else { rr(t.x+1,y,t.w-2,t.h-2,6); }
       ctx.fill(); ctx.globalAlpha=1;
     }
-    // rótulos: nome da nota nas brancas, letra do teclado em todas
-    ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    // rótulos: nome da nota nas brancas, letra do teclado em cada tecla que ele alcança (acende ao apertar)
+    const letra=tecladoFisico.visto&&ROTULO[m];
     if(!t.preta){
+      ctx.textAlign='center'; ctx.textBaseline='alphabetic';
       ctx.fillStyle=m%12===0?'#5b2bd1':'#6b6488';
       ctx.font=`800 ${Math.max(9,Math.min(15,t.w*.32))}px Figtree,sans-serif`;
       ctx.fillText(nomeDe(m),t.x+t.w/2,y+t.h-10);
-      if(tecladoFisico.visto&&ROTULO[m]){
-        ctx.fillStyle='#a49cc4'; ctx.font=`800 ${Math.max(9,Math.min(13,t.w*.28))}px Figtree,sans-serif`;
-        ctx.fillText(ROTULO[m],t.x+t.w/2,y+t.h-10-Math.max(13,Math.min(20,t.w*.42)));
-      }
-    }else if(tecladoFisico.visto&&ROTULO[m]){
-      ctx.fillStyle='#bdb5e0'; ctx.font=`800 ${Math.max(8,Math.min(12,t.w*.4))}px Figtree,sans-serif`;
-      ctx.fillText(ROTULO[m],t.x+t.w/2,y+t.h-8);
+      if(letra){ const lado=Math.max(16,Math.min(30,t.w*.5)); teclinha(t.x+t.w/2,y+t.h-14-Math.max(13,Math.min(18,t.w*.32)),lado,letra,baixo?corDe(m):'#2e2563',baixo?'#1b1035':'#fff'); }
+    }else if(letra){
+      const lado=Math.max(14,Math.min(26,t.w*.72)); teclinha(t.x+t.w/2,y+t.h-6,lado,letra,baixo?corDe(m):'#e8e3ff','#1b1035');
     }
   };
   ctx.fillStyle='#08061a'; ctx.fillRect(0,ky-2,W,H-ky+2);
@@ -887,12 +936,12 @@ addEventListener('keydown',e=>{
     if(!e.repeat) apertar(m,'k'+e.code);
     return;
   }
-  if(e.code==='Escape'||e.code==='KeyP'||(e.code==='Space'&&estado!=='menu')){
+  if(e.code==='Escape'||(e.code==='Space'&&estado!=='menu')){
     if(estado==='jogo'){ e.preventDefault(); pausar(); }
     else if(estado==='pausa'){ e.preventDefault(); continuar(); }
   }else if(e.code==='Enter'&&estado==='menu'&&!e.target.closest('button,select,input')){ e.preventDefault(); $('btnJogar').click(); }
 });
-addEventListener('keyup',e=>{ if(TECLAS[e.code]!=null) soltar('k'+e.code); });
+addEventListener('keyup',e=>soltar('k'+e.code));
 addEventListener('blur',()=>{ soltarTudo(); if(estado==='jogo') pausar(); });
 document.addEventListener('visibilitychange',()=>{ if(document.hidden&&estado==='jogo') pausar(); });
 document.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ audio(); if(b.closest('.ov')) b.blur(); }));
@@ -909,7 +958,7 @@ if(window.Controle){
 }
 
 /* para testes automáticos */
-window.__piano={estado:()=>estado,pos,musica:()=>musica,pendente:()=>musica&&pendente(),apertar,soltar,cont:()=>cont,pontos:()=>pontos};
+window.__piano={estado:()=>estado,pos,musica:()=>musica,pendente:()=>musica&&pendente(),apertar,soltar,cont:()=>cont,pontos:()=>pontos,teclas:()=>TECLAS};
 
 redimensiona();
 montaMenu();
