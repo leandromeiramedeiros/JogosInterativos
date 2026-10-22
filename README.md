@@ -30,6 +30,7 @@ Uma prateleira de jogos para jogar no navegador.
 | [Masmorra Relâmpago](https://leandromeiramedeiros.github.io/JogosInterativos/#masmorra-relampago) | RPG de ação em masmorras aleatórias: classe, habilidades, equipamentos e chefes em 5 minutos. |
 | [Operação Ômega](https://leandromeiramedeiros.github.io/JogosInterativos/#operacao-omega) | Tiro em primeira pessoa em 3D: segure um complexo militar por 6 ondas com pistola, fuzil, escopeta e granadas. |
 | [Piano Herói](https://leandromeiramedeiros.github.io/JogosInterativos/#piano-heroi) | As notas caem num piano de duas oitavas e você toca na hora certa; a melodia só soa quando você acerta. Parabéns pra Você, abertura de Dragon Ball GT ou um arquivo MIDI seu. Tem modo Treino, que espera você. |
+| [Adedanha](https://leandromeiramedeiros.github.io/JogosInterativos/#adedanha) | O STOP clássico, multijogador online: cada um no seu celular, sorteia a letra, todo mundo preenche as categorias, quem terminar grita STOP! e a turma vota nas respostas que não valem. |
 
 ## Controle
 
@@ -55,6 +56,7 @@ Jogos com níveis, pistas, temas ou classes têm um pódio para cada modo: no Ba
 | Kart Turbo | Pista |
 | Masmorra Relâmpago | Classe |
 | Piano Herói | Música × Nível (Fácil, Normal, Difícil) |
+| Adedanha | Rodadas (3, 5, 7, 10) |
 
 Os modos ficam no item do jogo na lista `JOGOS` (campo `modos`). O jogo avisa o modo ao começar a partida com `parent.postMessage({tipo: "jogos:modo", modo}, "*")` e manda o mesmo `modo` no `jogos:fim`. Não é preciso mudar a tabela: o modo vai na coluna `jogo` (`interligado--praia-medio`). As pontuações de antes dos modos continuam valendo no modo que tinha o mesmo nome do nível (Difícil, Montanha Maluca…). As do Interligado não diziam o tema, então ficam no tema **Antes dos temas**, separadas por nível; partida nova não entra nele.
 
@@ -68,6 +70,16 @@ Sem configuração, cada jogador vê só as pontuações salvas no próprio nave
 4. Cole as duas em [`placar-config.js`](placar-config.js) e faça push. Essas informações são públicas por natureza; nunca coloque ali a chave `service_role`/`secret`.
 
 As pontuações são enviadas pelo navegador, então alguém mal-intencionado poderia forjar uma. A tabela limita nome (até 20 caracteres) e pontos (até 50.000), e você pode apagar registros pelo painel do Supabase em **Table Editor → placar**.
+
+## Multijogador (Adedanha)
+
+O Adedanha usa o **Supabase Realtime** do mesmo projeto do placar (`placar-config.js`), sem tabela nova nem servidor: cada sala é um canal `adedanha:CÓDIGO`, o *Presence* diz quem está na sala e o *Broadcast* leva as mensagens. O convite é o link `#adedanha?sala=CÓDIGO` (a página principal repassa o que vem depois do `?` para o jogo).
+
+- O **anfitrião** é quem está há mais tempo na sala. O navegador dele guarda a partida, roda os cronômetros e manda o estado inteiro para todos a cada mudança; os outros só mandam pedidos (STOP, respostas, votos, pronto). Se o anfitrião sai, o próximo da fila assume com o último estado e a partida continua.
+- Quem recarrega a página volta como o mesmo jogador (o id fica na aba) e não perde os pontos nem o que já tinha escrito na rodada.
+- Regras: até 12 jogadores, 3 a 12 categorias (lista pronta + categorias livres), letras escolhidas pelo anfitrião (K, W, X e Y ficam de fora no começo) e sem repetir na partida. STOP só com tudo preenchido com a letra; os outros ganham 5 segundos. Na conferência, a resposta é anulada com o voto da maioria dos outros jogadores. 10 pontos por resposta única, 5 por repetida (sem diferenciar acento, maiúscula e espaço).
+- Como tudo roda nos navegadores, quem é anfitrião poderia trapacear pelo console. Serve para jogar entre amigos.
+- No fim, cada jogador pode mandar o próprio total para o placar, no pódio do número de rodadas jogado.
 
 ## Estrutura
 

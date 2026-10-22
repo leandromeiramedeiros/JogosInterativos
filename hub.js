@@ -251,7 +251,7 @@ function fecharCelebra(){
   if(window.Trofeu3D) Trofeu3D.parar();
 }
 $("c-placar").onclick=()=>{ fecharCelebra(); abrirPlacar(true); $("podium").scrollIntoView({block:"nearest"}); $("bclose").focus() };
-$("c-again").onclick=()=>{ fecharCelebra(); abrirPlacar(false); const j=JOGAVEIS.find(x=>x.id===atual); if(j){ frame.src=j.arquivo; frame.focus() } };
+$("c-again").onclick=()=>{ fecharCelebra(); abrirPlacar(false); const j=JOGAVEIS.find(x=>x.id===atual); if(j){ frame.src=endereco(j); frame.focus() } };
 $("celebra").addEventListener("keydown",e=>{
   if(e.key!=="Tab") return;
   const bs=[$("c-placar"),$("c-again")], i=bs.indexOf(document.activeElement);
@@ -477,14 +477,18 @@ $("recent-btn").onclick=async()=>{
 $("rclose").onclick=()=>recent.close?recent.close():recent.removeAttribute("open");
 recent.addEventListener("click",e=>{ if(e.target===recent) recent.close() });
 
-/* ================= Navegação ================= */
-let atual=null;
+/* ================= Navegação =================
+   O endereço é #id-do-jogo; o que vier depois de "?" vai para o jogo (ex.: #adedanha?sala=K7QF). */
+let atual=null, atualParams="";
+const lerHash=()=>{ const [id,params=""]=decodeURIComponent(location.hash.slice(1)).split("?"); return {id,params} };
+const endereco=j=>{ const {id,params}=lerHash(); return j.arquivo+(id===j.id&&params?"?"+params:"") };
 function route(){
-  const id=decodeURIComponent(location.hash.slice(1));
+  const {id,params}=lerHash();
   const j=JOGAVEIS.find(x=>x.id===id);   // jogos "em breve" não abrem
   if(j){
+    if(atual===j.id&&params!==atualParams&&params){ frame.src=endereco(j); atualParams=params }   // outro convite para o mesmo jogo
     if(atual!==j.id){
-      frame.src=j.arquivo; frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos";
+      frame.src=endereco(j); atualParams=params; frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos";
       const [g1,g2]=j.cor||["#ff6b2c","#14213d"];
       for(const el of [board,recent]){ el.style.setProperty("--g1",g1); el.style.setProperty("--g2",g2) }
       $("bgame").textContent=j.titulo;
