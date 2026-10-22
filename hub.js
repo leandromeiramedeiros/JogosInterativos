@@ -498,11 +498,11 @@ function route(e){
       atual=j.id; meuId=null; escolha=lerEscolha(j.id); limparEnvio(); desenharModos(); abrirPlacar(false); carregarPlacar();
       saiuDaTelaCheia=false; abrirFab(false);
     }
-    player.hidden=false; document.body.classList.add("playing");
+    player.hidden=false; travarFundo(true);
     frame.focus(); telaCheiaAoTocar();
   }else{
     const saindo=atual; atual=null;
-    player.hidden=true; document.body.classList.remove("playing");
+    player.hidden=true; travarFundo(false);
     frame.removeAttribute("src"); frame.src="about:blank"; /* para sons e cronômetros do jogo */
     limparEnvio(); fecharCelebra(); sairTelaCheia();
     document.title="Jogos Interativos";
@@ -510,6 +510,16 @@ function route(e){
   }
 }
 function fechar(){ if(location.hash.length>1) location.hash=""; else route() }
+/* Com um jogo aberto, a grade atrás fica presa no lugar. No iPhone, ao abrir o teclado num campo de texto
+   do jogo, o Safari rolava a grade, e o cursor e a seleção do campo apareciam deslocados do texto.
+   Ao fechar o jogo, a grade volta para onde estava. */
+let fundoY=0;
+function travarFundo(on){
+  const b=document.body;
+  if(on===b.classList.contains("playing")) return;
+  if(on){ fundoY=scrollY; b.style.top=-fundoY+"px"; b.classList.add("playing") }
+  else{ b.classList.remove("playing"); b.style.top=""; scrollTo(0,fundoY) }
+}
 document.getElementById("back").addEventListener("click",e=>{e.preventDefault();fechar()});
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("celebra").hidden){ fecharCelebra(); return } if(e.key==="Escape"&&atual&&!recent.open&&!document.fullscreenElement){ if(board.classList.contains("open")&&!matchMedia("(min-width:900px)").matches) abrirPlacar(false); else fechar() } });
 /* ================= Tela cheia e celular deitado ================= */
