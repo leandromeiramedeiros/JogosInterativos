@@ -874,7 +874,28 @@ function mostrar(t){
   if(t==="tInicio"||t==="tConectando") dock("");
 }
 function erroInicio(t){ mostrar("tInicio"); $("msgInicio").className="msg err"; $("msgInicio").textContent=t }
-function dock(html){ $("dock").hidden=!html; $("dockIn").innerHTML=html||"" }
+function dock(html){ $("dock").hidden=!html; trocar($("dockIn"),html||"") }
+/* Troca o conteúdo de el pelo html mexendo só no que mudou. Cada estado que chega redesenha a tela; se o botão
+   fosse recriado entre o dedo encostar e sair da tela, o toque se perdia (o celular só dispara o clique quando os
+   dois acontecem no mesmo elemento). Assim o botão continua o mesmo e só o texto e os atributos mudam. */
+function trocar(el,html){
+  const t=document.createElement("template"); t.innerHTML=html; igualar(el,t.content);
+}
+function igualar(a,b){
+  const na=[...a.childNodes], nb=[...b.childNodes];
+  nb.forEach((y,i)=>{
+    const x=na[i];
+    if(!x) a.appendChild(y);
+    else if(x.nodeType!==y.nodeType||x.nodeName!==y.nodeName||(x.nodeType===1&&x.id!==y.id)) a.replaceChild(y,x);
+    else if(x.nodeType!==1){ if(x.nodeValue!==y.nodeValue) x.nodeValue=y.nodeValue }
+    else{
+      for(const at of [...x.attributes]) if(!y.hasAttribute(at.name)) x.removeAttribute(at.name);
+      for(const at of y.attributes) if(x.getAttribute(at.name)!==at.value) x.setAttribute(at.name,at.value);
+      igualar(x,y);
+    }
+  });
+  for(let i=na.length-1;i>=nb.length;i--) a.removeChild(na[i]);
+}
 const quem=id=>E.jogadores[id]?E.jogadores[id].nome:"?";
 const nomeHost=()=>host&&E.jogadores[host]?E.jogadores[host].nome:"o anfitrião";
 function avatar(id){ const j=E.jogadores[id]; return j?`<span class="av" style="--c:${CORES[j.cor]}" aria-hidden="true">${esc(inicial(j.nome))}</span>`:"" }
@@ -1073,13 +1094,23 @@ function tick(){
 setInterval(tick,200);
 
 /* ---------- Conferência ---------- */
+/* "Pronto" que ainda não voltou no estado do anfitrião: o botão já mostra a escolha e o pedido é repetido até
+   ele confirmar (com internet ruim, um pedido perdido deixava o botão parecendo travado) */
+let meuPronto=null, tPronto=0;
+function insistirPronto(){
+  clearTimeout(tPronto);
+  tPronto=setTimeout(()=>{
+    if(!meuPronto||!E||E.fase!=="conferencia"||idRodada()!==meuPronto.rodada||E.prontos.includes(eu.id)===meuPronto.valor) return;
+    acao("pronto",{valor:meuPronto.valor}); insistirPronto();
+  },2000);
+}
 function telaConf(ehHost){
   mostrar("tConf");
   const c=calcular(E), ids=E.ordem.filter(id=>E.respostas[id]), outros=ids.length-1, precisa=Math.floor(outros/2)+1, joguei=!!E.respostas[eu.id];
   $("confLetra").textContent=E.letra;
   $("confTit").textContent=`Conferência da rodada ${E.rodada}`;
   $("confSub").textContent=(E.parou?`${quem(E.parou)} gritou STOP. `:"Acabou o tempo. ")+(outros>0?`Marque Não vale nas respostas que não servem: com ${precisa} ${precisa===1?"voto":"votos"}, a resposta é anulada.`:"");
-  $("cats").innerHTML=E.config.categorias.map((cat,ci)=>`<div class="card cat"><h3>${esc(cat)}${DICA[cat]?`<small>${esc(DICA[cat])}</small>`:""}</h3>${
+  trocar($("cats"),E.config.categorias.map((cat,ci)=>`<div class="card cat"><h3>${esc(cat)}${DICA[cat]?`<small>${esc(DICA[cat])}</small>`:""}</h3>${
     ids.map(id=>{
       const t=E.respostas[id][ci]||"", s=c[id][ci], votos=E.votos[id+"|"+ci]||[], meu=id===eu.id;
       const selo=!t?"":!s.ok?`<span class="selo inv">${esc(s.motivo)}</span>`:s.rep?'<span class="selo rep">repetida</span>':"";
@@ -1089,15 +1120,22 @@ function telaConf(ehHost){
         else vb=`<button class="voto" type="button" data-k="v:${id}:${ci}" data-alvo="${id}" data-ci="${ci}" aria-pressed="${votos.includes(eu.id)}" title="Esta resposta não vale">✗ Não vale${votos.length?` · ${votos.length} de ${precisa}`:""}</button>`;
       }
       return `<div class="ans${s.ok?"":" nao"}${t?"":" vazia"}${meu?" meu":""}"><span class="quem">${avatar(id)}<span class="nm">${esc(quem(id))}${meu?" (você)":""}</span></span><span class="txt">${t?esc(t):"em branco"}${selo}</span>${vb}<span class="pts p${s.pts}">${s.pts?"+"+s.pts:"0"}</span></div>`;
-    }).join("")}</div>`).join("");
+    }).join("")}</div>`).join(""));
   $("cats").querySelectorAll(".voto[data-alvo]").forEach(b=>b.onclick=()=>{
     const v=b.getAttribute("aria-pressed")!=="true";
     b.setAttribute("aria-pressed",String(v));   // resposta imediata; o estado do anfitrião confirma
     acao("voto",{alvo:b.dataset.alvo,ci:+b.dataset.ci,valor:v});
   });
-  const part=online().filter(id=>E.respostas[id]), prontos=part.filter(id=>E.prontos.includes(id)).length, euPronto=E.prontos.includes(eu.id);
+  const rid=idRodada();
+  if(meuPronto&&(meuPronto.rodada!==rid||E.prontos.includes(eu.id)===meuPronto.valor)) meuPronto=null;
+  const euPronto=meuPronto?meuPronto.valor:E.prontos.includes(eu.id);
+  const part=online().filter(id=>E.respostas[id]), prontos=part.filter(id=>id===eu.id?euPronto:E.prontos.includes(id)).length;
   dock(`${joguei?`<button class="btn ${euPronto?"":"pri"}" id="bPronto" data-k="pronto" type="button">${euPronto?"Desfazer":"Pronto, pode fechar"} · ${prontos}/${part.length}</button>`:`<div class="espera">Você entrou no meio da rodada. Espere a próxima.</div>`}${ehHost?'<button class="btn" id="bFechar" data-k="fechar" type="button">Fechar conferência</button>':""}`);
-  if($("bPronto")) $("bPronto").onclick=()=>acao("pronto",{valor:!euPronto});
+  if($("bPronto")) $("bPronto").onclick=()=>{
+    meuPronto={rodada:rid,valor:!euPronto};
+    acao("pronto",{valor:meuPronto.valor});
+    if(E&&E.fase==="conferencia"){ render(); insistirPronto() }
+  };
   if($("bFechar")) $("bFechar").onclick=hostFechar;
 }
 
