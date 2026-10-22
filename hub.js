@@ -479,16 +479,19 @@ recent.addEventListener("click",e=>{ if(e.target===recent) recent.close() });
 
 /* ================= Navegação =================
    O endereço é #id-do-jogo; o que vier depois de "?" vai para o jogo (ex.: #adedanha?sala=K7QF). */
-let atual=null, atualParams="";
-const lerHash=()=>{ const [id,params=""]=decodeURIComponent(location.hash.slice(1)).split("?"); return {id,params} };
+let atual=null;
+const lerHash=(h=location.hash)=>{ const [id,params=""]=decodeURIComponent(h.slice(1)).split("?"); return {id,params} };
 const endereco=j=>{ const {id,params}=lerHash(); return j.arquivo+(id===j.id&&params?"?"+params:"") };
-function route(){
+function route(e){
   const {id,params}=lerHash();
   const j=JOGAVEIS.find(x=>x.id===id);   // jogos "em breve" não abrem
   if(j){
-    if(atual===j.id&&params!==atualParams&&params){ frame.src=endereco(j); atualParams=params }   // outro convite para o mesmo jogo
+    // outro convite para o jogo que já está aberto (ex.: link de outra sala do Adedanha): recarrega o jogo com ele.
+    // Compara com o endereço anterior, que já inclui o que o próprio jogo mudou com replaceState.
+    const antes=e&&e.oldURL?lerHash(new URL(e.oldURL).hash):null;
+    if(atual===j.id&&params&&antes&&antes.params!==params) frame.src=endereco(j);
     if(atual!==j.id){
-      frame.src=endereco(j); atualParams=params; frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos";
+      frame.src=endereco(j); frame.title=j.titulo; ptitle.textContent=j.titulo; document.title=j.titulo+" · Jogos Interativos";
       const [g1,g2]=j.cor||["#ff6b2c","#14213d"];
       for(const el of [board,recent]){ el.style.setProperty("--g1",g1); el.style.setProperty("--g2",g2) }
       $("bgame").textContent=j.titulo;
