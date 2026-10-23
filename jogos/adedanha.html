@@ -72,7 +72,9 @@ body.na-sala .so-sala{display:inline-flex!important}
 .linha{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .msg{min-height:20px;font-size:14px;font-weight:700}
 .msg.err{color:var(--erro)}
-.av{width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;font:800 13px/1 var(--sans);color:#fff;background:var(--c,#777);flex:none}
+.av{position:relative;width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;font:800 13px/1 var(--sans);color:#fff;background:var(--c,#777);flex:none}
+/* quem já marcou pronto ganha um ✓ no avatar (conferência, resultado e lista de jogadores) */
+.pr-ok>.av::after{content:"✓";position:absolute;right:-5px;bottom:-5px;width:16px;height:16px;border-radius:50%;background:var(--ok);color:var(--ok-ink);font:800 10.5px/16px var(--sans);text-align:center;box-shadow:0 0 0 2px var(--card)}
 .pill{background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:4px 11px;font-weight:800;font-size:13px;white-space:nowrap}
 
 /* Início */
@@ -207,6 +209,18 @@ body.parou #avisos{top:calc(74px + env(safe-area-inset-top,0px))}
 .topo-conf{display:flex;gap:14px;align-items:center}
 .letra-m{width:48px;height:48px;border-radius:50%;background:var(--stop);color:var(--stop-ink);display:grid;place-items:center;font-family:var(--display);font-size:29px;flex:none}
 .topo-conf p{margin:5px 0 0;font-size:14px;line-height:1.45;color:var(--muted)}
+.topo-conf>div{min-width:0}
+.prontos{margin-top:12px;padding-top:10px;border-top:1.5px dashed var(--line)}
+.prontos:empty,.pr-res:empty{display:none}
+.prontos .rot{margin-bottom:7px}
+.pr-lista{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.pr-lista li{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:3px 11px 3px 3px;border:1.5px dashed var(--line);border-radius:999px;font-weight:700;font-size:13.5px;color:var(--muted)}
+.pr-lista li.pr-ok{border-style:solid;border-color:var(--ok);color:var(--ink)}
+.pr-lista .av{width:24px;height:24px;font-size:11.5px}
+.pr-lista .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-res{margin:-2px 0 12px;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.pr-res .ok{display:inline-grid;place-items:center;width:16px;height:16px;margin-right:2px;vertical-align:-3px;border-radius:50%;background:var(--ok);color:var(--ok-ink);font:800 10.5px/1 var(--sans)}
+.btn.todos{animation:chama 1.3s ease-in-out infinite}
 .cat{padding-bottom:8px}
 .cat h3{margin:0 0 6px;font-family:var(--display);font-weight:400;font-size:19px;letter-spacing:.02em;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .cat h3 small{font-family:var(--sans);font-size:12px;color:var(--muted)}
@@ -445,7 +459,7 @@ dialog .bt{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   <section id="tConf" class="wrap" hidden>
     <div class="duas">
       <div class="wrap">
-        <div class="card topo-conf"><div class="letra-m" id="confLetra">?</div><div><h2 id="confTit">Conferência</h2><p id="confSub"></p></div></div>
+        <div class="card topo-conf"><div class="letra-m" id="confLetra">?</div><div><h2 id="confTit">Conferência</h2><p id="confSub"></p><div class="prontos" id="confProntos"></div></div></div>
         <div id="cats" class="wrap"></div>
       </div>
       <div class="lado">
@@ -466,7 +480,7 @@ dialog .bt{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   <section id="tRes" class="wrap" hidden>
     <div class="duas">
       <div class="wrap">
-        <div class="card"><div class="cab"><h2 id="resTit">Fim da rodada</h2><span class="letra-m" id="resLetra">?</span></div><ol class="rank" id="rank"></ol></div>
+        <div class="card"><div class="cab"><h2 id="resTit">Fim da rodada</h2><span class="letra-m" id="resLetra">?</span></div><p class="pr-res" id="resProntos" role="status"></p><ol class="rank" id="rank"></ol></div>
         <div class="card"><div class="cab"><h2>Suas respostas</h2><span class="pill" id="resMeu"></span></div><div class="minhas" id="minhas"></div></div>
       </div>
       <div class="lado"></div>
@@ -912,9 +926,9 @@ function hostAcao(m){
     if(l.size) E.votos[k]=[...l]; else delete E.votos[k];
     publicar();
   }else if(t==="pronto"){
-    if(E.fase!=="conferencia") return;
+    if(E.fase!=="conferencia"&&E.fase!=="resultado") return;
     const l=new Set(E.prontos); if(m.valor) l.add(m.de); else l.delete(m.de); E.prontos=[...l];
-    if(!hostTalvezFechar()) publicar();
+    if(E.fase==="resultado"||!hostTalvezFechar()) publicar();   // no resultado, quem começa a próxima rodada é sempre o anfitrião
   }
 }
 
@@ -965,7 +979,7 @@ function hostFechar(){
   if(!E||host!==eu.id||E.fase!=="conferencia") return;
   const c=calcular(E); E.pontos={};
   for(const id in c){ const s=Object.values(c[id]).reduce((a,x)=>a+x.pts,0); E.pontos[id]=s; if(E.jogadores[id]) E.jogadores[id].total+=s }
-  E.fase="resultado"; publicar();
+  E.fase="resultado"; E.prontos=[]; publicar();   // no resultado, cada um marca de novo se já quer a próxima rodada
 }
 function hostProxima(){
   if(!E||host!==eu.id||E.fase!=="resultado") return;
@@ -1099,6 +1113,13 @@ function dock(html){
   if(trocar($("dockIn"),h)&&h){ $("bReagir").onclick=alternarReacoes; marcarReagir() }
 }
 const quem=id=>E.jogadores[id]?E.jogadores[id].nome:"?";
+/* quem conta para o "pronto": na conferência, quem respondeu a rodada; no resultado, todo mundo na sala menos o
+   anfitrião, que é quem começa a próxima rodada */
+const quemConta=()=>!E?[]:E.fase==="conferencia"?online().filter(id=>E.respostas[id]):E.fase==="resultado"?online().filter(id=>id!==host):[];
+function chipPronto(id){
+  const ok=E.prontos.includes(id), nome=esc(quem(id));
+  return `<li class="${ok?"pr-ok":""}" title="${nome}: ${ok?"já marcou pronto":"ainda não marcou"}">${avatar(id)}<span class="nm">${nome}${id===eu.id?" (você)":""}</span><span class="sr">: ${ok?"já marcou":"ainda não marcou"}</span></li>`;
+}
 const nomeHost=()=>host&&E.jogadores[host]?E.jogadores[host].nome:"o anfitrião";
 function avatar(id){ const j=E.jogadores[id]; return j?`<span class="av${id===eu.id||!j.on?"":" outro"}" data-av="${id}" style="--c:${CORES[j.cor]}" aria-hidden="true">${esc(inicial(j.nome))}</span>`:"" }
 
@@ -1372,29 +1393,36 @@ function telaConf(ehHost){
     b.setAttribute("aria-pressed",String(v)); $("cats")._h="";   // resposta imediata; o estado do anfitrião confirma (ou desfaz)
     acao("voto",{alvo:b.dataset.alvo,ci:+b.dataset.ci,valor:v});
   });
-  const part=online().filter(id=>E.respostas[id]), prontos=part.filter(id=>E.prontos.includes(id)).length, euPronto=E.prontos.includes(eu.id);
+  const part=quemConta(), prontos=part.filter(id=>E.prontos.includes(id)).length, euPronto=E.prontos.includes(eu.id);
+  trocar($("confProntos"),part.length>1?`<span class="rot">Quem já marcou pronto · ${prontos} de ${part.length}</span><ul class="pr-lista">${part.map(chipPronto).join("")}</ul>`:"");
   dock(`${joguei?`<button class="btn ${euPronto?"":"pri"}" id="bPronto" data-k="pronto" type="button"><span>${euPronto?"Desfazer":'Pronto<span class="lg">, pode fechar</span>'} · ${prontos}/${part.length}</span></button>`:`<div class="espera">Você entrou no meio da rodada. Espere a próxima.</div>`}${ehHost?'<button class="btn" id="bFechar" data-k="fechar" type="button"><span>Fechar<span class="lg"> conferência</span></span></button>':""}`);
   if($("bPronto")) $("bPronto").onclick=()=>acao("pronto",{valor:!euPronto});
   if($("bFechar")) $("bFechar").onclick=hostFechar;
 }
 
 /* ---------- Resultado da rodada ---------- */
-function linhaRank(x,rd,melhor){
-  return `<li class="${x.id===eu.id?"eu":""}"><span class="pos">${x.pos}º</span>${avatar(x.id)}<span class="nm">${esc(x.nome)}${x.on?"":' <small class="muted">(saiu)</small>'}</span><span class="rd">${rd==null?"":`+${rd}${melhor>0&&rd===melhor?" ★":""}`}</span><span class="tt">${x.total}</span></li>`;
+function linhaRank(x,rd,melhor,ok){
+  return `<li class="${x.id===eu.id?"eu":""}${ok?" pr-ok":""}"><span class="pos">${x.pos}º</span>${avatar(x.id)}<span class="nm">${esc(x.nome)}${x.on?"":' <small class="muted">(saiu)</small>'}</span><span class="rd">${rd==null?"":`+${rd}${melhor>0&&rd===melhor?" ★":""}`}</span><span class="tt">${x.total}</span></li>`;
 }
+let avisouTudo="";
 function telaRes(ehHost){
   mostrar("tRes");
-  const pts=E.pontos||{}, melhor=Math.max(0,...Object.values(pts));
+  const pts=E.pontos||{}, melhor=Math.max(0,...Object.values(pts)), ultima=E.rodada>=E.config.rodadas;
+  const conta=quemConta(), prontos=conta.filter(id=>E.prontos.includes(id)), euPronto=prontos.includes(eu.id), tudo=conta.length>0&&prontos.length===conta.length;
   $("resTit").textContent=`Rodada ${E.rodada} de ${E.config.rodadas}`;
   $("resLetra").textContent=E.letra;
-  trocar($("rank"),ranking().map(x=>linhaRank(x,pts[x.id]||0,melhor)).join(""));
+  trocar($("resProntos"),conta.length?`<span class="ok" aria-hidden="true">✓</span> marca quem já pediu ${ultima?"o resultado final":"a próxima rodada"}: ${prontos.length} de ${conta.length}.`+(ehHost?"":` ${esc(nomeHost())} ${ultima?"mostra o resultado final":"começa a próxima"} quando quiser.`):"");
+  trocar($("rank"),ranking().map(x=>linhaRank(x,pts[x.id]||0,melhor,prontos.includes(x.id))).join(""));
   const c=E.respostas[eu.id]?calcular(E)[eu.id]:null;
   $("resMeu").textContent=c?`+${pts[eu.id]||0} pontos`:"";
   $("resMeu").hidden=!c;
   trocar($("minhas"),c?E.config.categorias.map((cat,ci)=>{ const t=E.respostas[eu.id][ci]||""; return `<div><b>${esc(cat)}</b><span${t?"":' class="vz"'}>${t?esc(t):"em branco"}</span><b class="pts p${c[ci].pts}">${c[ci].pts?"+"+c[ci].pts:"0"}</b></div>` }).join(""):'<p class="muted" style="margin:0">Você não jogou esta rodada.</p>');
-  const ultima=E.rodada>=E.config.rodadas;
-  dock(ehHost?`<button class="btn pri grande" id="bProx" data-k="prox" type="button">${ultima?"Ver o resultado final":"Próxima rodada"}</button>`:`<div class="espera">Esperando ${esc(nomeHost())} ${ultima?"mostrar o resultado final":"sortear a próxima letra"}…</div>`);
+  if(ehHost) dock(`<button class="btn pri grande${tudo?" todos":""}" id="bProx" data-k="prox" type="button"><span>${tudo?'<span class="lg">Tudo pronto · </span>':""}${ultima?"Ver o resultado final":"Próxima rodada"}${conta.length&&!tudo?` · ${prontos.length}/${conta.length}`:""}</span></button>`);
+  else dock(`<button class="btn ${euPronto?"":"pri"}" id="bProntoRes" data-k="prontoRes" type="button"><span>${euPronto?"Desfazer":`Pronto<span class="lg"> para ${ultima?"o resultado":"a próxima"}</span>`} · ${prontos.length}/${conta.length}</span></button>`);
   if($("bProx")) $("bProx").onclick=hostProxima;
+  if($("bProntoRes")) $("bProntoRes").onclick=()=>acao("pronto",{valor:!euPronto});
+  // o anfitrião fica sabendo quando todo mundo já pediu a próxima (uma vez por rodada)
+  if(ehHost&&tudo&&avisouTudo!==idRodada()){ avisouTudo=idRodada(); aviso(ultima?"Tudo pronto para o resultado final!":"Tudo pronto para a próxima rodada!"); bip(880,120,"triangle",.07) }
 }
 
 /* ---------- Fim ---------- */
@@ -1683,11 +1711,11 @@ function faixaReacao(r,texto){
 
 /* ================= Jogadores e expulsão ================= */
 function desenharJogadores(){
-  const ehHost=host===eu.id, partida=E.fase!=="lobby";
+  const ehHost=host===eu.id, partida=E.fase!=="lobby", conta=quemConta();
   $("djT").textContent=`Jogadores na sala · ${online().length}`;
   trocar($("djL"),E.ordem.map(id=>{
     const j=E.jogadores[id];
-    return `<li class="${id===eu.id?"eu":""}${j.on?"":" fora"}">${avatar(id)}<span class="nm">${esc(j.nome)}</span>${id===host?'<span class="tag">anfitrião</span>':""}${id===eu.id?'<span class="tag">você</span>':""}${j.on?"":'<span class="tag">saiu</span>'}${partida?`<span class="tt">${j.total}</span>`:""}`+
+    return `<li class="${id===eu.id?"eu":""}${j.on?"":" fora"}${conta.includes(id)&&E.prontos.includes(id)?" pr-ok":""}">${avatar(id)}<span class="nm">${esc(j.nome)}</span>${id===host?'<span class="tag">anfitrião</span>':""}${id===eu.id?'<span class="tag">você</span>':""}${j.on?"":'<span class="tag">saiu</span>'}${partida?`<span class="tt">${j.total}</span>`:""}`+
       `${ehHost&&id!==eu.id?`<button class="btn mini perigo" type="button" data-exp="${id}" data-k="dx:${id}">Expulsar</button>`:""}</li>`;
   }).join(""));
   $("djL").querySelectorAll("[data-exp]").forEach(b=>b.onclick=()=>{ $("dJog").close(); pedirExpulsao(b.dataset.exp) });
